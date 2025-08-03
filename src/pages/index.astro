@@ -1,8 +1,8 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 ---
 
 <!doctype html>
@@ -12,37 +12,67 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 	</head>
 	<body>
 		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to build
-				a personal website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
+		<!-- 菜单按钮 -->
+		<button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+		<!-- 滑动边栏 -->
+		<div class="sidebar">
+			<h2>Catch up!</h2>
 			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
+				<li><a href="blog/algorithms"><h4>Algorithms</h4></a></li>
+				<li><a href="blog/abstract"><h4>Abstract Algebra</h4></a></li>
+				<li><a href="blog/furina"><h4>Furina</h4></a></li>
 			</ul>
+
+			<h2>Follow me on</h2>
+			<ul>
+				<li>
+					<a href="https://github.com/hotteano"><h4>GitHub</h4></a>
+				</li>
+				<li>
+					<a href="https://twitter.com/h_otteano"><h4>Twitter</h4></a>
+				</li>
+			</ul>
+		</div>
+
+		<style>
+			.sidebar {
+				padding-top: 40px; /* 整体内容下移 */
+			}
+			.sidebar h2 {
+				margin-top: 20px; /* 标题额外下移 */
+			}
+		</style>
+
+		<!-- 遮罩层 -->
+		<div class="overlay" onclick="toggleSidebar()"></div>
+		<script is:inline>
+			function toggleSidebar() {
+				document.body.classList.toggle("sidebar-open");
+			}
+
+			document.addEventListener("keydown", (e) => {
+				if (e.key === "Escape") {
+					document.body.classList.remove("sidebar-open");
+				}
+			});
+		</script>
+
+		<main>
+			<h1>Welcome To My Website!</h1>
 			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
+				Usually, I will put some of my personal notes on algorithms,
+				mathematics, complexity theory and AI theory on this website.
+				However, this blog is not only for this. I may update anything
+				that worths sharing, including my travel photos, poems, proses,
+				articles themed ACGN or even Wallpapers!
 			</p>
+
 			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
+				我的主页的大部分内容可能是专业的学术内容，包含算法、数学、复杂度理论或者人工智能理论，但是，我会常常在主页上更新许多内容：例如旅行照片、
+				自己写的诗歌（没错小文青多愁善感~）、一些散文游记或者同人文甚至壁纸（！！）希望大家多多关照~
 			</p>
+			<img src="/src/assets/126587255_p1.jpg" alt="Furina" />
 		</main>
 		<Footer />
 	</body>

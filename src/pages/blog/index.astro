@@ -1,15 +1,42 @@
 ---
-import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
-import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import BaseHead from "../../components/BaseHead.astro";
+import Footer from "../../components/Footer.astro";
+import FormattedDate from "../../components/FormattedDate.astro";
+import Header from "../../components/Header.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
 
-const posts = (await getCollection('blog')).sort(
+// 获取并按日期排序所有文章
+const allPosts = (await getCollection("blog")).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+// 按标签分类文章
+const postsByTag: Record<string, typeof allPosts> = {};
+
+allPosts.forEach((post) => {
+	// 确保tags始终是数组类型
+	const tags = Array.isArray(post.data.tags)
+		? post.data.tags
+		: typeof post.data.tags === "string"
+			? [post.data.tags]
+			: [];
+
+	if (tags.length === 0) {
+		if (!postsByTag["未分类"]) {
+			postsByTag["未分类"] = [];
+		}
+		postsByTag["未分类"].push(post);
+	} else {
+		tags.forEach((tag) => {
+			if (!postsByTag[tag]) {
+				postsByTag[tag] = [];
+			}
+			postsByTag[tag].push(post);
+		});
+	}
+});
 ---
 
 <!doctype html>
@@ -19,8 +46,11 @@ const posts = (await getCollection('blog')).sort(
 		<style>
 			main {
 				width: 960px;
+				max-width: 100%;
+				margin: 0 auto;
+				padding: 1rem;
 			}
-			ul {
+			.posts-list {
 				display: flex;
 				flex-wrap: wrap;
 				gap: 2rem;
@@ -28,29 +58,29 @@ const posts = (await getCollection('blog')).sort(
 				margin: 0;
 				padding: 0;
 			}
-			ul li {
+			.posts-list li {
 				width: calc(50% - 1rem);
 			}
-			ul li * {
+			.posts-list li * {
 				text-decoration: none;
 				transition: 0.2s ease;
 			}
-			ul li:first-child {
+			.posts-list li:first-child {
 				width: 100%;
 				margin-bottom: 1rem;
 				text-align: center;
 			}
-			ul li:first-child img {
+			.posts-list li:first-child img {
 				width: 100%;
 			}
-			ul li:first-child .title {
+			.posts-list li:first-child .title {
 				font-size: 2.369rem;
 			}
-			ul li img {
+			.posts-list li img {
 				margin-bottom: 0.5rem;
 				border-radius: 12px;
 			}
-			ul li a {
+			.posts-list li a {
 				display: block;
 			}
 			.title {
@@ -62,25 +92,59 @@ const posts = (await getCollection('blog')).sort(
 				margin: 0;
 				color: rgb(var(--gray));
 			}
-			ul li a:hover h4,
-			ul li a:hover .date {
+			.posts-list li a:hover h4,
+			.posts-list li a:hover .date {
 				color: rgb(var(--accent));
 			}
-			ul a:hover img {
+			.posts-list a:hover img {
 				box-shadow: var(--box-shadow);
 			}
+			/* 新增的分区样式 */
+			.tag-section {
+				margin-bottom: 4rem;
+				position: relative;
+			}
+
+			.tag-title {
+				font-size: 4rem;
+				margin: 3rem 0 1.5rem;
+				padding: 0.5rem 1rem;
+				background: rgba(var(--accent), 0.1);
+				border-left: 4px solid rgb(var(--accent));
+				display: inline-block;
+			}
+
+			/* 添加分区间隔线 */
+			.tag-section:not(:last-child)::after {
+				content: "";
+				display: block;
+				height: 3px;
+				background: linear-gradient(
+					90deg,
+					transparent,
+					rgba(0, 0, 0, 0.3),
+					transparent
+				);
+				margin: 3rem 0;
+			}
+
+			/* 悬停效果增强 */
+			.posts-list li a:hover {
+				transform: translateY(-3px);
+			}
+
 			@media (max-width: 720px) {
-				ul {
+				.posts-list {
 					gap: 0.5em;
 				}
-				ul li {
+				.posts-list li {
 					width: 100%;
 					text-align: center;
 				}
-				ul li:first-child {
+				.posts-list li:first-child {
 					margin-bottom: 0;
 				}
-				ul li:first-child .title {
+				.posts-list li:first-child .title {
 					font-size: 1.563em;
 				}
 			}
@@ -88,26 +152,81 @@ const posts = (await getCollection('blog')).sort(
 	</head>
 	<body>
 		<Header />
+		<!-- 菜单按钮 -->
+		<button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+		<!-- 滑动边栏 -->
+		<div class="sidebar">
+			<h2>Catch up!</h2>
+			<ul>
+				<li><a href="blog/algorithms"><h4>Algorithms</h4></a></li>
+				<li><a href="blog/abstract"><h4>Abstract Algebra</h4></a></li>
+				<li><a href="blog/furina"><h4>Furina</h4></a></li>
+			</ul>
+
+			<h2>Follow me on</h2>
+			<ul>
+				<li>
+					<a href="https://github.com/hotteano"><h4>GitHub</h4></a>
+				</li>
+				<li>
+					<a href="https://twitter.com/h_otteano"><h4>Twitter</h4></a>
+				</li>
+			</ul>
+		</div>
+
+		<style>
+			.sidebar {
+				padding-top: 40px; /* 整体内容下移 */
+			}
+			.sidebar h2 {
+				margin-top: 20px; /* 标题额外下移 */
+			}
+		</style>
+
+		<!-- 遮罩层 -->
+		<div class="overlay" onclick="toggleSidebar()"></div>
+		<script is:inline>
+			function toggleSidebar() {
+				document.body.classList.toggle("sidebar-open");
+			}
+
+			document.addEventListener("keydown", (e) => {
+				if (e.key === "Escape") {
+					document.body.classList.remove("sidebar-open");
+				}
+			});
+		</script>
 		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
-									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
+			{
+				Object.entries(postsByTag).map(([tag, posts]) => (
+					<section class="tag-section">
+						<h2 class="tag-title">{tag}</h2>
+						<ul class="posts-list">
+							{posts.map((post) => (
+								<li>
+									<a href={`/blog/${post.id}/`}>
+										{post.data.heroImage && (
+											<Image
+												width={720}
+												height={360}
+												src={post.data.heroImage}
+												alt=""
+											/>
+										)}
+										<h4 class="title">{post.data.title}</h4>
+										<p class="date">
+											<FormattedDate
+												date={post.data.pubDate}
+											/>
+										</p>
+									</a>
+								</li>
+							))}
+						</ul>
+					</section>
+				))
+			}
 		</main>
 		<Footer />
 	</body>

@@ -5,17 +5,18 @@
  */
 
 :root {
-	--accent: #2337ff;
-	--accent-dark: #000d8a;
+	--accent: #ac20b3;
+	--accent-dark: #d24391;
 	--black: 15, 18, 25;
 	--gray: 96, 115, 159;
 	--gray-light: 229, 233, 240;
 	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
+	--gray-gradient: rgba(var(--gray-light), 50%), #ffffff;
 	--box-shadow:
-		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px
-		rgba(var(--gray), 33%);
+		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px rgba(var(--gray), 33%);
+	--sidebar-width: 350px;
 }
+
 @font-face {
 	font-family: "Atkinson";
 	src: url("/fonts/atkinson-regular.woff") format("woff");
@@ -23,13 +24,15 @@
 	font-style: normal;
 	font-display: swap;
 }
+
 @font-face {
 	font-family: "Atkinson";
-	src: url("/fonts/atkinson-bold.woff") format("woff");
+	src: url("/fonts/atkinson-regular.woff") format("woff");
 	font-weight: 700;
 	font-style: normal;
 	font-display: swap;
 }
+
 body {
 	font-family: "Atkinson", sans-serif;
 	margin: 0;
@@ -39,98 +42,124 @@ body {
 	background-size: 100% 600px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
-	color: rgb(var(--gray-dark));
+	color: rgb(var(--black));
 	font-size: 20px;
 	line-height: 1.7;
 }
+
 main {
-	width: 720px;
+
+	width: 840px;
 	max-width: calc(100% - 2em);
 	margin: auto;
 	padding: 3em 1em;
 }
+
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-	margin: 0 0 0.5rem 0;
-	color: rgb(var(--black));
+	margin: 0 0 0.5em 0;
+	color: rgb(var(--gray-dark));
 	line-height: 1.2;
 }
+
 h1 {
 	font-size: 3.052em;
+	margin-bottom: 1em;
 }
+
 h2 {
 	font-size: 2.441em;
 }
+
 h3 {
 	font-size: 1.953em;
 }
+
 h4 {
 	font-size: 1.563em;
 }
+
 h5 {
 	font-size: 1.25em;
 }
+
 strong,
 b {
 	font-weight: 700;
 }
+
 a {
 	color: var(--accent);
 }
+
 a:hover {
 	color: var(--accent);
 }
+
 p {
+	margin-top: 0.4em;
 	margin-bottom: 1em;
 }
+
 .prose p {
 	margin-bottom: 2em;
 }
+
 textarea {
 	width: 100%;
 	font-size: 16px;
 }
+
 input {
 	font-size: 16px;
 }
+
 table {
 	width: 100%;
 }
+
 img {
 	max-width: 100%;
 	height: auto;
-	border-radius: 8px;
+	border-radius: 10px;
 }
+
 code {
 	padding: 2px 5px;
 	background-color: rgb(var(--gray-light));
 	border-radius: 2px;
 }
+
 pre {
 	padding: 1.5em;
 	border-radius: 8px;
 }
-pre > code {
+
+pre>code {
 	all: unset;
 }
+
 blockquote {
 	border-left: 4px solid var(--accent);
 	padding: 0 0 0 20px;
 	margin: 0px;
 	font-size: 1.333em;
 }
+
 hr {
 	border: none;
 	border-top: 1px solid rgb(var(--gray-light));
 }
+
 @media (max-width: 720px) {
 	body {
 		font-size: 18px;
 	}
+
 	main {
 		padding: 1em;
 	}
@@ -152,4 +181,108 @@ hr {
 	clip-path: inset(50%);
 	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
 	white-space: nowrap;
+}
+
+/* 菜单按钮 */
+.menu-btn {
+	position: fixed;
+	top: 100px;
+	left: 20px;
+	font-size: 24px;
+	cursor: pointer;
+	z-index: 110;
+	background: white;
+	border: none;
+	border-radius: 50%;
+	width: 40px;
+	height: 40px;
+	box-shadow: 0 2px 6px rgba(var(--gray), 0.2);
+}
+
+/* 边栏样式 */
+.sidebar {
+	position: fixed;
+	top: 0;
+	left: -350px;
+	width: var(--sidebar-width);
+	height: 100%;
+	background: white;
+	box-shadow: 2px 0 10px rgba(var(--gray), 0.1);
+	z-index: 120;
+	transition: left 0.3s ease;
+	padding: 20px;
+	box-sizing: border-box;
+}
+
+/* 遮罩层 */
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(var(--black), 0.5);
+	z-index: 100;
+	opacity: 0;
+	visibility: hidden;
+	transition: all 0.3s ease;
+}
+
+/* 边栏展开状态 */
+.sidebar-open .sidebar {
+	left: 0;
+}
+
+.sidebar-open .overlay {
+	opacity: 1;
+	visibility: visible;
+}
+
+.sidebar-open body {
+	margin-left: var(--sidebar-width);
+}
+
+/* 边栏内容 */
+.sidebar h2 {
+	color: var(--accent);
+	border-bottom: 2px solid var(--accent);
+	padding-bottom: 10px;
+}
+
+.sidebar ul {
+	list-style: none;
+	padding: 0;
+}
+
+.sidebar li {
+	margin: 15px 0;
+}
+
+.sidebar a {
+	color: rgb(var(--gray-dark));
+	text-decoration: none;
+	transition: color 0.2s;
+}
+
+.sidebar a:hover {
+	color: var(--accent);
+}
+
+/* 主内容区 */
+main {
+	max-width: 800px;
+	margin: 60px auto;
+	padding: 0 20px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+	.sidebar-open body {
+		margin-left: 0;
+	}
+
+	.sidebar {
+		width: 100%;
+		left: -100%;
+	}
 }
