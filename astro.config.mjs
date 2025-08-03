@@ -8,5 +8,4 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
 	site: 'https://hotteano.github.io',
 	integrations: [mdx(), sitemap()],
-	outDir: './docs',
 });
