@@ -1,6 +1,6 @@
 ## My Blog
 
-This is my personal blog introducing my basic information.
+This is my personal blog introducing my basic information（Based on Astro）.
 
 ## Featuring
 
