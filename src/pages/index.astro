@@ -1,0 +1,237 @@
+---
+import { getCollection } from "astro:content";
+import Container from "@components/Container.astro";
+import PageLayout from "@layouts/PageLayout.astro";
+import ArrowCard from "@components/ArrowCard.astro";
+import Link from "@components/Link.astro";
+import Typewriter from "@components/Typewriter.astro";
+import ParticleBackground from "@components/ParticleBackground.astro";
+import { dateRange } from "@lib/utils";
+import { SITE, HOME, SOCIALS } from "@consts";
+
+const blog = (await getCollection("blog"))
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0,SITE.NUM_POSTS_ON_HOMEPAGE);
+
+const projects = (await getCollection("projects"))
+  .filter(project => !project.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0,SITE.NUM_PROJECTS_ON_HOMEPAGE);
+
+const allwork = (await getCollection("work"))
+  .sort((a, b) => new Date(b.data.dateStart).valueOf() - new Date(a.data.dateStart).valueOf())
+  .slice(0,SITE.NUM_WORKS_ON_HOMEPAGE);
+
+const work = await Promise.all(
+  allwork.map(async (item) => {
+    const { Content } = await item.render();
+    return { ...item, Content };
+  })
+);
+
+---
+
+<PageLayout title={HOME.TITLE} description={HOME.DESCRIPTION}>
+  <ParticleBackground />
+  <Container>
+    <!-- Hero Section with Typewriter -->
+    <section class="min-h-[40vh] flex flex-col justify-center mb-16">
+      <div class="space-y-6">
+        <div class="animate">
+          <span class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-black/5 dark:bg-white/10 text-black/70 dark:text-white/70">
+            👋 欢迎来到我的数字花园
+          </span>
+        </div>
+        
+        <h1 class="animate animate-delay-100 text-4xl md:text-6xl font-bold text-black dark:text-white leading-tight">
+          Hi, I'm <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600 animate-gradient">Hotteano</span>
+        </h1>
+        
+        <div class="animate animate-delay-200 text-xl md:text-2xl text-black/60 dark:text-white/60 h-8">
+          <Typewriter text="热爱技术 · 追求设计 · 记录生活" speed={80} />
+        </div>
+        
+        <p class="animate animate-delay-300 text-lg text-black/50 dark:text-white/50 max-w-2xl leading-relaxed">
+          这里是 Hotteano 的个人博客，分享关于前端开发、UI 设计、以及生活中的点滴思考。
+          用 Astro 构建，追求极致的性能与体验。
+        </p>
+        
+        <div class="animate animate-delay-400 flex flex-wrap gap-4 pt-4">
+          <a href="/blog" class="magnetic-btn inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-black dark:bg-white text-white dark:text-black font-medium hover:scale-105 transition-transform duration-200">
+            阅读博客
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+          <a href="/projects" class="magnetic-btn inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-black/20 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200">
+            查看作品
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <div class="space-y-16 relative z-10">
+      <!-- Latest Posts -->
+      <section class="animate space-y-6">
+        <div class="flex flex-wrap gap-y-2 items-center justify-between">
+          <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+            <span class="animate-float inline-block">📝</span>
+            最新文章
+          </h2>
+          <Link href="/blog" class="hover-lift">
+            查看全部 →
+          </Link>
+        </div>
+        <ul class="flex flex-col gap-4">
+          {blog.map((post, index) => (
+            <li class={`animate animate-delay-${(index + 1) * 100}`}>
+              <ArrowCard entry={post} />
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <!-- Work Experience -->
+      <section class="animate space-y-6">
+        <div class="flex flex-wrap gap-y-2 items-center justify-between">
+          <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+            <span class="animate-float inline-block" style="animation-delay: 0.5s;">💼</span>
+            工作经历
+          </h2>
+          <Link href="/work" class="hover-lift">
+            查看全部 →
+          </Link>
+        </div>
+        <div class="grid gap-6">
+          {work.map((entry, index) => (
+            <div class={`animate p-6 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300 ${index % 2 === 0 ? 'animate-slide-left' : 'animate-slide-right'}`} style={`animation-delay: ${index * 100}ms`}>
+              <div class="flex flex-wrap gap-2 items-center text-sm opacity-60 mb-2">
+                <span class="px-2 py-0.5 rounded bg-black/5 dark:bg-white/10">
+                  {dateRange(entry.data.dateStart, entry.data.dateEnd)}
+                </span>
+              </div>
+              <h3 class="text-lg font-semibold text-black dark:text-white mb-1">
+                {entry.data.company}
+              </h3>
+              <p class="text-sm opacity-75 mb-3">{entry.data.role}</p>
+              <article class="prose-sm">
+                <entry.Content />
+              </article>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Recent Projects -->
+      <section class="animate space-y-6">
+        <div class="flex flex-wrap gap-y-2 items-center justify-between">
+          <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+            <span class="animate-float inline-block" style="animation-delay: 1s;">🚀</span>
+            近期项目
+          </h2>
+          <Link href="/projects" class="hover-lift">
+            查看全部 →
+          </Link>
+        </div>
+        <ul class="grid md:grid-cols-2 gap-4">
+          {projects.map((project, index) => (
+            <li class={`animate animate-scale-in`} style={`animation-delay: ${index * 150}ms`}>
+              <ArrowCard entry={project} />
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <!-- Connect Section -->
+      <section class="animate space-y-6">
+        <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+          <span class="animate-float inline-block" style="animation-delay: 1.5s;">🤝</span>
+          保持联系
+        </h2>
+        <div class="p-8 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5">
+          <p class="text-lg mb-6 text-black/60 dark:text-white/60">
+            对技术话题感兴趣？想要合作交流？欢迎通过以下方式与我联系 👇
+          </p>
+          <div class="flex flex-wrap gap-3">
+            {SOCIALS.map((SOCIAL, index) => (
+              <a 
+                href={SOCIAL.HREF} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="magnetic-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 transition-colors duration-200"
+                style={`animation-delay: ${index * 50}ms`}
+              >
+                <span class="capitalize">{SOCIAL.NAME}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+                </svg>
+              </a>
+            ))}
+            <a 
+              href={`mailto:${SITE.EMAIL}`}
+              class="magnetic-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black dark:bg-white text-white dark:text-black hover:opacity-80 transition-opacity duration-200"
+            >
+              <span>Email</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </Container>
+</PageLayout>
+
+<script>
+  // Scroll reveal animation
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('show');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const animateElements = document.querySelectorAll('.animate');
+    animateElements.forEach(el => observer.observe(el));
+  });
+
+  // Header scroll effect
+  const header = document.querySelector('header');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      header?.classList.add('scrolled');
+      document.documentElement.classList.add('scrolled');
+    } else {
+      header?.classList.remove('scrolled');
+      document.documentElement.classList.remove('scrolled');
+    }
+  });
+
+  // Magnetic button effect
+  document.querySelectorAll('.magnetic-btn').forEach(btn => {
+    btn.addEventListener('mousemove', (e: Event) => {
+      const mouseEvent = e as MouseEvent;
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const x = mouseEvent.clientX - rect.left - rect.width / 2;
+      const y = mouseEvent.clientY - rect.top - rect.height / 2;
+      
+      (e.currentTarget as HTMLElement).style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
+    });
+    
+    btn.addEventListener('mouseleave', (e: Event) => {
+      (e.currentTarget as HTMLElement).style.transform = 'translate(0, 0)';
+    });
+  });
+</script>

@@ -1,0 +1,91 @@
+---
+interface Props {
+  text: string;
+  speed?: number;
+  class?: string;
+}
+
+const { text, speed = 100, class: className = "" } = Astro.props;
+---
+
+<span class={`typewriter-text ${className}`} data-text={text} data-speed={speed}>
+  <span class="typewriter-content"></span>
+  <span class="typewriter-cursor">|</span>
+</span>
+
+<script>
+  class Typewriter {
+    element: HTMLElement;
+    text: string;
+    speed: number;
+    contentElement: HTMLElement;
+    cursorElement: HTMLElement;
+    index: number;
+    isTyping: boolean;
+
+    constructor(element: HTMLElement) {
+      this.element = element;
+      this.text = element.dataset.text || '';
+      this.speed = parseInt(element.dataset.speed || '100');
+      this.contentElement = element.querySelector('.typewriter-content') as HTMLElement;
+      this.cursorElement = element.querySelector('.typewriter-cursor') as HTMLElement;
+      this.index = 0;
+      this.isTyping = false;
+      
+      this.init();
+    }
+
+    init() {
+      // Use Intersection Observer to start typing when visible
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !this.isTyping) {
+            this.startTyping();
+          }
+        });
+      }, { threshold: 0.5 });
+
+      observer.observe(this.element);
+    }
+
+    startTyping() {
+      this.isTyping = true;
+      this.type();
+    }
+
+    type() {
+      if (this.index < this.text.length) {
+        this.contentElement.textContent += this.text.charAt(this.index);
+        this.index++;
+        
+        // Randomize typing speed slightly for realism
+        const randomSpeed = this.speed + (Math.random() * 50 - 25);
+        setTimeout(() => this.type(), randomSpeed);
+      } else {
+        // Blink cursor after typing is done
+        setTimeout(() => {
+          this.cursorElement.style.animation = 'blink 1s step-end infinite';
+        }, 500);
+      }
+    }
+  }
+
+  // Initialize all typewriters on the page
+  document.addEventListener('DOMContentLoaded', () => {
+    const typewriters = document.querySelectorAll('.typewriter-text');
+    typewriters.forEach(el => new Typewriter(el as HTMLElement));
+  });
+</script>
+
+<style>
+  .typewriter-cursor {
+    @apply inline-block w-0.5 ml-1;
+    @apply bg-current;
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>
