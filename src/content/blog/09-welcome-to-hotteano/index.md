@@ -1,12 +1,8 @@
 ---
 title: "欢迎来到 Hotteano 的博客"
-summary: "这是我博客的第一篇文章，介绍这个用 Astro 构建的现代化博客系统。"
+description: "这是我博客的第一篇文章，介绍这个用 Astro 构建的现代化博客系统。"
 date: "2026-02-17"
 draft: false
-tags:
-  - Astro
-  - 博客
-  - 前端
 ---
 
 ## 🎉 欢迎来到我的数字花园
