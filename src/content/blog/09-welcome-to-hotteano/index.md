@@ -1,63 +1,63 @@
 ---
-title: "欢迎来到 Hotteano 的博客"
-description: "这是我博客的第一篇文章，介绍这个用 Astro 构建的现代化博客系统。"
+title: "Welcome to Yanqiao Chen's Blog"
+description: "The first post of my blog, introducing this modern blog system built with Astro."
 date: "2026-02-17"
 draft: false
 ---
 
-## 🎉 欢迎来到我的数字花园
+## 🎉 Welcome to My Digital Garden
 
-大家好，我是 **Hotteano**！这是我的全新博客，使用 [Astro](https://astro.build/) 框架构建，追求极致的性能与体验。
+Hi there, I'm **Yanqiao Chen**! This is my brand new blog, built with [Astro](https://astro.build/) — designed for ultimate performance and experience.
 
-## ✨ 博客特色
+## ✨ Blog Features
 
-这个博客具有以下特点：
+This blog comes with the following highlights:
 
-### 🚀 极速性能
-- 100/100 Lighthouse 性能评分
-- 静态生成，首屏加载极快
-- 零 JavaScript 运行时开销（按需加载）
+### 🚀 Blazing Fast
+- 100/100 Lighthouse performance score
+- Static generation for instant first paint
+- Zero JavaScript runtime overhead (loaded on demand)
 
-### 🎨 灵动动画
-- 打字机效果标题
-- 粒子背景动画
-- 滚动触发动画
-- 磁性按钮交互
-- 悬停悬浮效果
+### 🎨 Delightful Animations
+- Typewriter effect for headings
+- Particle background animation
+- Scroll-triggered reveal animations
+- Magnetic button interactions
+- Hover lift effects on cards
 
-### 🌓 明暗主题
-- 支持亮色/暗色/系统主题切换
-- 平滑的主题过渡动画
-- 完美的暗色模式适配
+### 🌓 Light & Dark Themes
+- Support for light, dark, and system themes
+- Smooth theme transition animations
+- Perfect dark mode adaptation
 
-### 📝 内容支持
-- Markdown 原生支持
-- MDX 组件嵌入
-- 代码高亮
-- RSS 订阅
-- 自动生成站点地图
+### 📝 Content Support
+- Native Markdown support
+- MDX component embedding
+- Syntax highlighting for code blocks
+- RSS feed
+- Auto-generated sitemap
 
-## 🛠️ 技术栈
+## 🛠️ Tech Stack
 
-| 技术 | 用途 |
-|------|------|
-| Astro | 静态站点生成器 |
-| Tailwind CSS | 样式框架 |
-| TypeScript | 类型安全 |
-| MDX | 增强型 Markdown |
+| Technology | Purpose |
+|------------|---------|
+| Astro | Static site generator |
+| Tailwind CSS | Utility-first CSS framework |
+| TypeScript | Type safety |
+| MDX | Enhanced Markdown |
 
-## 🎯 未来计划
+## 🎯 Roadmap
 
-- [ ] 添加更多交互式组件
-- [ ] 集成评论系统
-- [ ] 添加文章搜索功能
-- [ ] 多语言支持
+- [ ] Add more interactive components
+- [ ] Integrate a comment system
+- [ ] Add article search functionality
+- [ ] Multi-language support
 
-## 📬 保持联系
+## 📬 Get in Touch
 
-如果你对这个博客的实现感兴趣，或者有技术话题想讨论，欢迎通过以下方式联系我：
+Interested in how this blog is built? Want to discuss tech topics? Feel free to reach out:
 
 - GitHub: [@hotteano](https://github.com/hotteano)
-- Email: your.email@example.com
+- Email: edwardchenyq@gmail.com
 
-感谢你的访问！🙏
+Thanks for stopping by! 🙏
