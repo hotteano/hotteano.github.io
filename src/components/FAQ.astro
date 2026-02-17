@@ -1,0 +1,276 @@
+---
+// FAQ Component - Common Q&A about Resume and Blog
+interface FAQItem {
+  question: string;
+  answer: string;
+  category: 'resume' | 'blog' | 'contact';
+}
+
+const faqs: FAQItem[] = [
+  {
+    question: "What are your research interests?",
+    answer: "My research interests lie at the intersection of theoretical computer science and machine learning, particularly in Circuit Complexity, Pseudorandomness, Reinforcement Learning Theory, and Learning Theory.",
+    category: "resume"
+  },
+  {
+    question: "Where are you currently studying?",
+    answer: "I am an undergraduate student at Southern University of Science and Technology (SUSTech), majoring in Computer Science and Engineering. I am a member of the Turing Class and currently in my sophomore year.",
+    category: "resume"
+  },
+  {
+    question: "What is your GPA?",
+    answer: "My overall GPA is 3.83/4.0. Semester breakdown: Fall 2024: 3.72/4.0, Spring 2024: 3.91/4.0, Fall 2025: 3.85/4.0.",
+    category: "resume"
+  },
+  {
+    question: "Do you have volunteer experience?",
+    answer: "Yes, I have completed over 114 hours of volunteer service and am a certified One-Star Volunteer by the Shenzhen Volunteer Federation.",
+    category: "resume"
+  },
+  {
+    question: "How can I contact you?",
+    answer: "You can reach me via email at edwardchenyq@gmail.com, or find me through the social media links at the bottom of the page.",
+    category: "contact"
+  },
+  {
+    question: "What content do you publish on your blog?",
+    answer: "My blog features technical notes, project updates, learning insights, and research progress. Topics include machine learning, algorithms, mathematics, and theoretical computer science.",
+    category: "blog"
+  },
+  {
+    question: "What projects are you currently working on?",
+    answer: "I am currently involved in developing the CSE Proficiency Assessment System and the Digital Logic course design project. More details can be found on the Projects page.",
+    category: "resume"
+  },
+  {
+    question: "Who are your advisors?",
+    answer: "My academic advisor is Prof. Pietro Simone Oliveto (SUSTech Department of CSE), and my college advisor is Prof. Yanqing Hu (SUSTech Department of Statistics and Data Science).",
+    category: "resume"
+  }
+];
+
+const categories = {
+  resume: { label: "About", color: "bg-blue-500" },
+  blog: { label: "Blog", color: "bg-green-500" },
+  contact: { label: "Contact", color: "bg-purple-500" }
+};
+---
+
+<div class="faq-widget fixed bottom-6 right-6 z-50">
+  <!-- Toggle Button -->
+  <button 
+    id="faq-toggle"
+    class="w-14 h-14 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 flex items-center justify-center"
+    aria-label="Open FAQ"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+  </button>
+
+  <!-- FAQ Window -->
+  <div 
+    id="faq-window" 
+    class="hidden absolute bottom-16 right-0 w-[420px] max-h-[600px] rounded-2xl border border-black/10 dark:border-white/10 bg-white dark:bg-stone-900 shadow-2xl overflow-hidden flex flex-col"
+  >
+    <!-- Header -->
+    <div class="p-4 border-b border-black/10 dark:border-white/10 bg-gradient-to-r from-blue-500/10 to-purple-500/10">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-black dark:text-white text-sm">FAQ</h3>
+            <p class="text-xs text-black/50 dark:text-white/50">About my resume and blog</p>
+          </div>
+        </div>
+        <button 
+          id="faq-close"
+          class="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 text-black/50 dark:text-white/50 transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Filter -->
+    <div class="px-4 py-3 border-b border-black/10 dark:border-white/10 flex gap-2 overflow-x-auto">
+      <button class="faq-filter active px-3 py-1.5 rounded-full text-xs font-medium bg-black dark:bg-white text-white dark:text-black transition-colors" data-filter="all">
+        All
+      </button>
+      {Object.entries(categories).map(([key, { label, color }]) => (
+        <button 
+          class="faq-filter px-3 py-1.5 rounded-full text-xs font-medium bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10 transition-colors flex items-center gap-1.5" 
+          data-filter={key}
+        >
+          <span class={`w-1.5 h-1.5 rounded-full ${color}`}></span>
+          {label}
+        </button>
+      ))}
+    </div>
+
+    <!-- FAQ List -->
+    <div 
+      id="faq-list" 
+      class="flex-1 overflow-y-auto p-4 space-y-3"
+    >
+      {faqs.map((faq, index) => (
+        <div 
+          class="faq-item animate group" 
+          data-category={faq.category}
+          style={`animation-delay: ${index * 50}ms`}
+        >
+          <button class="faq-question w-full text-left p-4 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-all duration-200">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <span class={`w-2 h-2 rounded-full ${categories[faq.category].color} shrink-0 mt-1.5`}></span>
+                <span class="font-medium text-sm text-black dark:text-white">{faq.question}</span>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" class="faq-arrow size-4 text-black/40 dark:text-white/40 shrink-0 transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
+          </button>
+          <div class="faq-answer hidden px-4 pb-4 pt-2">
+            <p class="text-sm text-black/70 dark:text-white/70 leading-relaxed pl-4 border-l-2 border-black/10 dark:border-white/10">
+              {faq.answer}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Footer -->
+    <div class="p-3 border-t border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5">
+      <a 
+        href="mailto:edwardchenyq@gmail.com" 
+        class="flex items-center justify-center gap-2 text-xs text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        Have other questions? Send me an email
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // FAQ functionality
+  const faqToggle = document.getElementById('faq-toggle');
+  const faqClose = document.getElementById('faq-close');
+  const faqWindow = document.getElementById('faq-window');
+  const faqFilters = document.querySelectorAll('.faq-filter');
+  const faqItems = document.querySelectorAll('.faq-item');
+  const faqQuestions = document.querySelectorAll('.faq-question');
+
+  let isOpen = false;
+
+  // Toggle FAQ window
+  faqToggle?.addEventListener('click', () => {
+    isOpen = !isOpen;
+    faqWindow?.classList.toggle('hidden', !isOpen);
+  });
+
+  faqClose?.addEventListener('click', () => {
+    isOpen = false;
+    faqWindow?.classList.add('hidden');
+  });
+
+  // Close when clicking outside
+  document.addEventListener('click', (e) => {
+    if (isOpen && !faqWindow?.contains(e.target as Node) && !faqToggle?.contains(e.target as Node)) {
+      isOpen = false;
+      faqWindow?.classList.add('hidden');
+    }
+  });
+
+  // Category filter
+  faqFilters.forEach(filter => {
+    filter.addEventListener('click', () => {
+      // Update active state
+      faqFilters.forEach(f => {
+        f.classList.remove('active', 'bg-black', 'dark:bg-white', 'text-white', 'dark:text-black');
+        f.classList.add('bg-black/5', 'dark:bg-white/5', 'text-black/70', 'dark:text-white/70');
+      });
+      filter.classList.add('active', 'bg-black', 'dark:bg-white', 'text-white', 'dark:text-black');
+      filter.classList.remove('bg-black/5', 'dark:bg-white/5', 'text-black/70', 'dark:text-white/70');
+
+      // Filter items
+      const category = filter.getAttribute('data-filter');
+      faqItems.forEach(item => {
+        if (category === 'all' || item.getAttribute('data-category') === category) {
+          (item as HTMLElement).style.display = 'block';
+        } else {
+          (item as HTMLElement).style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // Accordion functionality
+  faqQuestions.forEach(question => {
+    question.addEventListener('click', () => {
+      const item = question.closest('.faq-item');
+      const answer = item?.querySelector('.faq-answer');
+      const arrow = question.querySelector('.faq-arrow');
+      
+      // Close others
+      faqItems.forEach(otherItem => {
+        if (otherItem !== item) {
+          otherItem.querySelector('.faq-answer')?.classList.add('hidden');
+          otherItem.querySelector('.faq-arrow')?.classList.remove('rotate-180');
+        }
+      });
+      
+      // Toggle current
+      answer?.classList.toggle('hidden');
+      arrow?.classList.toggle('rotate-180');
+    });
+  });
+</script>
+
+<style>
+  /* Animation for FAQ window */
+  #faq-window {
+    transform-origin: bottom right;
+    animation: faq-appear 0.2s ease-out;
+  }
+
+  @keyframes faq-appear {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Custom scrollbar */
+  #faq-list::-webkit-scrollbar {
+    width: 6px;
+  }
+  #faq-list::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  #faq-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+  }
+  #faq-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.2);
+  }
+</style>

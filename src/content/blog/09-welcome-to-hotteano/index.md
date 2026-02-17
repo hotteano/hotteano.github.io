@@ -3,6 +3,7 @@ title: "Welcome to Yanqiao Chen's Blog"
 description: "The first post of my blog, introducing this modern blog system built with Astro."
 date: "2026-02-17"
 draft: false
+tags: ["blog", "astro", "web"]
 ---
 
 ## 🎉 Welcome to My Digital Garden

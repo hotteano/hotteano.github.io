@@ -1,0 +1,145 @@
+---
+// Calendar component with important dates
+interface ImportantDate {
+  date: string; // YYYY-MM-DD format
+  title: string;
+  type?: 'deadline' | 'event' | 'holiday' | 'other';
+}
+
+interface Props {
+  importantDates?: ImportantDate[];
+}
+
+const { importantDates = [] } = Astro.props;
+
+const today = new Date();
+const currentYear = today.getFullYear();
+const currentMonth = today.getMonth();
+
+// Get days in month
+const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+// Get first day of month (0 = Sunday)
+const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+
+// Month names
+const monthNames = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+// Type colors
+const typeColors: Record<string, string> = {
+  deadline: 'bg-red-500',
+  event: 'bg-blue-500',
+  holiday: 'bg-green-500',
+  other: 'bg-purple-500',
+};
+
+// Check if a date has an important event
+function getDateEvent(day: number): ImportantDate | null {
+  const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  return importantDates.find(d => d.date === dateStr) || null;
+}
+
+// Check if date is today
+function isToday(day: number): boolean {
+  return today.getDate() === day;
+}
+---
+
+<div class="calendar animate p-5 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-sm font-semibold text-black dark:text-white flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      {monthNames[currentMonth]} {currentYear}
+    </h3>
+  </div>
+
+  <!-- Week days header -->
+  <div class="grid grid-cols-7 gap-1 mb-2">
+    {weekDays.map(day => (
+      <div class="text-center text-xs text-black/40 dark:text-white/40 font-medium">
+        {day}
+      </div>
+    ))}
+  </div>
+
+  <!-- Calendar grid -->
+  <div class="grid grid-cols-7 gap-1">
+    {/* Empty cells for days before the first of the month */}
+    {Array.from({ length: firstDayOfMonth }).map(() => (
+      <div class="aspect-square"></div>
+    ))}
+    
+    {/* Days of the month */}
+    {Array.from({ length: daysInMonth }).map((_, index) => {
+      const day = index + 1;
+      const event = getDateEvent(day);
+      const todayClass = isToday(day) 
+        ? 'bg-black dark:bg-white text-white dark:text-black font-semibold' 
+        : 'text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10';
+      
+      return (
+        <div class="relative aspect-square flex items-center justify-center">
+          <span class={`w-7 h-7 flex items-center justify-center rounded-full text-xs transition-colors cursor-default ${todayClass}`}>
+            {day}
+          </span>
+          {event && (
+            <span 
+              class={`absolute bottom-0.5 w-1.5 h-1.5 rounded-full ${typeColors[event.type || 'other']}`}
+              title={event.title}
+            ></span>
+          )}
+        </div>
+      );
+    })}
+  </div>
+
+  {/* Legend for important dates */}
+  {importantDates.length > 0 && (
+    <div class="mt-4 pt-4 border-t border-black/10 dark:border-white/10 space-y-2">
+      <p class="text-xs text-black/50 dark:text-white/50 font-medium">Upcoming</p>
+      {importantDates
+        .filter(d => new Date(d.date) >= new Date(today.setHours(0,0,0,0)))
+        .slice(0, 3)
+        .map(date => (
+          <div class="flex items-center gap-2 text-xs">
+            <span class={`w-2 h-2 rounded-full ${typeColors[date.type || 'other']}`}></span>
+            <span class="text-black/60 dark:text-white/60 truncate flex-1" title={date.title}>
+              {date.title}
+            </span>
+            <span class="text-black/40 dark:text-white/40">
+              {new Date(date.date).getDate()}/{new Date(date.date).getMonth() + 1}
+            </span>
+          </div>
+        ))}
+    </div>
+  )}
+
+  {/* Legend */}
+  <div class="mt-3 flex flex-wrap gap-2 text-[10px]">
+    <span class="flex items-center gap-1 text-black/40 dark:text-white/40">
+      <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Deadline
+    </span>
+    <span class="flex items-center gap-1 text-black/40 dark:text-white/40">
+      <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Event
+    </span>
+    <span class="flex items-center gap-1 text-black/40 dark:text-white/40">
+      <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Holiday
+    </span>
+  </div>
+</div>
+
+<style>
+  .calendar {
+    backdrop-filter: blur(10px);
+  }
+</style>

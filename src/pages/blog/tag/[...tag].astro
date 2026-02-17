@@ -1,0 +1,95 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+import PageLayout from "@layouts/PageLayout.astro";
+import Container from "@components/Container.astro";
+import ArrowCard from "@components/ArrowCard.astro";
+import { BLOG } from "@consts";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  const allTags = new Set<string>();
+  
+  posts.forEach(post => {
+    if (post.data.tags) {
+      post.data.tags.forEach(tag => allTags.add(tag.toLowerCase()));
+    }
+  });
+  
+  return Array.from(allTags).map(tag => ({
+    params: { tag },
+    props: { tag },
+  }));
+}
+
+interface Props {
+  tag: string;
+}
+
+const { tag } = Astro.props;
+
+const posts = (await getCollection("blog"))
+  .filter(post => !post.data.draft && post.data.tags?.some(t => t.toLowerCase() === tag))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+type Acc = {
+  [year: string]: CollectionEntry<"blog">[];
+}
+
+const postsByYear = posts.reduce((acc: Acc, post) => {
+    const year = post.data.date.getFullYear().toString();
+    if (!acc[year]) {
+      acc[year] = [];
+    }
+    acc[year].push(post);
+    return acc;
+  }, {});
+
+const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a));
+---
+
+<PageLayout title={`Tag: ${tag} | ${BLOG.TITLE}`} description={`Posts tagged with ${tag}`}>
+  <Container>
+    <div class="space-y-10">
+      <div class="animate space-y-2">
+        <a href="/blog" class="text-sm text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors">
+          ← Back to all posts
+        </a>
+        <div class="flex items-center gap-3">
+          <span class="px-3 py-1 rounded-full text-sm bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-700 dark:text-blue-300 border border-blue-500/30">
+            #{tag}
+          </span>
+          <span class="text-black/50 dark:text-white/50 text-sm">
+            {posts.length} post{posts.length !== 1 ? 's' : ''}
+          </span>
+        </div>
+      </div>
+      
+      {posts.length === 0 ? (
+        <div class="animate text-black/60 dark:text-white/60">
+          No posts found with this tag.
+        </div>
+      ) : (
+        <div class="space-y-4">
+          {years.map(year => (
+            <section class="animate space-y-4">
+              <div class="font-semibold text-black dark:text-white">
+                {year}
+              </div>
+              <div>
+                <ul class="flex flex-col gap-15">
+                  {
+                    postsByYear[year].map((post) => (
+                      <li>
+                        <ArrowCard entry={post}/>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+            </section>
+          ))}
+        </div>
+      )}
+    </div>
+  </Container>
+</PageLayout>

@@ -9,12 +9,13 @@ import ParticleBackground from "@components/ParticleBackground.astro";
 import ScrambleText from "@components/ScrambleText.astro";
 import ProfileCard from "@components/ProfileCard.astro";
 import TagCloud from "@components/TagCloud.astro";
+import Calendar from "@components/Calendar.astro";
 import GlassCard from "@components/GlassCard.astro";
 import GridBackground from "@components/GridBackground.astro";
 import { dateRange } from "@lib/utils";
 import { SITE, HOME, SOCIALS } from "@consts";
 import { Image } from "astro:assets";
-import heroImage from "../assets/schedule_Feb.jpg";
+import heroImage from "../assets/4.jpg";
 
 const allBlog = (await getCollection("blog"))
   .filter(post => !post.data.draft)
@@ -106,8 +107,7 @@ const work = await Promise.all(
                 <ScrambleText text="Research Focus" />
               </h3>
               <p class="text-black/60 dark:text-white/60 text-sm leading-relaxed">
-                Exploring the intersection of theoretical computer science and machine learning. 
-                Currently focused on circuit complexity, pseudorandomness, and algorithmic foundations.
+                Context Engineering and Reinforcement Learning. Apart from that, I am also interested in the scaling optimization method design and the theoretical aspects of deep learning and the interpretability of large language models. 
               </p>
             </div>
           </div>
@@ -237,6 +237,12 @@ const work = await Promise.all(
       <aside class="hidden xl:block">
         <div class="sticky top-24 space-y-10 pb-8">
           <ProfileCard postCount={allBlog.length} projectCount={allProjects.length} pubCount={allwork.length} />
+          <Calendar importantDates={[
+            { date: "2026-02-24", title: "Semester Registration", type: "event" },
+            { date: "2026-05-15", title: "NIPS Paper Submission", type: "deadline" },
+            { date: "2026-12-02", title: "NeurIPS 2026", type: "event" },
+            { date: "2026-02-14", title: "Valentine's Day", type: "holiday" },
+          ]} />
           <TagCloud />
           
           <!-- Quick Links -->

@@ -4,6 +4,7 @@ import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import ReadingProgress from "@components/ReadingProgress.astro";
 import MouseGlow from "@components/MouseGlow.astro";
+import FAQ from "@components/FAQ.astro";
 import { SITE } from "@consts";
 
 type Props = {
@@ -28,5 +29,6 @@ const { title, description, showSidebar = false } = Astro.props;
       <slot />
     </main>
     <Footer />
+    <FAQ />
   </body>
 </html>

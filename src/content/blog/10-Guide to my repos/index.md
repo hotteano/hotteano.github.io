@@ -3,6 +3,7 @@ title: "Guide to my Repositories"
 description: "Here is a guide to my repositories, including the notes I have made for my courses."
 date: "2026-02-17"
 draft: false
+tags: ["notes", "repository", "guide"]
 ---
 
 ## Notes
