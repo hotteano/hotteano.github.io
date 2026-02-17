@@ -1,4 +1,5 @@
 ---
+import { getCollection } from "astro:content";
 import PageLayout from "./PageLayout.astro";
 import Container from "@components/Container.astro";
 import TableOfContents from "@components/TableOfContents.astro";
@@ -16,6 +17,10 @@ interface Props {
 
 const { post } = Astro.props;
 const { Content } = await post.render();
+
+const allBlog = (await getCollection("blog")).filter(p => !p.data.draft);
+const allProjects = (await getCollection("projects")).filter(p => !p.data.draft);
+const allwork = await getCollection("work");
 ---
 
 <PageLayout title={post.data.title} description={post.data.description} showSidebar={true}>
@@ -69,7 +74,7 @@ const { Content } = await post.render();
       <!-- Sidebar - Right side, outside the content area -->
       <aside class="hidden xl:block ml-16 w-64 flex-shrink-0">
         <div class="sticky top-24 space-y-8 pb-8">
-          <ProfileCard />
+          <ProfileCard postCount={allBlog.length} projectCount={allProjects.length} pubCount={allwork.length} />
           <TableOfContents />
           <TagCloud />
         </div>
