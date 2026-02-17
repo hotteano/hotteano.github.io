@@ -1,0 +1,43 @@
+---
+// Reading progress bar
+---
+
+<div class="reading-progress fixed top-0 left-0 right-0 h-1 z-[60] bg-transparent">
+  <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-0 transition-all duration-100"></div>
+</div>
+
+<div id="scroll-percent" class="fixed bottom-6 right-6 z-50 opacity-0 pointer-events-none transition-opacity duration-300">
+  <div class="w-14 h-14 rounded-full bg-black/80 dark:bg-white/80 backdrop-blur-sm flex items-center justify-center text-white dark:text-black font-bold text-sm shadow-lg">
+    <span id="percent-text">0%</span>
+  </div>
+</div>
+
+<script>
+  const progressBar = document.getElementById('progress-bar');
+  const scrollPercent = document.getElementById('scroll-percent');
+  const percentText = document.getElementById('percent-text');
+  
+  function updateProgress() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / docHeight) * 100;
+    
+    if (progressBar) {
+      progressBar.style.width = `${progress}%`;
+    }
+    
+    if (scrollPercent && percentText) {
+      if (scrollTop > 200) {
+        scrollPercent.classList.remove('opacity-0', 'pointer-events-none');
+        scrollPercent.classList.add('opacity-100');
+        percentText.textContent = `${Math.round(progress)}%`;
+      } else {
+        scrollPercent.classList.add('opacity-0', 'pointer-events-none');
+        scrollPercent.classList.remove('opacity-100');
+      }
+    }
+  }
+  
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+</script>

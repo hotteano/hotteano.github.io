@@ -1,0 +1,50 @@
+---
+---
+
+<div class="grid-background fixed inset-0 pointer-events-none z-0">
+  <div class="grid-lines"></div>
+  <div class="grid-glow"></div>
+</div>
+
+<style>
+  .grid-background {
+    --grid-color: rgba(128, 128, 128, 0.1);
+    --grid-size: 50px;
+  }
+  
+  .dark .grid-background {
+    --grid-color: rgba(255, 255, 255, 0.05);
+  }
+  
+  .grid-lines {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+    background-size: var(--grid-size) var(--grid-size);
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    animation: grid-move 20s linear infinite;
+  }
+  
+  @keyframes grid-move {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(var(--grid-size)); }
+  }
+  
+  .grid-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    animation: glow-pulse 4s ease-in-out infinite;
+  }
+  
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+  }
+</style>

@@ -3,6 +3,8 @@ import Container from "@components/Container.astro";
 import PageLayout from "@layouts/PageLayout.astro";
 import Link from "@components/Link.astro";
 import { SITE, ABOUT, SOCIALS } from "@consts";
+import { Image } from "astro:assets";
+import avatarImage from "../assets/Ams.jpg";
 
 ---
 
@@ -12,12 +14,16 @@ import { SITE, ABOUT, SOCIALS } from "@consts";
       <!-- Hero Section -->
       <section class="animate space-y-8">
         <div class="flex flex-col md:flex-row gap-8 items-start">
-          <!-- Avatar Placeholder -->
+          <!-- Avatar -->
           <div class="animate animate-scale-in shrink-0">
-            <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-1 hover-lift">
-              <div class="w-full h-full rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-4xl">
-                👨‍💻
-              </div>
+            <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-1 hover-lift overflow-hidden">
+              <Image 
+                src={avatarImage} 
+                alt={SITE.NAME}
+                class="w-full h-full rounded-full object-cover"
+                width={160}
+                height={160}
+              />
             </div>
           </div>
           

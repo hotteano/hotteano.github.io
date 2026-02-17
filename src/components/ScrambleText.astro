@@ -1,0 +1,121 @@
+---
+interface Props {
+  text: string;
+  class?: string;
+  speed?: number;
+}
+
+const { text, class: className = "", speed = 50 } = Astro.props;
+
+const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+---
+
+<span class={`scramble-text ${className}`} data-text={text} data-chars={chars} data-speed={speed}>
+  {text}
+</span>
+
+<script>
+  class TextScramble {
+    element: HTMLElement;
+    chars: string;
+    originalText: string;
+    frame: number;
+    queue: Array<{ from: string; to: string; start: number; end: number; char?: string }>;
+    frameRequest: number;
+    speed: number;
+
+    constructor(el: HTMLElement) {
+      this.element = el;
+      this.originalText = el.dataset.text || '';
+      this.chars = el.dataset.chars || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      this.speed = parseInt(el.dataset.speed || '50');
+      this.frame = 0;
+      this.queue = [];
+      this.frameRequest = 0;
+      
+      this.init();
+    }
+
+    init() {
+      // Trigger on hover
+      this.element.addEventListener('mouseenter', () => {
+        this.setText(this.originalText);
+      });
+      
+      // Initial animation
+      setTimeout(() => {
+        this.setText(this.originalText);
+      }, 500);
+    }
+
+    setText(newText: string) {
+      const length = Math.max(this.originalText.length, newText.length);
+      const promise = new Promise<void>((resolve) => this.resolve = resolve);
+      
+      this.queue = [];
+      for (let i = 0; i < length; i++) {
+        const from = this.originalText[i] || '';
+        const to = newText[i] || '';
+        const start = Math.floor(Math.random() * 20);
+        const end = start + Math.floor(Math.random() * 20);
+        this.queue.push({ from, to, start, end });
+      }
+      
+      cancelAnimationFrame(this.frameRequest);
+      this.frame = 0;
+      this.update();
+      
+      return promise;
+    }
+
+    resolve: () => void = () => {};
+
+    update() {
+      let output = '';
+      let complete = 0;
+
+      for (let i = 0, n = this.queue.length; i < n; i++) {
+        let { from, to, start, end, char } = this.queue[i];
+        
+        if (this.frame >= end) {
+          complete++;
+          output += to;
+        } else if (this.frame >= start) {
+          if (!char || Math.random() < 0.28) {
+            char = this.chars[Math.floor(Math.random() * this.chars.length)];
+            this.queue[i].char = char;
+          }
+          output += `<span class="scramble-char">${char}</span>`;
+        } else {
+          output += from;
+        }
+      }
+
+      this.element.innerHTML = output;
+
+      if (complete === this.queue.length) {
+        this.resolve();
+      } else {
+        this.frameRequest = requestAnimationFrame(() => this.update());
+        this.frame++;
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.scramble-text').forEach(el => {
+      new TextScramble(el as HTMLElement);
+    });
+  });
+</script>
+
+<style>
+  .scramble-char {
+    color: #3b82f6;
+    font-weight: bold;
+  }
+  
+  .dark .scramble-char {
+    color: #60a5fa;
+  }
+</style>

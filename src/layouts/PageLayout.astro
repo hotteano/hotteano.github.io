@@ -2,14 +2,17 @@
 import Head from "@components/Head.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
+import ReadingProgress from "@components/ReadingProgress.astro";
+import MouseGlow from "@components/MouseGlow.astro";
 import { SITE } from "@consts";
 
 type Props = {
   title: string;
   description: string;
+  showSidebar?: boolean;
 };
 
-const { title, description } = Astro.props;
+const { title, description, showSidebar = false } = Astro.props;
 ---
 
 <!doctype html>
@@ -18,8 +21,10 @@ const { title, description } = Astro.props;
     <Head title={`${title} | ${SITE.NAME}`} description={description} />
   </head>
   <body>
+    <ReadingProgress />
+    <MouseGlow />
     <Header />
-    <main>
+    <main class={showSidebar ? "with-sidebar" : ""}>
       <slot />
     </main>
     <Footer />

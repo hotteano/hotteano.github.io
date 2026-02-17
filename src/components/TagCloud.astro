@@ -1,0 +1,66 @@
+---
+// Tag cloud component
+const tags = [
+  { name: "Machine Learning", count: 5, size: "lg" },
+  { name: "Deep Learning", count: 3, size: "md" },
+  { name: "Algorithm", count: 8, size: "xl" },
+  { name: "Math", count: 6, size: "lg" },
+  { name: "Python", count: 4, size: "md" },
+  { name: "C++", count: 3, size: "sm" },
+  { name: "Theory", count: 7, size: "lg" },
+  { name: "Notes", count: 10, size: "xl" },
+];
+
+const sizeClasses = {
+  sm: "text-xs px-2 py-1",
+  md: "text-sm px-3 py-1.5",
+  lg: "text-base px-4 py-2",
+  xl: "text-lg px-5 py-2.5 font-semibold",
+};
+
+const colors = [
+  "from-blue-500/20 to-cyan-500/20 text-blue-700 dark:text-blue-300 border-blue-500/30",
+  "from-purple-500/20 to-pink-500/20 text-purple-700 dark:text-purple-300 border-purple-500/30",
+  "from-green-500/20 to-emerald-500/20 text-green-700 dark:text-green-300 border-green-500/30",
+  "from-orange-500/20 to-red-500/20 text-orange-700 dark:text-orange-300 border-orange-500/30",
+];
+---
+
+<div class="tag-cloud animate p-5 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5">
+  <h3 class="text-sm font-semibold text-black dark:text-white mb-4 flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+      <line x1="7" y1="7" x2="7.01" y2="7"/>
+    </svg>
+    Tags
+  </h3>
+  
+  <div class="flex flex-wrap gap-2">
+    {tags.map((tag, index) => (
+      <a 
+        href={`/blog/tag/${tag.name.toLowerCase().replace(/\s+/g, '-')}`}
+        class={`tag-item inline-block rounded-full border bg-gradient-to-r ${colors[index % colors.length]} ${sizeClasses[tag.size]} hover:scale-110 hover:shadow-lg transition-all duration-300 animate-float`}
+        style={`animation-delay: ${index * 0.1}s; animation-duration: ${3 + index * 0.2}s;`}
+        title={`${tag.count} posts`}
+      >
+        {tag.name}
+        <span class="ml-1 opacity-60 text-xs">({tag.count})</span>
+      </a>
+    ))}
+  </div>
+</div>
+
+<style>
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+  }
+  
+  .animate-float {
+    animation: float ease-in-out infinite;
+  }
+  
+  .tag-item:hover {
+    z-index: 10;
+  }
+</style>

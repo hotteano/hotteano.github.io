@@ -1,0 +1,106 @@
+---
+import PageLayout from "./PageLayout.astro";
+import Container from "@components/Container.astro";
+import TableOfContents from "@components/TableOfContents.astro";
+import ProfileCard from "@components/ProfileCard.astro";
+import TagCloud from "@components/TagCloud.astro";
+import FormattedDate from "@components/FormattedDate.astro";
+import BackToPrev from "@components/BackToPrev.astro";
+import Comments from "@components/Comments.astro";
+import { readingTime } from "@lib/utils";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  post: CollectionEntry<"blog">;
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<PageLayout title={post.data.title} description={post.data.description} showSidebar={true}>
+  <Container>
+    <div class="flex justify-center">
+      <!-- Main Content - Fixed width, centered -->
+      <div class="w-full max-w-3xl">
+        <div class="animate mb-8">
+          <BackToPrev href="/blog">
+            Back to blog
+          </BackToPrev>
+        </div>
+        
+        <!-- Post Header -->
+        <div class="space-y-4 mb-10">
+          <div class="animate flex items-center gap-3 text-sm text-black/50 dark:text-white/50">
+            <FormattedDate date={post.data.date} />
+            <span>•</span>
+            <span>{readingTime(post.body)}</span>
+          </div>
+          
+          <h1 class="animate text-3xl md:text-4xl font-bold text-black dark:text-white leading-tight">
+            {post.data.title}
+          </h1>
+          
+          <p class="animate text-lg text-black/60 dark:text-white/60">
+            {post.data.description}
+          </p>
+          
+          <!-- Tags -->
+          {post.data.tags && (
+            <div class="animate flex flex-wrap gap-2">
+              {post.data.tags.map((tag: string) => (
+                <span class="px-3 py-1 rounded-full text-xs bg-black/5 dark:bg-white/10 text-black/70 dark:text-white/70">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        <!-- Article Content -->
+        <article class="animate prose dark:prose-invert w-full max-w-none overflow-x-auto">
+          <Content />
+        </article>
+        
+        <!-- Comments -->
+        <Comments />
+      </div>
+      
+      <!-- Sidebar - Right side, outside the content area -->
+      <aside class="hidden xl:block ml-16 w-64 flex-shrink-0">
+        <div class="sticky top-24 space-y-8 pb-8">
+          <ProfileCard />
+          <TableOfContents />
+          <TagCloud />
+        </div>
+      </aside>
+    </div>
+  </Container>
+</PageLayout>
+
+<style>
+  /* Ensure consistent article width */
+  article.prose {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Prevent code blocks from expanding width */
+  .prose pre {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  
+  /* Prevent tables from expanding width */
+  .prose table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  
+  /* Ensure images don't overflow */
+  .prose img {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
