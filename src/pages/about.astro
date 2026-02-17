@@ -1,0 +1,235 @@
+---
+import Container from "@components/Container.astro";
+import PageLayout from "@layouts/PageLayout.astro";
+import Link from "@components/Link.astro";
+import { SITE, ABOUT, SOCIALS } from "@consts";
+
+---
+
+<PageLayout title={ABOUT.TITLE} description={ABOUT.DESCRIPTION}>
+  <Container>
+    <div class="space-y-16">
+      <!-- Hero Section -->
+      <section class="animate space-y-8">
+        <div class="flex flex-col md:flex-row gap-8 items-start">
+          <!-- Avatar Placeholder -->
+          <div class="animate animate-scale-in shrink-0">
+            <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-1 hover-lift">
+              <div class="w-full h-full rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-4xl">
+                👨‍💻
+              </div>
+            </div>
+          </div>
+          
+          <div class="flex-1 space-y-4">
+            <h1 class="animate animate-delay-100 text-3xl md:text-4xl font-bold text-black dark:text-white">
+              Hi, I'm {SITE.NAME}
+            </h1>
+            
+            <p class="animate animate-delay-200 text-lg text-black/60 dark:text-white/60 leading-relaxed">
+              A Enthusiaistic Theorist, An Algorithm Explorer, A AI Developer, and A Lifelong Learner.
+            </p>
+            
+            <div class="animate animate-delay-300 flex flex-wrap gap-3 pt-2">
+              <a href={`mailto:${SITE.EMAIL}`} class="magnetic-btn inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-medium hover:scale-105 transition-transform duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                  <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                Get in Touch
+              </a>
+              <a href="/work" class="magnetic-btn inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-black/20 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200">
+                View Resume
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Background Story -->
+      <section class="animate space-y-6">
+        <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+          <span class="animate-float inline-block">📖</span>
+          My Story
+        </h2>
+        
+        <div class="space-y-4 text-black/60 dark:text-white/60 leading-relaxed">
+          <p class="animate">
+            I was born in Shenzhen, Guangdong Province, China, the Silicon Valley of China. Graduated from Shenzhen Middle School, I pursued my passion for technology at the Southern University of Science and Technology (SUSTech), where I will receive my Network Engineering degree in 2028. Now I am in my Sophomore year, and I have a strong interest in AI development and algorithm research. I am currently working on several projects that explore the intersection of reinforcement learning and natural language processing, aiming to create more intelligent and adaptive systems.
+          </p>
+          
+          <p class="animate">
+            When I am not coding, you may find me reading mathematical books and papers, upload notes and thoughts to my blog. I love tackling hard problems and sharing my insights with others. I am more an idea-maker than a code-writer, and I enjoy brainstorming and discussing new concepts with fellow enthusiasts. 
+          </p>
+          
+          <p class="animate">
+            In this blog, you may getting to know about me, catch up with my recent motion and also feel free to reach out to me if you have any interesting ideas or just want to say hi!
+          </p>
+        </div>
+      </section>
+
+      <!-- Skills -->
+      <section class="animate space-y-6">
+        <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+          <span class="animate-float inline-block" style="animation-delay: 0.5s;">🛠️</span>
+          Skills & Technologies
+        </h2>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {
+            [
+              { name: "C++", emoji: "📜", color: "from-yellow-400 to-orange-500" },
+              { name: "Java", emoji: "🔷", color: "from-blue-400 to-blue-600" },
+              { name: "Python", emoji: "⚛️", color: "from-cyan-400 to-blue-500" },
+              { name: "C", emoji: "🟢", color: "from-green-400 to-green-600" },
+              { name: "PostgreSQL", emoji: "🐍", color: "from-blue-400 to-yellow-400" },
+              { name: "LaTeX", emoji: "🚀", color: "from-orange-400 to-red-500" },
+              { name: "Markdown", emoji: "🎨", color: "from-cyan-400 to-teal-500" },
+              { name: "Git", emoji: "📦", color: "from-red-400 to-orange-500" },
+            ].map((skill, index) => (
+              <div 
+                class={`animate p-4 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300`}
+                style={`animation-delay: ${index * 50}ms`}
+              >
+                <div class={`w-10 h-10 rounded-lg bg-gradient-to-br ${skill.color} flex items-center justify-center text-lg mb-3`}>
+                  {skill.emoji}
+                </div>
+                <h3 class="font-medium text-black dark:text-white">{skill.name}</h3>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- Interests -->
+      <section class="animate space-y-6">
+        <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+          <span class="animate-float inline-block" style="animation-delay: 1s;">✨</span>
+          Interests & Hobbies
+        </h2>
+        
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="animate p-6 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5 hover-lift">
+            <div class="text-3xl mb-4">💻</div>
+            <h3 class="font-semibold text-black dark:text-white mb-2">Coding</h3>
+            <p class="text-sm text-black/50 dark:text-white/50">
+              Coding is not my profession, but it's definitely my passion. I love building things and solving problems with code.
+            </p>
+          </div>
+          
+          <div class="animate p-6 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5 hover-lift" style="animation-delay: 100ms;">
+            <div class="text-3xl mb-4">📚</div>
+            <h3 class="font-semibold text-black dark:text-white mb-2">Reading</h3>
+            <p class="text-sm text-black/50 dark:text-white/50">
+              Tech blogs, science fiction, and anything that sparks curiosity.
+            </p>
+          </div>
+          
+          <div class="animate p-6 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5 hover-lift" style="animation-delay: 200ms;">
+            <div class="text-3xl mb-4">🎮</div>
+            <h3 class="font-semibold text-black dark:text-white mb-2">Gaming</h3>
+            <p class="text-sm text-black/50 dark:text-white/50">
+              FPS games, strategy games, RPG games, and of course, the classic Minesweeper. Gaming is a great way to unwind and have fun.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Connect -->
+      <section class="animate space-y-6">
+        <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+          <span class="animate-float inline-block" style="animation-delay: 1.5s;">🤝</span>
+          Let's Connect
+        </h2>
+        
+        <div class="p-8 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5">
+          <p class="text-lg mb-6 text-black/60 dark:text-white/60">
+            I'm always open to interesting conversations and collaboration opportunities. 
+            Feel free to reach out through any of these platforms 👇
+          </p>
+          
+          <div class="flex flex-wrap gap-3">
+            {SOCIALS.map((SOCIAL, index) => (
+              <a 
+                href={SOCIAL.HREF} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="magnetic-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 transition-colors duration-200 capitalize"
+              >
+                {SOCIAL.NAME}
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+                </svg>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- Fun Facts -->
+      <section class="animate space-y-6">
+        <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+          <span class="animate-float inline-block" style="animation-delay: 2s;">🎯</span>
+          Quick Facts
+        </h2>
+        
+        <div class="flex flex-wrap gap-4">
+          {
+            [
+              { label: "Location", value: "Shenzhen, Guangdong, China" },
+              { label: "Coffee consumed", value: "1~2 cups per day" },
+              { label: "Lines of code", value: "I don't know" },
+              { label: "Bugs created", value: "More than the code I wrote" },
+            ].map((fact, index) => (
+              <div 
+                class="animate px-4 py-2 rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5"
+                style={`animation-delay: ${index * 100}ms`}
+              >
+                <span class="text-sm text-black/50 dark:text-white/50">{fact.label}:</span>
+                <span class="text-sm font-medium text-black dark:text-white ml-1">{fact.value}</span>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+    </div>
+  </Container>
+</PageLayout>
+
+<script>
+  // Scroll reveal animation
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('show');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const animateElements = document.querySelectorAll('.animate');
+    animateElements.forEach(el => observer.observe(el));
+  });
+
+  // Magnetic button effect
+  document.querySelectorAll('.magnetic-btn').forEach(btn => {
+    btn.addEventListener('mousemove', (e) => {
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const x = (e as MouseEvent).clientX - rect.left - rect.width / 2;
+      const y = (e as MouseEvent).clientY - rect.top - rect.height / 2;
+      
+      (e.currentTarget as HTMLElement).style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
+    });
+    
+    btn.addEventListener('mouseleave', (e) => {
+      (e.currentTarget as HTMLElement).style.transform = 'translate(0, 0)';
+    });
+  });
+</script>
