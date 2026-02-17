@@ -19,7 +19,7 @@ export const BLOG: Metadata = {
 };
 
 export const WORK: Metadata = {
-  TITLE: "Resume",
+  TITLE: "Work",
   DESCRIPTION: "My professional experience and career journey",
 };
 
@@ -35,11 +35,23 @@ export const ABOUT: Metadata = {
 
 export const SOCIALS: Socials = [
   { 
-    NAME: "twitter-x",
-    HREF: "https://twitter.com/hotteano",
-  },
-  { 
     NAME: "github",
     HREF: "https://github.com/hotteano"
+  },
+  { 
+    NAME: "twitter-x",
+    HREF: "https://x.com/hotteano",
+  },
+  { 
+    NAME: "zhihu",
+    HREF: "https://zhihu.com/people/hotteano",
+  },
+  { 
+    NAME: "bilibili",
+    HREF: "https://space.bilibili.com/hotteano",
+  },
+  { 
+    NAME: "Xiaohongshu",
+    HREF: "https://www.xiaohongshu.com/user/profile/66e702c2000000001d033908",
   },
 ];
