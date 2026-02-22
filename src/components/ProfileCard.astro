@@ -1,7 +1,7 @@
 ---
 import { SITE } from "@consts";
 import { Image } from "astro:assets";
-import avatarImage from "../assets/Ams.jpg";
+import avatarImage from "../assets/avatar.jpg";
 
 interface Props {
   postCount?: number;
@@ -12,42 +12,73 @@ interface Props {
 const { postCount = 0, projectCount = 0, pubCount = 0 } = Astro.props;
 ---
 
-<div class="profile-card animate p-5 rounded-xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-black/5 to-transparent dark:from-white/5 overflow-hidden">
+<div
+  class="profile-card animate p-5 rounded-xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-black/5 to-transparent dark:from-white/5 overflow-hidden"
+>
   <!-- Animated background -->
   <div class="absolute inset-0 opacity-30">
-    <div class="absolute top-0 left-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl animate-pulse-glow"></div>
-    <div class="absolute bottom-0 right-0 w-24 h-24 bg-purple-500/20 rounded-full blur-3xl animate-pulse-glow" style="animation-delay: 1s;"></div>
+    <div
+      class="absolute top-0 left-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl animate-pulse-glow"
+    >
+    </div>
+    <div
+      class="absolute bottom-0 right-0 w-24 h-24 bg-purple-500/20 rounded-full blur-3xl animate-pulse-glow"
+      style="animation-delay: 1s;"
+    >
+    </div>
   </div>
-  
+
   <div class="relative z-10 text-center">
     <!-- Avatar with glow effect -->
     <div class="relative inline-block mb-4">
-      <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur-lg opacity-50 animate-pulse-glow"></div>
-      <Image 
-        src={avatarImage} 
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur-lg opacity-50 animate-pulse-glow"
+      >
+      </div>
+      <Image
+        src={avatarImage}
         alt={SITE.NAME}
         class="relative w-20 h-20 rounded-full object-cover border-2 border-white dark:border-stone-800"
         width={80}
         height={80}
       />
-      <div class="absolute bottom-0 right-0 w-5 h-5 bg-green-500 rounded-full border-2 border-white dark:border-stone-800 animate-pulse"></div>
+      <div
+        class="absolute bottom-0 right-0 w-5 h-5 bg-green-500 rounded-full border-2 border-white dark:border-stone-800 animate-pulse"
+      >
+      </div>
     </div>
-    
+
     <h3 class="font-bold text-black dark:text-white mb-1">{SITE.NAME}</h3>
-    <p class="text-xs text-black/50 dark:text-white/50 mb-4">Turing Class @ SUSTech</p>
-    
+    <p class="text-xs text-black/50 dark:text-white/50 mb-4">
+      Turing Class @ SUSTech
+    </p>
+
     <!-- Stats -->
     <div class="grid grid-cols-3 gap-2 text-center">
-      <div class="p-2 rounded-lg bg-black/5 dark:bg-white/5 hover-lift transition-all">
-        <div class="text-lg font-bold text-black dark:text-white">{postCount}</div>
+      <div
+        class="p-2 rounded-lg bg-black/5 dark:bg-white/5 hover-lift transition-all"
+      >
+        <div class="text-lg font-bold text-black dark:text-white">
+          {postCount}
+        </div>
         <div class="text-[10px] text-black/40 dark:text-white/40">Posts</div>
       </div>
-      <div class="p-2 rounded-lg bg-black/5 dark:bg-white/5 hover-lift transition-all" style="animation-delay: 100ms;">
-        <div class="text-lg font-bold text-black dark:text-white">{projectCount}</div>
+      <div
+        class="p-2 rounded-lg bg-black/5 dark:bg-white/5 hover-lift transition-all"
+        style="animation-delay: 100ms;"
+      >
+        <div class="text-lg font-bold text-black dark:text-white">
+          {projectCount}
+        </div>
         <div class="text-[10px] text-black/40 dark:text-white/40">Projects</div>
       </div>
-      <div class="p-2 rounded-lg bg-black/5 dark:bg-white/5 hover-lift transition-all" style="animation-delay: 200ms;">
-        <div class="text-lg font-bold text-black dark:text-white">{pubCount}</div>
+      <div
+        class="p-2 rounded-lg bg-black/5 dark:bg-white/5 hover-lift transition-all"
+        style="animation-delay: 200ms;"
+      >
+        <div class="text-lg font-bold text-black dark:text-white">
+          {pubCount}
+        </div>
         <div class="text-[10px] text-black/40 dark:text-white/40">Pubs</div>
       </div>
     </div>
@@ -56,10 +87,17 @@ const { postCount = 0, projectCount = 0, pubCount = 0 } = Astro.props;
 
 <style>
   @keyframes pulse-glow {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(1.1); }
+    0%,
+    100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.6;
+      transform: scale(1.1);
+    }
   }
-  
+
   .animate-pulse-glow {
     animation: pulse-glow 3s ease-in-out infinite;
   }
