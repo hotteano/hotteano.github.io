@@ -77,10 +77,12 @@ $$F_n = A \cdot \phi^n + B \cdot \psi^n$$
 
 利用初始条件 $F_0 = 0, F_1 = 1$：
 
-$$\begin{cases}
+$$
+\begin{cases}
 A + B = 0 \\
 A\phi + B\psi = 1
-\end{cases}$$
+\end{cases}
+$$
 
 解得：
 
