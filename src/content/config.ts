@@ -1,4 +1,6 @@
 import { defineCollection, z } from "astro:content";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
 const blog = defineCollection({
   type: "content",
