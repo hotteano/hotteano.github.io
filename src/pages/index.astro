@@ -99,14 +99,14 @@ const work = await Promise.all(
       <div class="space-y-16">
       <!-- Featured Section with Glass Cards -->
       <section class="animate grid md:grid-cols-3 gap-6">
-        <GlassCard glow class="md:col-span-2">
-          <div class="flex items-start gap-4">
+        <GlassCard glow class="md:col-span-2" padding="p-4 sm:p-5">
+          <div class="flex items-start gap-3 sm:gap-4">
             <div class="text-4xl animate-float flex-shrink-0">🎯</div>
-            <div class="min-w-0">
+            <div class="min-w-0 w-full">
               <h3 class="text-xl font-bold text-black dark:text-white mb-2">
                 <ScrambleText text="Research Focus" />
               </h3>
-              <p class="text-black/60 dark:text-white/60 text-sm leading-relaxed break-words">
+              <p class="text-black/60 dark:text-white/60 text-sm leading-relaxed overflow-wrap-normal">
                 Context Engineering and Reinforcement Learning. Apart from that, I am also interested in the scaling optimization method design and the theoretical aspects of deep learning and the interpretability of large language models. 
               </p>
             </div>

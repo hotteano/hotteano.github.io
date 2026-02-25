@@ -3,14 +3,15 @@ interface Props {
   class?: string;
   hover?: boolean;
   glow?: boolean;
+  padding?: string;
 }
 
-const { class: className = "", hover = true, glow = false } = Astro.props;
+const { class: className = "", hover = true, glow = false, padding = "p-6" } = Astro.props;
 ---
 
 <div class={`glass-card relative overflow-hidden rounded-2xl border border-white/20 dark:border-white/10 bg-white/10 dark:bg-white/5 backdrop-blur-lg ${hover ? 'hover-lift' : ''} ${glow ? 'glass-glow' : ''} ${className}`}>
   <div class="glass-shine absolute inset-0 opacity-0 transition-opacity duration-500"></div>
-  <div class="relative z-10 p-6">
+  <div class={`relative z-10 ${padding}`}>
     <slot />
   </div>
 </div>
