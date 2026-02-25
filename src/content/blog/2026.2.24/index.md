@@ -4,6 +4,7 @@ description: "组合数学基础知识的系统笔记"
 date: "2026-02-24"
 draft: false
 tags: ["notes", "combinatorics"]
+column: "学习笔记"
 ---
 
 ## 1. 集合与加乘原理

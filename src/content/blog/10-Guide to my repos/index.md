@@ -19,4 +19,4 @@ tags: ["notes", "repository", "guide"]
 - [Database Systems Project 1](https://github.com/hotteano/SUSTech-Database-Project-1-Evaluation-of-DBMS-and-file-operation) Score: 89/100
 - [Database Systems Project 2](https://github.com/hotteano/SUSTech-2025-DataBase-H-Project-2-Repo) Score: 89/100
 - [Java Course Design](https://github.com/hotteano/Sokoban) Score: 95/100
-- More to come...
+- [Computer Organization Project- RISCV CPU](https://github.com/hotteano/A-RISC-V-CPU-for-Computer-Organization-CS202-in-SUSTech) Score: ?/100

@@ -4,6 +4,7 @@ description: "本节我们介绍了线性递归关系的定义、求解方法。
 date: "2026-02-25"
 draft: false
 tags: ["notes", "combinatorics"]
+column: "学习笔记"
 ---
 
 ## 1 齐次线性递推
