@@ -1,5 +1,5 @@
 ---
-company: "My work in Reinforcement Learning"
+company: "Individual Researcher"
 role: "Co-First Author"
 dateStart: "01/08/2026"
 dateEnd: "06/01/2026"
