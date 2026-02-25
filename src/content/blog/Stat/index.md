@@ -4,6 +4,7 @@ description: "本章为本人在概率论和数理统计方面的学习笔记，
 date: "2026-02-25"
 draft: false
 tags: ["notes", "probability", "statistics"]
+column: "学习笔记"
 ---
 
 ## 1 概率论基础

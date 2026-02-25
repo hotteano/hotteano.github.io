@@ -1,9 +1,10 @@
 ---
-title: "黄金投资2026.2.24"
+title: "黄金投资2026.2.25午盘总结"
 description: "今日黄金分析"
-date: "2026-02-24"
+date: "2026-02-25"
 draft: false
 tags: ["investment", "gold"]
+column: "投资"
 ---
 
 ## 目前持仓

@@ -8,21 +8,45 @@ import { BLOG } from "@consts";
 const data = (await getCollection("blog"))
   .filter(post => !post.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-  
+
+type ColumnPosts = {
+  [column: string]: CollectionEntry<"blog">[];
+};
+
+type YearData = {
+  columns: ColumnPosts;
+  uncategorized: CollectionEntry<"blog">[];
+};
+
 type Acc = {
-  [year: string]: CollectionEntry<"blog">[];
-}
+  [year: string]: YearData;
+};
+
+const COLUMNS = ["投资", "学习笔记"] as const;
 
 const posts = data.reduce((acc: Acc, post) => {
     const year = post.data.date.getFullYear().toString();
     if (!acc[year]) {
-      acc[year] = [];
+      acc[year] = { columns: {}, uncategorized: [] };
     }
-    acc[year].push(post);
+    
+    const column = post.data.column;
+    if (column) {
+      if (!acc[year].columns[column]) {
+        acc[year].columns[column] = [];
+      }
+      acc[year].columns[column].push(post);
+    } else {
+      acc[year].uncategorized.push(post);
+    }
+    
     return acc;
   }, {});
 
-const years = Object.keys(posts).sort((a, b) => parseInt(b) - parseInt(a)); 
+const years = Object.keys(posts).sort((a, b) => parseInt(b) - parseInt(a));
+
+// 获取所有已使用的专栏
+const allColumns = [...new Set(data.map(post => post.data.column).filter(Boolean))] as string[];
 ---
 
 <PageLayout title={BLOG.TITLE} description={BLOG.DESCRIPTION}>
@@ -31,25 +55,82 @@ const years = Object.keys(posts).sort((a, b) => parseInt(b) - parseInt(a));
       <div class="animate font-semibold text-black dark:text-white">
         Blog
       </div>
-      <div class="space-y-4">
-        {years.map(year => (
-          <section class="animate space-y-4">
-            <div class="font-semibold text-black dark:text-white">
-              {year}
-            </div>
-            <div>
-              <ul class="flex flex-col gap-15">
-                {
-                  posts[year].map((post) => (
-                    <li>
-                      <ArrowCard entry={post}/>
-                    </li>
-                  ))
-                }
-              </ul>
-            </div>
-          </section>
-        ))}
+      
+      {/* 专栏导航 */}
+      {allColumns.length > 0 && (
+        <div class="animate space-y-3">
+          <div class="text-sm text-gray-500 dark:text-gray-400">专栏</div>
+          <div class="flex flex-wrap gap-2">
+            {allColumns.map(column => (
+              <a
+                href={`/blog/column/${encodeURIComponent(column)}`}
+                class="px-3 py-1.5 text-sm rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              >
+                {column}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      <div class="space-y-8">
+        {years.map(year => {
+          const yearData = posts[year];
+          const hasColumns = Object.keys(yearData.columns).length > 0;
+          const hasUncategorized = yearData.uncategorized.length > 0;
+          
+          return (
+            <section class="animate space-y-4">
+              <div class="font-semibold text-xl text-black dark:text-white border-b border-gray-200 dark:border-gray-800 pb-2">
+                {year}
+              </div>
+              
+              <div class="space-y-6">
+                {/* 按专栏分组的文章 */}
+                {hasColumns && (
+                  <div class="space-y-4">
+                    {Object.entries(yearData.columns).map(([column, columnPosts]) => (
+                      <div class="space-y-2">
+                        <div class="flex items-center gap-2">
+                          <span class="px-2 py-0.5 text-xs rounded bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">
+                            {column}
+                          </span>
+                        </div>
+                        <ul class="flex flex-col gap-3 pl-4 border-l-2 border-blue-100 dark:border-blue-900">
+                          {columnPosts.map((post) => (
+                            <li>
+                              <ArrowCard entry={post}/>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {/* 未分类文章 */}
+                {hasUncategorized && (
+                  <div class="space-y-2">
+                    {hasColumns && (
+                      <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 text-xs rounded bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                          其他
+                        </span>
+                      </div>
+                    )}
+                    <ul class={`flex flex-col gap-3 ${hasColumns ? 'pl-4 border-l-2 border-gray-200 dark:border-gray-800' : ''}`}>
+                      {yearData.uncategorized.map((post) => (
+                        <li>
+                          <ArrowCard entry={post}/>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </section>
+          );
+        })}
       </div>
     </div>
   </Container>

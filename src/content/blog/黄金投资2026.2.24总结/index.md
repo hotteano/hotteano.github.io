@@ -4,6 +4,7 @@ description: "今日黄金分析"
 date: "2026-02-24"
 draft: false
 tags: ["investment", "gold"]
+column: "投资"
 ---
 
 ## 目前持仓

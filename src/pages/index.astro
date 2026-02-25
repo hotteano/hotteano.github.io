@@ -94,7 +94,7 @@ const work = await Promise.all(
       </div>
     </section>
 
-    <div class="grid grid-cols-1 xl:grid-cols-[1fr_240px] gap-16 relative z-10">
+    <div class="grid grid-cols-1 xl:grid-cols-[1fr_280px] gap-12 relative z-10">
       <!-- Main Content -->
       <div class="space-y-16">
       <!-- Featured Section with Glass Cards -->
@@ -106,7 +106,7 @@ const work = await Promise.all(
               <h3 class="text-xl font-bold text-black dark:text-white mb-2">
                 <ScrambleText text="Research Focus" />
               </h3>
-              <p class="text-black/60 dark:text-white/60 text-sm leading-relaxed overflow-wrap-normal">
+              <p class="text-black/60 dark:text-white/60 text-sm leading-relaxed break-words">
                 Context Engineering and Reinforcement Learning. Apart from that, I am also interested in the scaling optimization method design and the theoretical aspects of deep learning and the interpretability of large language models. 
               </p>
             </div>
@@ -133,9 +133,9 @@ const work = await Promise.all(
             View All →
           </Link>
         </div>
-        <ul class="flex flex-col gap-4">
+        <ul class="flex flex-col gap-4 w-full">
           {blog.map((post, index) => (
-            <li class={`animate animate-delay-${(index + 1) * 100}`}>
+            <li class={`animate animate-delay-${(index + 1) * 100} w-full overflow-hidden`}>
               <ArrowCard entry={post} />
             </li>
           ))}
@@ -184,9 +184,9 @@ const work = await Promise.all(
             View All →
           </Link>
         </div>
-        <ul class="grid md:grid-cols-2 gap-4">
+        <ul class="grid md:grid-cols-2 gap-4 w-full">
           {projects.map((project, index) => (
-            <li class={`animate animate-scale-in`} style={`animation-delay: ${index * 150}ms`}>
+            <li class={`animate animate-scale-in min-w-0 overflow-hidden`} style={`animation-delay: ${index * 150}ms`}>
               <ArrowCard entry={project} />
             </li>
           ))}
