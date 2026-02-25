@@ -161,6 +161,13 @@ $$P(A|B) = \frac{P(AB)}{P(B)}$$
 
 定义了随机变量之后，我们可以考虑其累计分布函数（CDF）和概率分布。累计分布函数 $F(x)$ 定义为 $F(x) = P(X \le x)$，它描述了随机变量 $X$ 取值小于或等于 $x$ 的概率。
 
+累计分布函数具有以下基本性质：
+> 1. **单调不减性**：若 $x_1 < x_2$，则 $F(x_1) \le F(x_2)$。
+> 2. **右连续性**：$\lim_{x \to x_0^+} F(x) = F(x_0)$。
+> 3. **极限性质**：$\lim_{x \to -\infty} F(x) = 0$，$\lim_{x \to +\infty} F(x) = 1$。
+
+这些性质使得累计分布函数成为描述随机变量行为的强大工具。通过CDF，我们可以计算任意区间内的概率：$P(a < X \le b) = F(b) - F(a)$。
+
 ##### 概率质量函数和概率密度函数
 
 随机变量的概率分布描述了随机变量取不同值的概率情况。对于离散型随机变量，我们用概率质量函数（PMF）来描述其分布；对于连续型随机变量，我们用概率密度函数（PDF）来描述其分布。
@@ -171,43 +178,507 @@ $$P(A|B) = \frac{P(AB)}{P(B)}$$
 
 > **注：** 注意区分概率密度函数与概率测度——$P:\mathcal{F} \to [0,1]$，而 $f: \mathbb{R} \to [0, \infty)$ 是一个函数，它不是概率测度，但可以通过积分得到概率测度。
 
+对于连续型随机变量，需要注意 $P(X = x) = 0$ 对任意单点成立，这与离散型情况有本质区别。概率密度函数 $f(x)$ 在某点的值并不代表概率，而是概率的"密度"，只有经过积分后才能得到实际概率。
+
 #### 1.3.3 常见的离散分布
+
+离散型随机变量在实际应用中非常常见，下面介绍几种重要的离散分布。
+
+##### 伯努利分布（Bernoulli Distribution）
+
+伯努利分布是最简单的离散分布，描述只有两种可能结果的随机试验。
+
+> **定义**：若随机变量 $X$ 只取 0 和 1 两个值，且 $P(X=1) = p$，$P(X=0) = 1-p$，其中 $0 \le p \le 1$，则称 $X$ 服从参数为 $p$ 的伯努利分布，记为 $X \sim \text{Bernoulli}(p)$。
+
+伯努利分布的期望和方差分别为：$E[X] = p$，$\text{Var}(X) = p(1-p)$。
+
+> **例子**：抛一枚硬币，正面朝上记为 1，反面朝上记为 0。若硬币公平，则 $p = 0.5$，服从伯努利分布。
+
+##### 二项分布（Binomial Distribution）
+
+二项描述 $n$ 次独立伯努利试验中成功次数的分布。
+
+> **定义**：设 $X$ 为 $n$ 次独立伯努利试验中成功的次数，每次成功概率为 $p$，则 $X$ 的概率质量函数为：
+> $$P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}, \quad k = 0, 1, \ldots, n$$
+> 称 $X$ 服从参数为 $(n, p)$ 的二项分布，记为 $X \sim \text{Binomial}(n, p)$。
+
+二项分布的期望和方差：$E[X] = np$，$\text{Var}(X) = np(1-p)$。
+
+> **例子**：连续抛掷 10 枚公平硬币，正面朝上的次数服从 $\text{Binomial}(10, 0.5)$ 分布。
+
+##### 泊松分布（Poisson Distribution）
+
+泊松分布常用于描述单位时间或单位空间内随机事件发生次数的分布。
+
+> **定义**：若随机变量 $X$ 的概率质量函数为：
+> $$P(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}, \quad k = 0, 1, 2, \ldots$$
+> 其中 $\lambda > 0$ 为参数，则称 $X$ 服从参数为 $\lambda$ 的泊松分布，记为 $X \sim \text{Poisson}(\lambda)$。
+
+泊松分布的期望和方差相等：$E[X] = \text{Var}(X) = \lambda$。
+
+> **泊松分布与二项分布的关系**：当 $n$ 很大且 $p$ 很小时，二项分布 $\text{Binomial}(n, p)$ 可以用泊松分布 $\text{Poisson}(np)$ 近似。具体来说，若 $n \to \infty$，$p \to 0$，且 $np \to \lambda$，则：
+> $$\binom{n}{k} p^k (1-p)^{n-k} \approx \frac{\lambda^k e^{-\lambda}}{k!}$$
+
+> **例子**：某客服中心每小时平均接到 4 通电话，则一小时内接到的电话数服从 $\text{Poisson}(4)$ 分布。
+
+##### 几何分布（Geometric Distribution）
+
+几何分布描述在独立伯努利试验中首次成功所需的试验次数。
+
+> **定义**：设 $X$ 为首次成功所需的试验次数，每次成功概率为 $p$，则：
+> $$P(X = k) = (1-p)^{k-1} p, \quad k = 1, 2, \ldots$$
+> 称 $X$ 服从参数为 $p$ 的几何分布，记为 $X \sim \text{Geometric}(p)$。
+
+几何分布具有无记忆性：$P(X > m + n | X > m) = P(X > n)$。
+
+> **期望和方差**：$E[X] = \frac{1}{p}$，$\text{Var}(X) = \frac{1-p}{p^2}$。
+
+##### 负二项分布（Negative Binomial Distribution）
+
+负二项分布是几何分布的推广，描述获得 $r$ 次成功所需的试验次数。
+
+> **定义**：设 $X$ 为获得 $r$ 次成功所需的试验次数，则：
+> $$P(X = k) = \binom{k-1}{r-1} p^r (1-p)^{k-r}, \quad k = r, r+1, \ldots$$
+
+当 $r = 1$ 时，负二项分布退化为几何分布。
 
 #### 1.3.4 常见的连续分布
 
+连续型随机变量在实际应用中同样重要，下面介绍几种核心的连续分布。
+
+##### 均匀分布（Uniform Distribution）
+
+均匀分布描述在区间内每个点等可能取值的随机变量。
+
+> **定义**：若随机变量 $X$ 在区间 $[a, b]$ 上的概率密度函数为：
+> $$f(x) = \begin{cases} \frac{1}{b-a}, & a \le x \le b \\ 0, & \text{其他} \end{cases}$$
+> 则称 $X$ 服从 $[a, b]$ 上的均匀分布，记为 $X \sim \text{Uniform}(a, b)$。
+
+均匀分布的期望和方差：$E[X] = \frac{a+b}{2}$，$\text{Var}(X) = \frac{(b-a)^2}{12}$。
+
+> **例子**：在 $[0, 1]$ 区间随机取一点，该点的坐标服从 $\text{Uniform}(0, 1)$ 分布。
+
+##### 正态分布（Normal/Gaussian Distribution）
+
+正态分布是概率论中最重要的分布，在自然界和社会现象中广泛存在。
+
+> **定义**：若随机变量 $X$ 的概率密度函数为：
+> $$f(x) = \frac{1}{\sqrt{2\pi}\sigma} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right), \quad -\infty < x < +\infty$$
+> 其中 $\mu \in \mathbb{R}$，$\sigma > 0$，则称 $X$ 服从参数为 $(\mu, \sigma^2)$ 的正态分布，记为 $X \sim N(\mu, \sigma^2)$。
+
+正态分布的期望和方差：$E[X] = \mu$，$\text{Var}(X) = \sigma^2$。
+
+> **标准正态分布**：当 $\mu = 0$，$\sigma = 1$ 时，称为标准正态分布，记为 $Z \sim N(0, 1)$。其概率密度函数为：
+> $$\phi(z) = \frac{1}{\sqrt{2\pi}} e^{-\frac{z^2}{2}}$$
+> 任何正态分布都可以通过标准化变换转化为标准正态分布：若 $X \sim N(\mu, \sigma^2)$，则 $Z = \frac{X-\mu}{\sigma} \sim N(0, 1)$。
+
+> **例子**：人的身高、测量误差、考试成绩等往往近似服从正态分布。
+
+##### 指数分布（Exponential Distribution）
+
+指数分布常用于描述独立随机事件发生的时间间隔。
+
+> **定义**：若随机变量 $X$ 的概率密度函数为：
+> $$f(x) = \begin{cases} \lambda e^{-\lambda x}, & x \ge 0 \\ 0, & x < 0 \end{cases}$$
+> 其中 $\lambda > 0$，则称 $X$ 服从参数为 $\lambda$ 的指数分布，记为 $X \sim \text{Exp}(\lambda)$。
+
+指数分布的期望和方差：$E[X] = \frac{1}{\lambda}$，$\text{Var}(X) = \frac{1}{\lambda^2}$。
+
+> **无记忆性**：指数分布与几何分布类似，具有无记忆性：
+> $$P(X > s + t | X > s) = P(X > t), \quad \forall s, t > 0$$
+> 这使得指数分布在可靠性理论和排队论中有重要应用。
+
+> **与泊松分布的关系**：若单位时间内某事件发生的次数服从泊松分布，则事件发生的间隔时间服从指数分布。
+
+##### 伽马分布（Gamma Distribution）
+
+伽马分布是指数分布的推广，描述多个独立指数分布随机变量之和的分布。
+
+> **定义**：若随机变量 $X$ 的概率密度函数为：
+> $$f(x) = \begin{cases} \frac{\lambda^\alpha}{\Gamma(\alpha)} x^{\alpha-1} e^{-\lambda x}, & x > 0 \\ 0, & x \le 0 \end{cases}$$
+> 其中 $\alpha > 0$ 为形状参数，$\lambda > 0$ 为率参数，$\Gamma(\alpha)$ 为伽马函数，则称 $X$ 服从伽马分布，记为 $X \sim \Gamma(\alpha, \lambda)$。
+
+> **伽马函数**：$\Gamma(\alpha) = \int_0^\infty t^{\alpha-1} e^{-t} \mathrm{d}t$，满足 $\Gamma(n) = (n-1)!$（当 $n$ 为正整数）。
+
+伽马分布的期望和方差：$E[X] = \frac{\alpha}{\lambda}$，$\text{Var}(X) = \frac{\alpha}{\lambda^2}$。
+
+当 $\alpha = 1$ 时，伽马分布退化为指数分布。
+
+##### 卡方分布（Chi-Square Distribution）
+
+卡方分布是伽马分布的特例，在统计推断中非常重要。
+
+> **定义**：若 $Z_1, Z_2, \ldots, Z_n$ 是独立同分布的标准正态随机变量，则：
+> $$X = Z_1^2 + Z_2^2 + \cdots + Z_n^2$$
+> 服从自由度为 $n$ 的卡方分布，记为 $X \sim \chi^2(n)$。
+
+卡方分布是 $\Gamma(\frac{n}{2}, \frac{1}{2})$ 的特例。其期望和方差：$E[X] = n$，$\text{Var}(X) = 2n$。
+
+##### $t$ 分布（Student's t-Distribution）
+
+$t$ 分布在小样本统计推断中具有重要作用。
+
+> **定义**：设 $Z \sim N(0, 1)$，$U \sim \chi^2(n)$，且 $Z$ 与 $U$ 独立，则：
+> $$T = \frac{Z}{\sqrt{U/n}}$$
+> 服从自由度为 $n$ 的 $t$ 分布，记为 $T \sim t(n)$。
+
+$t$ 分布的概率密度函数为：
+$$f(t) = \frac{\Gamma(\frac{n+1}{2})}{\sqrt{n\pi} \Gamma(\frac{n}{2})} \left(1 + \frac{t^2}{n}\right)^{-\frac{n+1}{2}}$$
+
+当 $n \to \infty$ 时，$t$ 分布趋近于标准正态分布。
+
+##### $F$ 分布（F-Distribution）
+
+$F$ 分布在方差分析和回归分析中广泛应用。
+
+> **定义**：设 $U \sim \chi^2(m)$，$V \sim \chi^2(n)$，且 $U$ 与 $V$ 独立，则：
+> $$F = \frac{U/m}{V/n}$$
+> 服从自由度为 $(m, n)$ 的 $F$ 分布，记为 $F \sim F(m, n)$。
+
+$F$ 分布与 $t$ 分布的关系：若 $T \sim t(n)$，则 $T^2 \sim F(1, n)$。
+
 ### 1.4 期望、方差、协方差与矩
+
+数字特征是描述随机变量分布特性的重要指标，它们提供了分布的简洁概括。
 
 #### 1.4.1 期望
 
+期望（或均值）是随机变量取值的加权平均，权重为相应的概率。
+
+> **定义**：设 $X$ 为随机变量：
+> - 若 $X$ 为离散型，$P(X = x_i) = p_i$，则 $E[X] = \sum_i x_i p_i$（要求 $\sum_i |x_i| p_i < \infty$）。
+> - 若 $X$ 为连续型，概率密度函数为 $f(x)$，则 $E[X] = \int_{-\infty}^{\infty} x f(x) \mathrm{d}x$（要求 $\int_{-\infty}^{\infty} |x| f(x) \mathrm{d}x < \infty$）。
+
+期望具有以下重要性质：
+> 1. **线性性**：$E[aX + b] = aE[X] + b$，其中 $a, b$ 为常数。
+> 2. **可加性**：$E[X + Y] = E[X] + E[Y]$，无论 $X$ 与 $Y$ 是否独立。
+> 3. **独立性下的乘积性**：若 $X$ 与 $Y$ 独立，则 $E[XY] = E[X]E[Y]$。
+
+> **函数的期望**（ LOTUS 法则）：设 $Y = g(X)$，则：
+> - 离散型：$E[Y] = \sum_i g(x_i) p_i$
+> - 连续型：$E[Y] = \int_{-\infty}^{\infty} g(x) f(x) \mathrm{d}x$
+> 无需先求 $Y$ 的分布，直接利用 $X$ 的分布即可计算。
+
 #### 1.4.2 方差
+
+方差度量随机变量取值与其期望的偏离程度。
+
+> **定义**：随机变量 $X$ 的方差定义为：
+> $$\text{Var}(X) = E[(X - E[X])^2] = E[X^2] - (E[X])^2$$
+> 标准差定义为 $\sigma_X = \sqrt{\text{Var}(X)}$。
+
+方差的性质：
+> 1. $\text{Var}(X) \ge 0$，且 $\text{Var}(X) = 0$ 当且仅当 $X$ 以概率 1 取常数值。
+> 2. $\text{Var}(aX + b) = a^2 \text{Var}(X)$。
+> 3. 若 $X$ 与 $Y$ 独立，则 $\text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y)$。
+
+> **切比雪夫不等式**：对于任意 $\varepsilon > 0$，有：
+> $$P(|X - E[X]| \ge \varepsilon) \le \frac{\text{Var}(X)}{\varepsilon^2}$$
+> 这个不等式给出了偏离均值的概率上界，在证明大数定律中有重要应用。
 
 #### 1.4.3 协方差与相关系数
 
+协方差度量两个随机变量之间的线性关联程度。
+
+> **定义**：随机变量 $X$ 和 $Y$ 的协方差定义为：
+> $$\text{Cov}(X, Y) = E[(X - E[X])(Y - E[Y])] = E[XY] - E[X]E[Y]$$
+
+协方差的性质：
+> 1. 对称性：$\text{Cov}(X, Y) = \text{Cov}(Y, X)$。
+> 2. 双线性：$\text{Cov}(aX + b, cY + d) = ac \cdot \text{Cov}(X, Y)$。
+> 3. 若 $X$ 与 $Y$ 独立，则 $\text{Cov}(X, Y) = 0$（但反之不成立）。
+> 4. 方差公式：$\text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y) + 2\text{Cov}(X, Y)$。
+
+相关系数是标准化后的协方差，消除了量纲的影响。
+
+> **定义**：$X$ 和 $Y$ 的相关系数定义为：
+> $$\rho_{XY} = \frac{\text{Cov}(X, Y)}{\sigma_X \sigma_Y}$$
+> 其中 $\sigma_X = \sqrt{\text{Var}(X)}$，$\sigma_Y = \sqrt{\text{Var}(Y)}$。
+
+相关系数的性质：
+> 1. $-1 \le \rho_{XY} \le 1$。
+> 2. $|\rho_{XY}| = 1$ 当且仅当 $X$ 与 $Y$ 之间存在线性关系：$Y = aX + b$（几乎必然）。
+> 3. $\rho_{XY} = 0$ 表示 $X$ 与 $Y$ 不相关（无线性相关），但可能有非线性关系。
+
+> **注意**：独立一定不相关，但不相关不一定独立。例如，设 $X \sim \text{Uniform}(-1, 1)$，$Y = X^2$，则 $\text{Cov}(X, Y) = 0$，但 $X$ 与 $Y$ 显然不独立。
+
 #### 1.4.4 矩
+
+矩是期望概念的推广，可以描述分布的更多特征。
+
+> **定义**：随机变量 $X$ 的 $k$ 阶原点矩定义为 $\mu_k' = E[X^k]$，$k$ 阶中心矩定义为 $\mu_k = E[(X - E[X])^k]$。
+
+特别地：
+> - 一阶原点矩 $\mu_1' = E[X]$ 就是期望。
+> - 二阶中心矩 $\mu_2 = \text{Var}(X)$ 就是方差。
+
+> **偏度（Skewness）**：三阶标准化矩，度量分布的不对称性：
+> $$\gamma_1 = \frac{\mu_3}{\sigma^3} = \frac{E[(X - \mu)^3]}{(\text{Var}(X))^{3/2}}$$
+> - $\gamma_1 = 0$：对称分布（如正态分布）。
+> - $\gamma_1 > 0$：右偏（长尾在右）。
+> - $\gamma_1 < 0$：左偏（长尾在左）。
+
+> **峰度（Kurtosis）**：四阶标准化矩，度量分布的尾部厚重程度：
+> $$\gamma_2 = \frac{\mu_4}{\sigma^4} - 3 = \frac{E[(X - \mu)^4]}{(\text{Var}(X))^2} - 3$$
+> 减去 3 是为了使正态分布的峰度为 0（超值峰度）。
+> - $\gamma_2 > 0$：比正态分布更尖峰厚尾。
+> - $\gamma_2 < 0$：比正态分布更平峰薄尾。
 
 ### 1.5 多维随机变量与联合分布
 
+在实际问题中，我们经常需要同时考虑多个随机变量，这就引入了多维随机变量的概念。
+
 #### 1.5.1 多维随机变量
+
+> **定义**：设 $X_1, X_2, \ldots, X_n$ 是定义在同一样本空间 $\Omega$ 上的 $n$ 个随机变量，则称向量 $\mathbf{X} = (X_1, X_2, \ldots, X_n)$ 为 $n$ 维随机向量或 $n$ 维随机变量。
+
+多维随机变量的研究重点在于描述各分量之间的相互关系，这通过联合分布来实现。
 
 #### 1.5.2 联合分布
 
+##### 联合累计分布函数
+
+> **定义**：$n$ 维随机变量 $\mathbf{X} = (X_1, \ldots, X_n)$ 的联合累计分布函数定义为：
+> $$F(x_1, \ldots, x_n) = P(X_1 \le x_1, \ldots, X_n \le x_n)$$
+
+对于二维情况 $(X, Y)$，联合CDF $F(x, y) = P(X \le x, Y \le y)$ 具有以下性质：
+> 1. $0 \le F(x, y) \le 1$。
+> 2. $F(x, y)$ 对每个变量都是单调不减的。
+> 3. $F(-\infty, y) = F(x, -\infty) = 0$，$F(+\infty, +\infty) = 1$。
+> 4. 对任意 $x_1 < x_2$，$y_1 < y_2$，有：
+> $$P(x_1 < X \le x_2, y_1 < Y \le y_2) = F(x_2, y_2) - F(x_2, y_1) - F(x_1, y_2) + F(x_1, y_1) \ge 0$$
+
+##### 联合概率质量函数与联合概率密度函数
+
+对于离散型随机变量：
+
+> **联合PMF**：$p(x, y) = P(X = x, Y = y)$，满足 $\sum_x \sum_y p(x, y) = 1$。
+
+对于连续型随机变量：
+
+> **联合PDF**：函数 $f(x, y)$ 满足：
+> $$P((X, Y) \in D) = \iint_D f(x, y) \mathrm{d}x \mathrm{d}y$$
+> 且 $f(x, y) \ge 0$，$\int_{-\infty}^{\infty} \int_{-\infty}^{\infty} f(x, y) \mathrm{d}x \mathrm{d}y = 1$。
+
+在点 $(x, y)$ 处，联合PDF可以看作概率的"面密度"：
+$$f(x, y) = \frac{\partial^2 F(x, y)}{\partial x \partial y}$$
+
+##### 独立性
+
+> **定义**：随机变量 $X$ 和 $Y$ 独立，当且仅当：
+> - 离散型：$p(x, y) = p_X(x) \cdot p_Y(y)$ 对所有 $(x, y)$ 成立。
+> - 连续型：$f(x, y) = f_X(x) \cdot f_Y(y)$ 对所有 $(x, y)$ 成立。
+> - 统一表述：$F(x, y) = F_X(x) \cdot F_Y(y)$ 对所有 $x, y$ 成立。
+
+独立性意味着一个随机变量的取值不影响另一个随机变量的分布。对于独立随机变量，有 $E[XY] = E[X]E[Y]$，$\text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y)$。
+
 #### 1.5.3 边缘分布与条件分布
+
+##### 边缘分布
+
+从联合分布可以得到单个随机变量的分布，称为边缘分布。
+
+> **离散型边缘PMF**：
+> $$p_X(x) = \sum_y p(x, y), \quad p_Y(y) = \sum_x p(x, y)$$
+
+> **连续型边缘PDF**：
+> $$f_X(x) = \int_{-\infty}^{\infty} f(x, y) \mathrm{d}y, \quad f_Y(y) = \int_{-\infty}^{\infty} f(x, y) \mathrm{d}x$$
+
+边缘分布描述了单个随机变量的分布特性，但丢失了与其他变量的关系信息。
+
+##### 条件分布
+
+条件分布描述在给定一个随机变量取值的条件下，另一个随机变量的分布。
+
+> **离散型条件PMF**：
+> $$p_{X|Y}(x|y) = P(X = x | Y = y) = \frac{p(x, y)}{p_Y(y)}, \quad p_Y(y) > 0$$
+
+> **连续型条件PDF**：
+> $$f_{X|Y}(x|y) = \frac{f(x, y)}{f_Y(y)}, \quad f_Y(y) > 0$$
+
+条件分布满足概率分布的所有性质。例如，对于连续型：
+$$P(a \le X \le b | Y = y) = \int_a^b f_{X|Y}(x|y) \mathrm{d}x$$
+
+> **乘法公式**：
+> - 离散型：$p(x, y) = p_{X|Y}(x|y) \cdot p_Y(y) = p_{Y|X}(y|x) \cdot p_X(x)$
+> - 连续型：$f(x, y) = f_{X|Y}(x|y) \cdot f_Y(y) = f_{Y|X}(y|x) \cdot f_X(x)$
+
+这给出了联合分布、边缘分布和条件分布之间的关系。
+
+##### 条件期望与全期望公式
+
+> **条件期望**：给定 $Y = y$ 时，$X$ 的条件期望为：
+> - 离散型：$E[X | Y = y] = \sum_x x \cdot p_{X|Y}(x|y)$
+> - 连续型：$E[X | Y = y] = \int_{-\infty}^{\infty} x \cdot f_{X|Y}(x|y) \mathrm{d}x$
+
+条件期望 $E[X | Y]$ 本身是 $Y$ 的函数，也是一个随机变量。
+
+> **全期望公式（迭代期望法则）**：
+> $$E[X] = E[E[X | Y]]$$
+> 具体地：
+> - 离散型：$E[X] = \sum_y E[X | Y = y] \cdot p_Y(y)$
+> - 连续型：$E[X] = \int_{-\infty}^{\infty} E[X | Y = y] \cdot f_Y(y) \mathrm{d}y$
+
+全期望公式在计算复杂期望时非常有用，可以先固定一个变量进行条件期望计算，再对该变量求期望。
 
 #### 1.5.4 多维正态分布
 
+多维正态分布是单变量正态分布在多维情形的推广，在统计学和机器学习中具有核心地位。
+
+> **定义**：设 $\boldsymbol{\mu} = (\mu_1, \ldots, \mu_n)^T \in \mathbb{R}^n$，$\boldsymbol{\Sigma}$ 为 $n \times n$ 正定对称矩阵。若随机向量 $\mathbf{X} = (X_1, \ldots, X_n)^T$ 的联合概率密度函数为：
+> $$f(\mathbf{x}) = \frac{1}{(2\pi)^{n/2} |\boldsymbol{\Sigma}|^{1/2}} \exp\left(-\frac{1}{2}(\mathbf{x} - \boldsymbol{\mu})^T \boldsymbol{\Sigma}^{-1} (\mathbf{x} - \boldsymbol{\mu})\right)$$
+> 则称 $\mathbf{X}$ 服从 $n$ 维正态分布，记为 $\mathbf{X} \sim N_n(\boldsymbol{\mu}, \boldsymbol{\Sigma})$。
+
+其中 $\boldsymbol{\mu}$ 是均值向量，$\boldsymbol{\Sigma}$ 是协方差矩阵：
+$$\boldsymbol{\Sigma} = \begin{pmatrix} \sigma_{11} & \sigma_{12} & \cdots & \sigma_{1n} \\ \sigma_{21} & \sigma_{22} & \cdots & \sigma_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ \sigma_{n1} & \sigma_{n2} & \cdots & \sigma_{nn} \end{pmatrix}$$
+其中 $\sigma_{ij} = \text{Cov}(X_i, X_j)$，$\sigma_{ii} = \text{Var}(X_i) = \sigma_i^2$。
+
+多维正态分布的重要性质：
+> 1. **边缘分布仍为正态**：每个分量 $X_i \sim N(\mu_i, \sigma_{ii})$。
+> 2. **不相关等价于独立**：对于多维正态分布，$X_i$ 与 $X_j$ 不相关当且仅当它们独立。
+> 3. **线性变换不变性**：若 $\mathbf{X} \sim N_n(\boldsymbol{\mu}, \boldsymbol{\Sigma})$，$\mathbf{A}$ 为 $m \times n$ 矩阵，$\mathbf{b} \in \mathbb{R}^m$，则：
+> $$\mathbf{Y} = \mathbf{A}\mathbf{X} + \mathbf{b} \sim N_m(\mathbf{A}\boldsymbol{\mu} + \mathbf{b}, \mathbf{A}\boldsymbol{\Sigma}\mathbf{A}^T)$$
+> 4. **条件分布仍为正态**：在给定部分分量的条件下，其余分量的条件分布也是正态分布。
+
+二维正态分布是常见的特例。设 $(X, Y) \sim N_2(\mu_1, \mu_2, \sigma_1^2, \sigma_2^2, \rho)$，其中 $\rho$ 是相关系数，则：
+
+> **条件分布**：
+> $$X | Y = y \sim N\left(\mu_1 + \rho\frac{\sigma_1}{\sigma_2}(y - \mu_2), \sigma_1^2(1 - \rho^2)\right)$$
+
+条件期望 $E[X | Y = y] = \mu_1 + \rho\frac{\sigma_1}{\sigma_2}(y - \mu_2)$ 是 $y$ 的线性函数，这是正态分布的重要特征。
+
 ### 1.6 大数定律与中心极限定理
 
-#### 1.6.1 依概率收敛（$p \overset{P}{\to} a$）与几乎处处收敛（a.s.）
+大数定律和中心极限定理是概率论中最重要的极限定理，它们描述了随机变量序列在大量试验下的渐近行为。
+
+#### 1.6.1 依概率收敛（$X_n \overset{P}{\to} X$）与几乎处处收敛（a.s.）
+
+在讨论极限定理之前，我们需要明确随机变量序列收敛的含义。
+
+> **依概率收敛**：设 $\{X_n\}$ 是随机变量序列，$X$ 是随机变量。若对任意 $\varepsilon > 0$，有：
+> $$\lim_{n \to \infty} P(|X_n - X| \ge \varepsilon) = 0$$
+> 则称 $X_n$ 依概率收敛于 $X$，记为 $X_n \overset{P}{\to} X$。
+
+依概率收敛意味着当 $n$ 足够大时，$X_n$ 与 $X$ 的差距超过任意给定阈值的概率趋于零。
+
+> **几乎处处收敛（以概率 1 收敛）**：若：
+> $$P\left(\lim_{n \to \infty} X_n = X\right) = 1$$
+> 或等价地：
+> $$P\left(\omega: \lim_{n \to \infty} X_n(\omega) = X(\omega)\right) = 1$$
+> 则称 $X_n$ 几乎处处收敛于 $X$，记为 $X_n \overset{a.s.}{\to} X$ 或 $X_n \to X$ a.s.。
+
+几乎处处收敛是更强的收敛形式：对几乎所有的样本点，序列都收敛。
+
+> **关系**：几乎处处收敛蕴含依概率收敛，但反之不成立。
 
 #### 1.6.2 弱大数定律
 
+弱大数定律（Weak Law of Large Numbers, WLLN）描述了样本均值依概率收敛于期望值。
+
+> **定理（切比雪夫弱大数定律）**：设 $\{X_n\}$ 是两两不相关的随机变量序列，$E[X_i] = \mu$，$\text{Var}(X_i) \le C$（方差有界）。令 $\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i$，则：
+> $$\bar{X}_n \overset{P}{\to} \mu$$
+
+> **证明**：首先计算 $\bar{X}_n$ 的期望和方差：
+> $$E[\bar{X}_n] = \frac{1}{n}\sum_{i=1}^n E[X_i] = \mu$$
+> 由于两两不相关：
+> $$\text{Var}(\bar{X}_n) = \frac{1}{n^2}\sum_{i=1}^n \text{Var}(X_i) \le \frac{nC}{n^2} = \frac{C}{n}$$
+> 由切比雪夫不等式：
+> $$P(|\bar{X}_n - \mu| \ge \varepsilon) \le \frac{\text{Var}(\bar{X}_n)}{\varepsilon^2} \le \frac{C}{n\varepsilon^2} \to 0 \quad (n \to \infty)$$
+
+更一般的弱大数定律不需要方差存在的条件：
+
+> **定理（辛钦弱大数定律）**：设 $\{X_n\}$ 是独立同分布（i.i.d.）的随机变量序列，$E[X_1] = \mu$ 存在，则：
+> $$\bar{X}_n \overset{P}{\to} \mu$$
+
+弱大数定律为频率学派的概率解释提供了理论基础：事件发生的频率依概率收敛于其理论概率。
+
 #### 1.6.3 强大数定律
+
+强大数定律（Strong Law of Large Numbers, SLLN）是更强的结果，描述了样本均值几乎处处收敛于期望值。
+
+> **定理（科尔莫戈罗夫强大数定律）**：设 $\{X_n\}$ 是独立同分布的随机变量序列，则：
+> $$\bar{X}_n \overset{a.s.}{\to} \mu$$
+> 当且仅当 $E[|X_1|] < \infty$，此时 $\mu = E[X_1]$。
+
+强大数定律表明，对于几乎所有样本路径，样本均值都会收敛到期望值。这比弱大数定律"更强的概率趋于目标"更加确定。
+
+> **中心极限定理（Central Limit Theorem, CLT）**
+
+虽然不在小节标题中，但中心极限定理是与大数定律并列的核心极限定理，必须提及。
+
+> **定理（林德伯格-列维中心极限定理）**：设 $\{X_n\}$ 是独立同分布的随机变量序列，$E[X_1] = \mu$，$\text{Var}(X_1) = \sigma^2 < \infty$。令 $\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i$，则：
+> $$\frac{\bar{X}_n - \mu}{\sigma/\sqrt{n}} = \frac{\sum_{i=1}^n X_i - n\mu}{\sqrt{n}\sigma} \overset{d}{\to} N(0, 1)$$
+> 即对任意 $x \in \mathbb{R}$：
+> $$\lim_{n \to \infty} P\left(\frac{\bar{X}_n - \mu}{\sigma/\sqrt{n}} \le x\right) = \Phi(x)$$
+> 其中 $\Phi(x)$ 是标准正态分布的CDF。
+
+中心极限定理揭示了正态分布的普遍性：无论原始分布是什么（只要方差有限），大量独立随机变量之和的标准化形式都渐近服从正态分布。这解释了为什么正态分布在自然界和统计学中如此普遍。
+
+> **注：** 记号 $\overset{d}{\to}$ 表示依分布收敛，即分布函数逐点收敛（在连续点）。
 
 ### 1.7 特征函数
 
+特征函数是研究随机变量分布和极限定理的重要工具，它本质上是随机变量的傅里叶变换。
+
 #### 1.7.1 定义与性质
 
+> **定义**：随机变量 $X$ 的特征函数定义为：
+> $$\varphi_X(t) = E[e^{itX}] = \begin{cases} \sum_x e^{itx} p(x), & \text{离散型} \\ \int_{-\infty}^{\infty} e^{itx} f(x) \mathrm{d}x, & \text{连续型} \end{cases}$$
+> 其中 $i = \sqrt{-1}$，$t \in \mathbb{R}$。
+
+由于 $|e^{itX}| = 1$，特征函数对所有随机变量都存在（包括没有矩的随机变量如柯西分布）。
+
+特征函数的基本性质：
+> 1. $\varphi(0) = 1$，$|\varphi(t)| \le 1$。
+> 2. $\varphi(-t) = \overline{\varphi(t)}$（共轭对称性）。
+> 3. $\varphi(t)$ 在 $\mathbb{R}$ 上一致连续。
+> 4. 若 $X$ 与 $Y$ 独立，则 $\varphi_{X+Y}(t) = \varphi_X(t) \cdot \varphi_Y(t)$。
+> 5. 若 $Y = aX + b$，则 $\varphi_Y(t) = e^{itb} \varphi_X(at)$。
+
+特征函数与矩的关系：
+
+> **定理**：若 $E[|X|^k] < \infty$，则 $\varphi(t)$ 在 $t = 0$ 处 $k$ 次可导，且：
+> $$\varphi^{(k)}(0) = i^k E[X^k]$$
+> 特别地，$E[X] = \frac{\varphi'(0)}{i}$，$E[X^2] = -\varphi''(0)$。
+
+这为计算矩提供了另一种途径。
+
+常见分布的特征函数：
+> - 标准正态：$\varphi(t) = e^{-t^2/2}$
+> - 一般正态 $N(\mu, \sigma^2)$：$\varphi(t) = e^{it\mu - \sigma^2 t^2/2}$
+> - 泊松分布 $\text{Poisson}(\lambda)$：$\varphi(t) = e^{\lambda(e^{it}-1)}$
+> - 指数分布 $\text{Exp}(\lambda)$：$\varphi(t) = \frac{\lambda}{\lambda - it}$
+
+特征函数最重要的性质是唯一性：
+
+> **唯一性定理**：两个随机变量具有相同的特征函数当且仅当它们具有相同的分布函数。
+
+这意味着特征函数完全刻画了随机变量的分布。
+
 #### 1.7.2 逆转公式
+
+逆转公式提供了从特征函数恢复分布函数的方法。
+
+> **定理（逆转公式）**：设 $\varphi(t)$ 是随机变量 $X$ 的特征函数，$F(x)$ 是其分布函数。若 $a < b$ 是 $F$ 的连续点，则：
+> $$F(b) - F(a) = \lim_{T \to \infty} \frac{1}{2\pi} \int_{-T}^{T} \frac{e^{-ita} - e^{-itb}}{it} \varphi(t) \mathrm{d}t$$
+
+若 $X$ 是连续型随机变量，概率密度函数 $f(x)$ 连续，则有更简洁的逆转公式：
+
+> **密度逆转公式**：
+> $$f(x) = \frac{1}{2\pi} \int_{-\infty}^{\infty} e^{-itx} \varphi(t) \mathrm{d}t$$
+
+这正是傅里叶逆变换的形式，表明特征函数与密度函数构成傅里叶变换对。
+
+对于离散型随机变量，设其取值为 $\{x_k\}$，则：
+
+> **离散逆转公式**：
+> $$P(X = x_k) = \lim_{T \to \infty} \frac{1}{2T} \int_{-T}^{T} e^{-itx_k} \varphi(t) \mathrm{d}t$$
+
+逆转公式的重要性在于它保证了特征函数与分布函数之间的一一对应关系，使得我们可以通过特征函数来研究分布的性质，特别是在证明极限定理时非常有用。
+
+> **连续性定理**：设 $\{F_n\}$ 是分布函数序列，$\{\varphi_n\}$ 是对应的特征函数序列。则 $F_n$ 弱收敛于分布函数 $F$（即在某分布函数 $F$ 的所有连续点上收敛）当且仅当 $\varphi_n(t)$ 逐点收敛于某函数 $\varphi(t)$，且 $\varphi(t)$ 在 $t = 0$ 处连续（此时 $\varphi$ 是极限分布的特征函数）。
+
+连续性定理是证明中心极限定理的关键工具：我们可以通过证明标准化和的特征函数收敛于标准正态分布的特征函数 $e^{-t^2/2}$，来推出分布的收敛性。
 
 ## 2 数理统计
 
