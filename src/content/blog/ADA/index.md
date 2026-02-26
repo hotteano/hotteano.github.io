@@ -132,14 +132,58 @@ $$
 
 ## 分治（Divide and Conquer）
 
+### 二分查找
+
+### 分治技巧
+
 ## 动态规划（Dynamic Programming）
+
+### 线性DP
+
+### 背包DP
+
+### 区间DP
+
+### 状态压缩DP
+
+### 数位DP
+
+### 树上DP
+
+### 计数DP
+
+### DP优化手段
 
 ## 贪心算法（Greedy Algorithm）
 
+### 排序法
+
+### 邻项交换法
+
+### 后悔法
+
 ## 网络流（Network Flow）
+
+### 最大流
+
+#### Ford-Fulkerson Algorithm
+
+#### Edmonds-Karp Algorithm
+
+#### Dinic's Algorithm
+
+#### Push-Relabel Algorithm
+
+### 最小割
+
+### 费用流
 
 ## 稳定匹配（Stable Matching）
 
 ### 匹配
+
+#### 二分图判定
+
+#### 二分图匹配与匈牙利算法
 
 ### 稳定匹配与Shapley-Gale Algorithm
