@@ -10,7 +10,7 @@ const blog = defineCollection({
     date: z.coerce.date(),
     draft: z.boolean().optional(),
     tags: z.array(z.string()).optional(),
-    column: z.enum(["投资", "学习笔记", "读书笔记"]).optional(),
+    column: z.enum(["投资", "学习笔记", "读书笔记", "说明"]).optional(),
   }),
 });
 
