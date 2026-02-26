@@ -132,58 +132,1025 @@ $$
 
 ## 分治（Divide and Conquer）
 
+分治（Divide and Conquer）是一种重要的算法设计策略，其核心思想是将一个复杂的问题分解成若干个规模较小但结构相似的子问题，递归地解决这些子问题，然后将子问题的解合并以得到原问题的解。
+
+### 基本步骤
+
+1. **分解（Divide）**：将原问题分解为若干个规模较小、相互独立且与原问题结构相似的子问题
+2. **解决（Conquer）**：递归地解决各个子问题。如果子问题足够小，则直接求解
+3. **合并（Combine）**：将子问题的解合并为原问题的解
+
 ### 二分查找
+
+二分查找是分治思想的典型应用，适用于在有序数组中查找元素。
+
+**思路**：通过比较中间元素，将搜索范围减半。
+
+**复杂度**：
+- 时间复杂度：$O(\log n)$
+- 空间复杂度：$O(1)$（迭代版本）或 $O(\log n)$（递归版本）
+
+**伪代码（迭代版）**：
+```
+BinarySearch(A, target, left, right):
+    while left <= right:
+        mid = left + (right - left) / 2
+        if A[mid] == target:
+            return mid
+        else if A[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+```
+
+**伪代码（递归版）**：
+```
+BinarySearchRecursive(A, target, left, right):
+    if left > right:
+        return -1
+    mid = left + (right - left) / 2
+    if A[mid] == target:
+        return mid
+    else if A[mid] < target:
+        return BinarySearchRecursive(A, target, mid + 1, right)
+    else:
+        return BinarySearchRecursive(A, target, left, mid - 1)
+```
+
+**扩展应用**：
+- 查找第一个/最后一个满足条件的元素
+- 旋转有序数组的查找
+- 二分答案（将求解问题转化为判定问题）
 
 ### 分治技巧
 
+#### 主定理（Master Theorem）
+
+对于递归式 $T(n) = aT(n/b) + f(n)$，其中 $a \geq 1$, $b > 1$：
+
+1. 若 $f(n) = O(n^{\log_b a - \epsilon})$，则 $T(n) = \Theta(n^{\log_b a})$
+2. 若 $f(n) = \Theta(n^{\log_b a})$，则 $T(n) = \Theta(n^{\log_b a} \log n)$
+3. 若 $f(n) = \Omega(n^{\log_b a + \epsilon})$ 且 $af(n/b) \leq cf(n)$，则 $T(n) = \Theta(f(n))$
+
+#### 经典应用
+
+##### 归并排序（Merge Sort）
+
+**思路**：将数组分成两半，分别排序，然后合并两个有序数组。
+
+**复杂度**：
+- 时间复杂度：$O(n \log n)$
+- 空间复杂度：$O(n)$
+
+**伪代码**：
+```
+MergeSort(A, left, right):
+    if left < right:
+        mid = (left + right) / 2
+        MergeSort(A, left, mid)
+        MergeSort(A, mid + 1, right)
+        Merge(A, left, mid, right)
+
+Merge(A, left, mid, right):
+    i = left, j = mid + 1, k = 0
+    temp = array of size (right - left + 1)
+    while i <= mid and j <= right:
+        if A[i] <= A[j]:
+            temp[k++] = A[i++]
+        else:
+            temp[k++] = A[j++]
+    while i <= mid:
+        temp[k++] = A[i++]
+    while j <= right:
+        temp[k++] = A[j++]
+    copy temp back to A[left..right]
+```
+
+##### 快速排序（Quick Sort）
+
+**思路**：选择一个枢轴元素，将数组划分为两部分（小于枢轴和大于枢轴），然后递归排序两部分。
+
+**复杂度**：
+- 平均时间复杂度：$O(n \log n)$
+- 最坏时间复杂度：$O(n^2)$（当划分极度不平衡时）
+- 空间复杂度：$O(\log n)$（递归栈空间）
+
+**伪代码**：
+```
+QuickSort(A, left, right):
+    if left < right:
+        pivotIndex = Partition(A, left, right)
+        QuickSort(A, left, pivotIndex - 1)
+        QuickSort(A, pivotIndex + 1, right)
+
+Partition(A, left, right):
+    pivot = A[right]
+    i = left - 1
+    for j = left to right - 1:
+        if A[j] <= pivot:
+            i = i + 1
+            swap A[i] and A[j]
+    swap A[i + 1] and A[right]
+    return i + 1
+```
+
+##### 逆序对计数
+
+**问题**：统计数组中逆序对的数量（即满足 $i < j$ 且 $A[i] > A[j]$ 的对数）。
+
+**思路**：利用归并排序的过程，在合并时统计跨越中点的逆序对。
+
+**伪代码**：
+```
+CountInversions(A, left, right):
+    if left >= right:
+        return 0
+    mid = (left + right) / 2
+    count = 0
+    count += CountInversions(A, left, mid)
+    count += CountInversions(A, mid + 1, right)
+    count += MergeAndCount(A, left, mid, right)
+    return count
+
+MergeAndCount(A, left, mid, right):
+    // 合并两个有序数组并统计逆序对
+    i = left, j = mid + 1, count = 0
+    temp = empty array
+    while i <= mid and j <= right:
+        if A[i] <= A[j]:
+            temp.append(A[i++])
+        else:
+            temp.append(A[j++])
+            count += mid - i + 1  // A[i..mid]都大于A[j]
+    // 复制剩余元素
+    copy remaining elements to temp
+    copy temp back to A[left..right]
+    return count
+```
+
+**复杂度**：$O(n \log n)$
+
+##### 最近点对问题
+
+**问题**：在二维平面上给定 $n$ 个点，找出距离最近的一对点。
+
+**思路**：
+1. 按 $x$ 坐标排序，将点集分成左右两半
+2. 递归求解左右两部分的最近距离 $d$
+3. 检查跨越中线的点对，只需考虑距离中线不超过 $d$ 的点，且按 $y$ 坐标排序后每个点只需与接下来的最多7个点比较
+
+**复杂度**：$O(n \log n)$
+
+#### 加速技巧
+
+- **预处理**：在分治前对数据进行排序或建立索引
+- **剪枝**：在搜索问题中提前终止不可能产生更优解的分支
+- **迭代加深**：限制递归深度，逐步放宽限制
+
 ## 动态规划（Dynamic Programming）
+
+动态规划（Dynamic Programming，简称DP）是一种通过将复杂问题分解为相互重叠的子问题来求解的算法设计方法。与分治不同，动态规划适用于子问题有重叠的情况，通过记忆化（Memoization）或制表（Tabulation）来避免重复计算。
+
+### 基本要素
+
+1. **最优子结构**：问题的最优解包含其子问题的最优解
+2. **重叠子问题**：递归求解过程中会反复遇到相同的子问题
+3. **无后效性**：某阶段的状态一旦确定，就不受之后决策的影响
+
+### 设计步骤
+
+1. **定义状态**：确定DP数组的含义，即 $dp[i]$ 或 $dp[i][j]$ 表示什么
+2. **状态转移方程**：找出状态之间的递推关系
+3. **初始化**：确定边界条件
+4. **计算顺序**：确定状态计算的先后顺序
+5. **提取答案**：从DP数组中得到最终答案
 
 ### 线性DP
 
+线性DP是指状态转移方程呈现线性关系的动态规划问题。
+
+#### 最长递增子序列（LIS）
+
+**问题**：给定序列，求最长的严格递增子序列的长度。
+
+**状态定义**：$dp[i]$ 表示以第 $i$ 个元素结尾的LIS长度
+
+**状态转移**：
+$$
+dp[i] = \max_{j < i, a[j] < a[i]} \{dp[j] + 1\}
+$$
+
+**伪代码（$O(n^2)$）**：
+```
+LIS(A, n):
+    dp = array of size n, initialized to 1
+    for i = 1 to n - 1:
+        for j = 0 to i - 1:
+            if A[j] < A[i]:
+                dp[i] = max(dp[i], dp[j] + 1)
+    return max(dp)
+```
+
+**伪代码（$O(n \log n)$ 二分优化）**：
+```
+LIS_Binary(A, n):
+    tail = empty array  // tail[i]表示长度为i+1的LIS的最小结尾元素
+    for x in A:
+        pos = lower_bound(tail, x)  // 找到第一个>=x的位置
+        if pos == tail.size():
+            tail.append(x)
+        else:
+            tail[pos] = x
+    return tail.size()
+```
+
+**复杂度**：
+- 朴素做法：$O(n^2)$
+- 二分优化：$O(n \log n)$
+
+#### 最长公共子序列（LCS）
+
+**问题**：给定两个序列，求它们的最长公共子序列长度。
+
+**状态定义**：$dp[i][j]$ 表示 $A[1..i]$ 和 $B[1..j]$ 的LCS长度
+
+**状态转移**：
+$$
+dp[i][j] = \begin{cases}
+dp[i-1][j-1] + 1 & \text{if } A[i] = B[j] \\
+\max(dp[i-1][j], dp[i][j-1]) & \text{otherwise}
+\end{cases}
+$$
+
+**伪代码**：
+```
+LCS(A, B, m, n):
+    dp = 2D array of size (m+1) x (n+1), initialized to 0
+    for i = 1 to m:
+        for j = 1 to n:
+            if A[i-1] == B[j-1]:
+                dp[i][j] = dp[i-1][j-1] + 1
+            else:
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+    return dp[m][n]
+```
+
+**复杂度**：$O(nm)$，其中 $n, m$ 分别为两个序列的长度
+
+#### 编辑距离
+
+**问题**：计算将一个字符串转换为另一个字符串所需的最少操作次数（插入、删除、替换）。
+
+**状态定义**：$dp[i][j]$ 表示 $A[1..i]$ 转换为 $B[1..j]$ 的最小代价
+
+**状态转移**：
+$$
+dp[i][j] = \min \begin{cases}
+dp[i-1][j] + 1 & \text{删除} \\
+dp[i][j-1] + 1 & \text{插入} \\
+dp[i-1][j-1] + (A[i] \neq B[j]) & \text{替换}
+\end{cases}
+$$
+
+**伪代码**：
+```
+EditDistance(A, B, m, n):
+    dp = 2D array of size (m+1) x (n+1)
+    for i = 0 to m:
+        dp[i][0] = i
+    for j = 0 to n:
+        dp[0][j] = j
+    for i = 1 to m:
+        for j = 1 to n:
+            if A[i-1] == B[j-1]:
+                dp[i][j] = dp[i-1][j-1]
+            else:
+                dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+    return dp[m][n]
+```
+
+**复杂度**：$O(nm)$
+
 ### 背包DP
+
+背包问题是动态规划的经典应用，根据约束条件不同分为多种类型。
+
+#### 0/1背包
+
+**问题**：$n$ 个物品，每个物品有重量 $w_i$ 和价值 $v_i$，背包容量为 $W$，每个物品只能选择一次，求能装下的最大价值。
+
+**状态定义**：$dp[i][j]$ 表示考虑前 $i$ 个物品，容量为 $j$ 时的最大价值
+
+**状态转移**：
+$$
+dp[i][j] = \max(dp[i-1][j], dp[i-1][j-w_i] + v_i)
+$$
+
+**伪代码（二维）**：
+```
+Knapsack01(weights, values, n, W):
+    dp = 2D array of size (n+1) x (W+1), initialized to 0
+    for i = 1 to n:
+        for j = 0 to W:
+            dp[i][j] = dp[i-1][j]
+            if j >= weights[i-1]:
+                dp[i][j] = max(dp[i][j], dp[i-1][j-weights[i-1]] + values[i-1])
+    return dp[n][W]
+```
+
+**伪代码（一维空间优化）**：
+```
+Knapsack01_Optimized(weights, values, n, W):
+    dp = array of size (W+1), initialized to 0
+    for i = 0 to n-1:
+        for j = W down to weights[i]:  // 必须倒序
+            dp[j] = max(dp[j], dp[j-weights[i]] + values[i])
+    return dp[W]
+```
+
+**复杂度**：
+- 时间：$O(nW)$
+- 空间：$O(W)$（优化后）
+
+#### 完全背包
+
+**问题**：与0/1背包类似，但每个物品可以选择无限次。
+
+**状态转移**：
+$$
+dp[i][j] = \max(dp[i-1][j], dp[i][j-w_i] + v_i)
+$$
+
+**伪代码**：
+```
+UnboundedKnapsack(weights, values, n, W):
+    dp = array of size (W+1), initialized to 0
+    for i = 0 to n-1:
+        for j = weights[i] to W:  // 正序遍历
+            dp[j] = max(dp[j], dp[j-weights[i]] + values[i])
+    return dp[W]
+```
+
+**注意**：完全背包的空间优化中，内层循环需要正序遍历。
+
+#### 多重背包
+
+**问题**：每个物品有数量限制 $c_i$。
+
+**优化方法**：
+- 二进制拆分：将 $c_i$ 拆分为 $1, 2, 4, ..., c_i - 2^k + 1$，转化为0/1背包
+- 单调队列优化：时间复杂度 $O(nW)$
+
+**伪代码（二进制拆分）**：
+```
+MultipleKnapsack(weights, values, counts, n, W):
+    dp = array of size (W+1), initialized to 0
+    for i = 0 to n-1:
+        k = 1
+        while counts[i] > 0:
+            cnt = min(k, counts[i])
+            weight = weights[i] * cnt
+            value = values[i] * cnt
+            for j = W down to weight:
+                dp[j] = max(dp[j], dp[j-weight] + value)
+            counts[i] -= cnt
+            k *= 2
+    return dp[W]
+```
 
 ### 区间DP
 
+区间DP以区间作为状态，常用于解决与区间相关的问题。
+
+#### 矩阵链乘法
+
+**问题**：给定 $n$ 个矩阵的维度，确定乘法顺序使得标量乘法次数最少。
+
+**状态定义**：$dp[i][j]$ 表示计算矩阵 $A_i$ 到 $A_j$ 乘积的最小代价
+
+**状态转移**：
+$$
+dp[i][j] = \min_{i \leq k < j} \{dp[i][k] + dp[k+1][j] + p_{i-1}p_kp_j\}
+$$
+
+**伪代码**：
+```
+MatrixChainOrder(p, n):  // p[0..n]存储矩阵维度
+    dp = 2D array of size n x n, initialized to 0
+    for len = 2 to n:  // 区间长度
+        for i = 0 to n - len:
+            j = i + len - 1
+            dp[i][j] = infinity
+            for k = i to j - 1:
+                cost = dp[i][k] + dp[k+1][j] + p[i]*p[k+1]*p[j+1]
+                dp[i][j] = min(dp[i][j], cost)
+    return dp[0][n-1]
+```
+
+**复杂度**：$O(n^3)$
+
+#### 石子合并
+
+**问题**：$n$ 堆石子排成一排，每次合并相邻两堆，代价为两堆石子数之和，求合并成一堆的最小代价。
+
+**状态定义**：$dp[i][j]$ 表示合并区间 $[i,j]$ 的最小代价
+
+**状态转移**：
+$$
+dp[i][j] = \min_{i \leq k < j} \{dp[i][k] + dp[k+1][j]\} + sum[i][j]
+$$
+
+**伪代码**：
+```
+StoneMerge(stones, n):
+    prefix = prefix sum array
+    dp = 2D array of size n x n, initialized to infinity
+    for i = 0 to n-1:
+        dp[i][i] = 0
+    for len = 2 to n:
+        for i = 0 to n - len:
+            j = i + len - 1
+            for k = i to j - 1:
+                cost = dp[i][k] + dp[k+1][j] + prefix[j+1] - prefix[i]
+                dp[i][j] = min(dp[i][j], cost)
+    return dp[0][n-1]
+```
+
+**优化**：四边形不等式优化可将复杂度降至 $O(n^2)$
+
 ### 状态压缩DP
+
+状态压缩DP适用于处理集合相关的DP问题，使用二进制数表示集合状态。
+
+#### 旅行商问题（TSP）
+
+**问题**：给定 $n$ 个城市和之间的距离，求从起点出发经过所有城市恰好一次并返回起点的最短路径。
+
+**状态定义**：$dp[mask][i]$ 表示已经访问过的城市集合为 $mask$，当前在城市 $i$ 的最短距离
+
+**状态转移**：
+$$
+dp[mask][i] = \min_{j \notin mask} \{dp[mask \setminus \{i\}][j] + dist[j][i]\}
+$$
+
+**伪代码**：
+```
+TSP(dist, n):
+    dp = 2D array of size (1<<n) x n, initialized to infinity
+    dp[1][0] = 0  // 从城市0出发，只访问了城市0
+    for mask = 1 to (1<<n) - 1:
+        for i = 0 to n-1:
+            if not (mask & (1<<i)): continue
+            if dp[mask][i] == infinity: continue
+            for j = 0 to n-1:
+                if mask & (1<<j): continue
+                newMask = mask | (1<<j)
+                dp[newMask][j] = min(dp[newMask][j], dp[mask][i] + dist[i][j])
+    ans = infinity
+    for i = 1 to n-1:
+        ans = min(ans, dp[(1<<n)-1][i] + dist[i][0])
+    return ans
+```
+
+**复杂度**：$O(n^2 \cdot 2^n)$
 
 ### 数位DP
 
+数位DP用于解决与数字各位相关的问题，通常按位进行DP。
+
+#### 统计数字个数
+
+**问题**：统计区间 $[L, R]$ 中满足特定条件的数字个数（如不含某数字、各位和为某值等）。
+
+**状态定义**：$dp[pos][tight][...]$，其中 $pos$ 表示当前处理到的位数，$tight$ 表示是否受上界限制
+
+**技巧**：使用记忆化搜索实现，通常用 `dfs(pos, tight, ...)` 的形式
+
+**伪代码**：
+```
+DigitDP(num):  // 统计[0, num]中满足条件的数字个数
+    digits = digits of num from high to low
+    memo = 3D array for memoization, initialized to -1
+    
+    dfs(pos, tight, sum):
+        if pos == len(digits):
+            return check(sum) ? 1 : 0
+        if not tight and memo[pos][sum] != -1:
+            return memo[pos][sum]
+        limit = tight ? digits[pos] : 9
+        res = 0
+        for d = 0 to limit:
+            newTight = tight and (d == limit)
+            res += dfs(pos + 1, newTight, sum + d)
+        if not tight:
+            memo[pos][sum] = res
+        return res
+    
+    return dfs(0, true, 0)
+```
+
 ### 树上DP
+
+树上DP在树结构上进行，通常需要先通过DFS遍历树。
+
+#### 树的最大独立集
+
+**问题**：在树上选择一些节点，使得任意两个被选节点不相邻，求最大权值和。
+
+**状态定义**：
+- $dp[u][0]$：不选节点 $u$ 时，以 $u$ 为根的子树的最大权值
+- $dp[u][1]$：选节点 $u$ 时，以 $u$ 为根的子树的最大权值
+
+**状态转移**：
+$$
+\begin{aligned}
+dp[u][0] &= \sum_v \max(dp[v][0], dp[v][1]) \\
+dp[u][1] &= w_u + \sum_v dp[v][0]
+\end{aligned}
+$$
+
+**伪代码**：
+```
+TreeDP(u, parent):
+    dp[u][0] = 0
+    dp[u][1] = weight[u]
+    for v in adjacency[u]:
+        if v == parent: continue
+        TreeDP(v, u)
+        dp[u][0] += max(dp[v][0], dp[v][1])
+        dp[u][1] += dp[v][0]
+```
 
 ### 计数DP
 
+计数DP用于计算满足特定条件的方案数。
+
+#### 整数划分
+
+**问题**：将整数 $n$ 划分为若干个正整数之和的方案数。
+
+**状态定义**：$dp[i][j]$ 表示将 $i$ 划分为最大部分不超过 $j$ 的方案数
+
+**状态转移**：
+$$
+dp[i][j] = dp[i][j-1] + dp[i-j][j]
+$$
+
+**伪代码**：
+```
+Partition(n):
+    dp = 2D array of size (n+1) x (n+1), initialized to 0
+    for j = 0 to n:
+        dp[0][j] = 1  // 划分0有一种方案（不选任何数）
+    for i = 1 to n:
+        for j = 1 to n:
+            dp[i][j] = dp[i][j-1]
+            if i >= j:
+                dp[i][j] += dp[i-j][j]
+    return dp[n][n]
+```
+
 ### DP优化手段
+
+#### 滚动数组
+
+当DP转移只依赖于前一阶段的状态时，可以使用滚动数组将空间复杂度减半或更多。
+
+**示例（0/1背包）**：
+```
+// 原来需要 dp[n+1][W+1]
+// 优化后只需要 dp[2][W+1]
+for i = 0 to n-1:
+    for j = 0 to W:
+        dp[(i+1)%2][j] = dp[i%2][j]
+        if j >= w[i]:
+            dp[(i+1)%2][j] = max(dp[(i+1)%2][j], dp[i%2][j-w[i]] + v[i])
+```
+
+#### 前缀和优化
+
+当状态转移涉及区间求和时，可以使用前缀和将 $O(n)$ 的转移优化到 $O(1)$。
+
+**示例**：
+```
+// 原转移: dp[i] = sum(dp[j] for j in [i-m, i-1])
+// 优化: 维护前缀和数组 prefix
+prefix[0] = 0
+for i = 1 to n:
+    prefix[i] = prefix[i-1] + dp[i-1]
+    dp[i] = prefix[i] - prefix[max(0, i-m)]
+```
+
+#### 单调队列/单调栈优化
+
+用于优化形如 $dp[i] = \min_{j \in [i-m, i-1]} \{dp[j] + f(i, j)\}$ 的转移。
+
+#### 斜率优化（凸包优化）
+
+当状态转移方程可以表示为 $dp[i] = \min_{j < i} \{dp[j] + a[i] \cdot b[j]\}$ 时，可以用斜率优化将复杂度从 $O(n^2)$ 降至 $O(n)$ 或 $O(n \log n)$。
+
+#### 四边形不等式优化
+
+用于优化区间DP，当满足四边形不等式时，可以将复杂度从 $O(n^3)$ 降至 $O(n^2)$。
 
 ## 贪心算法（Greedy Algorithm）
 
+贪心算法是一种在每一步选择中都采取在当前状态下最好或最优的选择，从而希望导致结果是全局最好或最优的算法。
+
+### 基本要素
+
+1. **贪心选择性质**：通过局部最优选择能达到全局最优
+2. **最优子结构**：问题的最优解包含其子问题的最优解
+
 ### 排序法
+
+通过某种排序策略，按特定顺序处理元素。
+
+#### 活动选择问题
+
+**问题**：给定 $n$ 个活动的开始和结束时间，选择最大数量的互不重叠的活动。
+
+**贪心策略**：每次选择结束时间最早且不与已选活动冲突的活动。
+
+**伪代码**：
+```
+ActivitySelection(activities):  // activities: (start, end) pairs
+    sort activities by end time
+    count = 1
+    lastEnd = activities[0].end
+    for i = 1 to n-1:
+        if activities[i].start >= lastEnd:
+            count += 1
+            lastEnd = activities[i].end
+    return count
+```
+
+**正确性证明**：设贪心解为 $G$，最优解为 $O$。通过归纳法可以证明 $|G| = |O|$。
+
+**复杂度**：$O(n \log n)$（排序）
+
+#### 区间调度问题
+
+**问题**：选择最少数量的点，使得每个区间都至少包含一个点。
+
+**贪心策略**：按右端点排序，每次选择当前区间的右端点，然后跳过所有包含该点的区间。
+
+**伪代码**：
+```
+IntervalCovering(intervals):  // intervals: (left, right)
+    sort intervals by right endpoint
+    points = empty list
+    i = 0
+    while i < n:
+        point = intervals[i].right
+        points.append(point)
+        while i < n and intervals[i].left <= point:
+            i += 1
+    return points
+```
 
 ### 邻项交换法
 
+通过分析相邻元素的交换对答案的影响来确定排序策略。
+
+#### 调度问题
+
+**问题**：$n$ 个任务，每个任务有处理时间 $t_i$ 和截止期限 $d_i$，求最小化最大延迟。
+
+**贪心策略**：按最早截止时间优先（EDD, Earliest Due Date）排序。
+
+**伪代码**：
+```
+MinimizeLateness(jobs):  // jobs: (processing_time, deadline)
+    sort jobs by deadline
+    time = 0
+    maxLateness = 0
+    for job in jobs:
+        time += job.processing_time
+        lateness = max(0, time - job.deadline)
+        maxLateness = max(maxLateness, lateness)
+    return maxLateness
+```
+
+#### 字符串拼接
+
+**问题**：将若干字符串拼接成一个字典序最小的字符串。
+
+**贪心策略**：对于两个字符串 $a$ 和 $b$，若 $a+b < b+a$（字典序比较），则 $a$ 应排在 $b$ 前面。
+
+**伪代码**：
+```
+MinStringConcatenation(strings):
+    sort strings with comparator (a, b) -> (a+b) < (b+a)
+    return concatenation of sorted strings
+```
+
 ### 后悔法
 
+先贪心选择，当发现选择错误时进行"后悔"并调整选择。
+
+#### 带截止期限的任务调度
+
+**问题**：每个任务有截止期限和收益，在截止期限前完成任务可获得收益，每个任务需要单位时间，求最大收益。
+
+**算法**：
+
+**伪代码**：
+```
+JobSequencingWithDeadlines(jobs, n):  // jobs: (deadline, profit)
+    sort jobs by profit in descending order
+    maxDeadline = max(job.deadline for job in jobs)
+    slot = array of size maxDeadline, initialized to -1
+    
+    for job in jobs:
+        for t = job.deadline down to 1:
+            if slot[t-1] == -1:
+                slot[t-1] = job.id
+                break
+    return slot
+```
+
+**复杂度**：$O(n^2)$ 或使用并查集优化至 $O(n \alpha(n))$
+
 ## 网络流（Network Flow）
+
+网络流问题研究在有向图中从源点到汇点的最大流量问题。
+
+### 基本概念
+
+- **流网络**：有向图 $G = (V, E)$，每条边 $(u, v)$ 有容量 $c(u, v) \geq 0$
+- **流**：函数 $f: V \times V \to \mathbb{R}$，满足容量约束和流量守恒
+- **残量网络**：$c_f(u, v) = c(u, v) - f(u, v) + f(v, u)$
+- **增广路**：残量网络中从 $s$ 到 $t$ 的路径
+- **最大流**：从源点 $s$ 到汇点 $t$ 的最大可行流
 
 ### 最大流
 
 #### Ford-Fulkerson Algorithm
 
+**基本思想**：在残量网络中反复寻找增广路， augment 流量直到不存在增广路。
+
+**伪代码**：
+```
+FordFulkerson(G, s, t):
+    for each edge (u, v) in G.E:
+        f[u][v] = 0
+        f[v][u] = 0
+    while there exists a path p from s to t in residual network Gf:
+        cf(p) = min(cf(u, v) for (u, v) in p)
+        for each edge (u, v) in p:
+            f[u][v] += cf(p)
+            f[v][u] -= cf(p)
+    return f
+```
+
+**复杂度**：$O(E \cdot |f^*|)$，其中 $|f^*|$ 是最大流的值
+
 #### Edmonds-Karp Algorithm
+
+Ford-Fulkerson 的改进版，使用 BFS 寻找最短增广路。
+
+**伪代码**：
+```
+EdmondsKarp(G, s, t):
+    f = zero flow
+    while true:
+        // BFS to find shortest augmenting path
+        parent = BFS(Gf, s, t)
+        if no path found:
+            break
+        cf = minimum residual capacity along the path
+        augment flow along the path by cf
+    return f
+```
+
+**复杂度**：$O(VE^2)$
+
+**性质**： Edmonds-Karp 算法最多进行 $O(VE)$ 次增广。
 
 #### Dinic's Algorithm
 
+**基本思想**：
+1. 构建层次图（BFS 分层）
+2. 在层次图中使用 DFS 进行多路增广
+3. 重复直到不存在增广路
+
+**伪代码**：
+```
+Dinic(G, s, t):
+    maxFlow = 0
+    while BFS builds level graph:
+        while true:
+            flow = DFS(s, infinity)
+            if flow == 0:
+                break
+            maxFlow += flow
+    return maxFlow
+
+BFS(s, t):
+    level = array initialized to -1
+    queue = [s]
+    level[s] = 0
+    while queue not empty:
+        u = queue.pop()
+        for each edge (u, v) with residual capacity > 0:
+            if level[v] == -1:
+                level[v] = level[u] + 1
+                queue.push(v)
+    return level[t] != -1
+
+DFS(u, flow):
+    if u == t:
+        return flow
+    for each edge (u, v) with residual capacity > 0 and level[v] == level[u] + 1:
+        pushed = DFS(v, min(flow, residual[u][v]))
+        if pushed > 0:
+            residual[u][v] -= pushed
+            residual[v][u] += pushed
+            return pushed
+    return 0
+```
+
+**复杂度**：
+- 一般图：$O(V^2E)$
+- 单位容量：$O(\min(V^{2/3}, E^{1/2})E)$
+- 二分图匹配：$O(E\sqrt{V})$
+
+**当前弧优化**：记录每个点当前检查到哪条边，避免重复检查。
+
 #### Push-Relabel Algorithm
+
+**基本思想**：
+- 不维护可行流，而是维护预流（preflow），允许节点有超额流
+- 通过"推流"（push）操作将超额流向低高度的邻居推送
+- 通过"重标号"（relabel）操作提升节点高度以允许更多推流
+
+**复杂度**：
+- 基础版：$O(V^2E)$
+- 最高标号（HLPP）：$O(V^2\sqrt{E})$
 
 ### 最小割
 
+**最大流最小割定理**：最大流的值等于最小割的容量。
+
+**最小割构造**：在最大流后的残量网络中，从源点可达的节点集合为 $S$，其余为 $T$，则 $(S, T)$ 为最小割。
+
+**应用**：
+- 图像分割
+- 二分图最大匹配
+- 最小点覆盖、最大独立集（König 定理）
+
 ### 费用流
 
+**问题**：每条边除容量外还有单位费用，求最大流中的最小费用流。
+
+#### 最小费用最大流
+
+**算法**：
+1. 在残量网络中找最短路径（按费用）
+2. 沿路径增广
+3. 重复直到无法增广或达到指定流量
+
+**伪代码**：
+```
+MinCostMaxFlow(G, s, t, maxf):
+    flow = 0, cost = 0
+    while flow < maxf:
+        // SPFA or Dijkstra with potential to find shortest path
+        dist, parent = SPFA(s)
+        if dist[t] == infinity:
+            break
+        augment = min(maxf - flow, residual capacity along path)
+        flow += augment
+        cost += augment * dist[t]
+        update residual network
+    return (flow, cost)
+```
+
+**复杂度**：
+- SPFA 实现：$O(V E \cdot |f|)$
+- 势函数 + Dijkstra：$O(F \cdot (E \log V))$，其中 $F$ 为流量
+
 ## 稳定匹配（Stable Matching）
+
+稳定匹配问题研究如何在两组参与者之间形成稳定的配对。
 
 ### 匹配
 
 #### 二分图判定
 
+**问题**：判断一个无向图是否为二分图。
+
+**方法**：BFS/DFS 染色，若存在奇环则不是二分图。
+
+**伪代码**：
+```
+IsBipartite(G):
+    color = array initialized to -1
+    for each vertex u:
+        if color[u] == -1:
+            if not BFSColor(u, 0):
+                return false
+    return true
+
+BFSColor(start, c):
+    queue = [start]
+    color[start] = c
+    while queue not empty:
+        u = queue.pop()
+        for v in adjacency[u]:
+            if color[v] == -1:
+                color[v] = 1 - color[u]
+                queue.push(v)
+            else if color[v] == color[u]:
+                return false
+    return true
+```
+
+**复杂度**：$O(V + E)$
+
 #### 二分图匹配与匈牙利算法
 
+**二分图匹配**：在二分图中寻找边集，使得任意两条边不共享端点。
+
+**匈牙利算法（Kuhn's Algorithm）**：
+
+**伪代码**：
+```
+HungarianAlgorithm(G, U, V):  // U, V are the two partitions
+    match = array of size |V|, initialized to -1
+    result = 0
+    for u in U:
+        visited = array of size |V|, initialized to false
+        if DFS(u, visited, match):
+            result += 1
+    return result
+
+DFS(u, visited, match):
+    for v in adjacency[u]:
+        if not visited[v]:
+            visited[v] = true
+            if match[v] == -1 or DFS(match[v], visited, match):
+                match[v] = u
+                return true
+    return false
+```
+
+**复杂度**：$O(VE)$ 或 $O(E\sqrt{V})$（Hopcroft-Karp 算法）
+
+**Hopcroft-Karp 算法**：每次找一组最短的不相交增广路同时增广，复杂度 $O(E\sqrt{V})$。
+
 ### 稳定匹配与Shapley-Gale Algorithm
+
+**问题**：$n$ 个男生和 $n$ 个女生，每人有一个偏好列表，求一个稳定的完美匹配。
+
+**稳定**：不存在一对男女彼此更喜欢对方而不是当前的伴侣。
+
+**Gale-Shapley 算法**：
+
+**伪代码**：
+```
+GaleShapley(menPrefs, womenPrefs, n):
+    // menPrefs[i]: 男生i的偏好列表（女生编号）
+    // womenPrefs[i]: 女生i的偏好列表（男生编号）
+    
+    wife = array of size n, initialized to -1    // 女生i的丈夫
+    husband = array of size n, initialized to -1 // 男生i的妻子
+    nextProposal = array of size n, initialized to 0  // 男生i下一个要求婚的女生索引
+    
+    freeMen = queue of all men
+    
+    while freeMen not empty:
+        m = freeMen.pop()
+        w = menPrefs[m][nextProposal[m]]
+        nextProposal[m] += 1
+        
+        if wife[w] == -1:  // 女生w是自由的
+            wife[w] = m
+            husband[m] = w
+        else if womenPrefs[w].indexOf(m) < womenPrefs[w].indexOf(wife[w]):
+            // 女生w更喜欢m而不是当前的丈夫
+            freeMen.push(wife[w])
+            husband[wife[w]] = -1
+            wife[w] = m
+            husband[m] = w
+        else:
+            freeMen.push(m)  // m被拒绝，继续寻找
+    
+    return husband  // 或wife
+```
+
+**性质**：
+- **收敛性**：算法最多在 $n^2$ 轮后结束
+- **完美性**：最终形成完美匹配
+- **稳定性**：匹配是稳定的
+- **男生最优**：对男生而言，这是所有稳定匹配中最优的
+- **女生最劣**：对女生而言，这是所有稳定匹配中最差的
+
+**复杂度**：$O(n^2)$
+
+**变体问题**：
+- 多对一匹配（如医院-实习医生问题）
+- 带容量限制的匹配
+- 不完全偏好列表
