@@ -15,8 +15,7 @@ Don't get worried if you don't find reading Chinese easy! Soon I will be writing
 
 ## The Column of my Blogs
 
-I have categorized my blogs into several columns, including "投资" (Investment), "学习笔记" (Study Notes), "读书笔记" (Book Notes), and "说明" (Explanations). Each column serves a different purpose and focuses on different topics. The "投资" column will contain my thoughts and analyses on investment opportunities and strategies. The "学习笔记" column will include my notes and insights from my studies, especially in the field of computer science. The "读书笔记" column will feature my notes and reflections on the books I have read. Finally, the "说明" column will provide explanations and clarifications on various topics, including the language and structure of my blogs, as well as any other relevant information that I think is important for my readers to know. I hope this categorization can help my readers easily find the content that interests them and navigate through my blogs more efficiently.
-
+I have categorized my blogs into several columns, including "投资" (Investment), "学习笔记" (Study Notes), "读书笔记" (Book Notes). Each column serves a different purpose and focuses on different topics. The "投资" column will contain my thoughts and analyses on investment opportunities and strategies. The "学习笔记" column will include my notes and insights from my studies, especially in the field of computer science. The "读书笔记" column will feature my notes and reflections on the books I have read.
 ## The Purpose of my Blogs
 
 Writing blogs is not in purpose of gaining followers or making money, but rather a way for me to organize my thoughts, share my insights, and connect with like-minded individuals. Thus, the blog will not only include knowledge and information that I want to share with others, but also my personal thoughts, reflections, and experiences, e.g., travel records, daily life, etc. 
