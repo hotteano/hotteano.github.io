@@ -1,6 +1,6 @@
 ---
 company: "Theory of AI Lab"
-role: "Research Assistant"
+role: "Student Intern"
 dateStart: "02/24/2026"
 dateEnd: "06/01/2026"
 ---
