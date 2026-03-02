@@ -1,7 +1,7 @@
 ---
 title: "黄金投资2026.3.2午盘总结"
 description: "今日黄金分析"
-date: "2026-02-28"
+date: "2026-03-02"
 draft: false
 tags: ["investment", "gold"]
 column: "投资"
