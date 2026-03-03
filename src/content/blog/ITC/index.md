@@ -7,8 +7,6 @@ tags: ["notes", "computation", "theory"]
 column: "学习笔记"
 ---
 
-# 计算理论导论
-
 ## 可计算理论
 
 ### 有限自动机
