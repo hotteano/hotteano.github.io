@@ -1,6 +1,6 @@
 ---
-title: "计算机组成原理Notes"
-description: "本篇笔记主要记录了在学习计算机组成原理过程中所做的笔记，内容涵盖了计算机系统的基本组成、指令系统、数据通路设计等方面的知识。"
+title: "计算理论导论"
+description: "本笔记包含了我学习计算理论导论中做的笔记。REFBOOK：Introduction to Theory of Computation, Micheal Sipser (MIT)."
 date: "2026-02-28"
 draft: false
 tags: ["notes", "computation", "theory"]
