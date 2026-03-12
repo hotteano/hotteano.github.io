@@ -810,6 +810,24 @@ IntervalCovering(intervals):  // intervals: (left, right)
     return points
 ```
 
+#### 区间划分问题
+
+**问题**：将区间集合划分为最少数量的互不重叠的子集。
+
+**贪心策略**：按开始时间排序，使用最小堆维护当前子集的结束时间，每次将区间放入结束时间最早的子集中。
+
+**伪代码**：
+```
+IntervalPartitioning(intervals):
+    sort intervals by start time
+    minHeap = empty min-heap
+    for interval in intervals:
+        if minHeap is not empty and minHeap.peek() <= interval.start:
+            minHeap.pop()
+        minHeap.push(interval.end)
+    return minHeap.size()
+```
+
 ### 邻项交换法
 
 通过分析相邻元素的交换对答案的影响来确定排序策略。
@@ -873,6 +891,13 @@ JobSequencingWithDeadlines(jobs, n):  // jobs: (deadline, profit)
 
 **复杂度**：$O(n^2)$ 或使用并查集优化至 $O(n \alpha(n))$
 
+### 最优性论证：通过交换论证证明贪心策略的正确性
+
+证明最优性的方法有很多，比较常见的主要是交换论证。
+
+- 假设存在一个最优解 $O$，与贪心解 $G$ 不同，去掉 $O$ 中的一个元素，加入 $G$ 中的一个元素，证明新的解仍然是最优的。
+- 假设存在一个最优解 $O$，与贪心解 $G$ 顺序不同，证明交换逆序对不会降低解的质量。
+
 ## 网络流（Network Flow）
 
 网络流问题研究在有向图中从源点到汇点的最大流量问题。
@@ -884,6 +909,8 @@ JobSequencingWithDeadlines(jobs, n):  // jobs: (deadline, profit)
 - **残量网络**：$c_f(u, v) = c(u, v) - f(u, v) + f(v, u)$
 - **增广路**：残量网络中从 $s$ 到 $t$ 的路径
 - **最大流**：从源点 $s$ 到汇点 $t$ 的最大可行流
+
+
 
 ### 最大流
 
