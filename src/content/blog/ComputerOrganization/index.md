@@ -205,6 +205,12 @@ else: add x3, x1, x2   # x3 = x1 + x2
 
 上述的寄存器约定有助于程序员在编写汇编代码时更好地组织和管理寄存器的使用，避免冲突和混乱。
 
+> **Caller reg and Callee reg**: 
+>
+> Caller reg指的是，调用之后Caller中需要恢复的寄存器，Callee reg指的是，调用之后Callee中需要恢复的寄存器
+> 
+> 
+
 #### 调用过程
 
 在RISC-V中，调用过程通常涉及以下步骤：
@@ -248,11 +254,12 @@ factorial:
     ble  a0, t0, base_case
     
     # 递归情况
-    addi sp, sp, -8         # 分配栈空间 (16字节对齐)
+    addi sp, sp, -8         # 分配栈空间 (16字节对齐)，从高到低
     sw   ra, 4(sp)          # 保存返回地址
-    sw   s0, 0(sp)          # 保存 s0 (调用者保存)
+    sw   s0, 0(sp)          # 保存 s0 (调用者保存)，此处为上一层的参数a0
+    # 每一次递归深入，保存当时的参数a0和ra，共8字节
     
-    mv   s0, a0             # s0 = n
+    mv   s0, a0             # s0 = n，将参数保存到
     addi a0, a0, -1         # a0 = n-1
     jal  factorial          # 递归调用 factorial(n-1)
     
@@ -260,14 +267,14 @@ factorial:
     mul  a0, s0, a0         # a0 = n * (n-1)!
     
     # 恢复现场
-    lw   s0, 0(sp)
+    lw   s0, 0(sp) # 取出栈指针指向的数，存入s0，提供给上一层使用
     lw   ra, 4(sp)
     addi sp, sp, 8
-    ret
+    jr   ra
 
 base_case:
-    li   a0, 1              # return 1
-    ret
+    li   a0, 1              # return 1，将结果保存到a0
+    jr   ra
 ```
 
 我们来看一下指令
