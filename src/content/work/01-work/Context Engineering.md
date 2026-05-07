@@ -5,10 +5,6 @@ dateStart: "01/08/2026"
 dateEnd: "05/15/2026"
 ---
 
-I am currently working on a research paper in the field of Context Engineering, which is a subfield of Artificial Intelligence focused on understanding and modeling the context in which AI systems operate. 
+I am the co-first author (in the first place) of this paper, collaborating with Dongsheng Hou$^1$, Yuhan Rui$^1$, $Zhen Cao^2$, Yepang Liu$^\dagger$ from SUSTech. 
 
-We have nearly finished the experiment part of this paper, and our method perform better than the SOTA method in specific dataset.
-
-I am the co-first author of this paper, collaborating with Dongsheng Hou and Yuhan Rui from SUSTech. 
-
-We are aimed to publish our research findings in NeurIPS 2026.
+The paper have been submitted to the conference of NeurIPS 2026 (Contribution: Concept&Feasibility).
