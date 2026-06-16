@@ -1,7 +1,7 @@
 ---
 title: "博弈论Notes"
 description: "本文为我学习博弈论的笔记。包含各类博弈类型。"
-date: "2026-02-25"
+date: "2026-02-27"
 draft: false
 tags: ["notes", "algorithm", "game theory"]
 column: "学习笔记"
