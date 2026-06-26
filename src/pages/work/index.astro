@@ -8,6 +8,7 @@ import { WORK } from "@consts";
 
 import NeurIPSLogo from "@assets/NeurIPS-logo.svg";
 import AAAILogo from "@assets/AAAI-Logo-Title-FullColor.svg";
+import AlgorithmicaCover from "@assets/453.webp";
 
 const collection = (await getCollection("work"))
   .sort((a, b) => new Date(b.data.dateStart).valueOf() - new Date(a.data.dateStart).valueOf());
@@ -39,7 +40,8 @@ const venueTheme = (venue?: string) => {
       return {
         bar: "from-rose-500 via-pink-500 to-fuchsia-500",
         badge: "border-rose-500/30 bg-rose-500/10 !text-rose-700 dark:!text-rose-300",
-        logo: null,
+        logo: AlgorithmicaCover,
+        isCover: true,
         watermark: "ALGO",
       };
     default:
@@ -132,20 +134,14 @@ const statusTheme = (status?: string) => {
                     </h3>
                   </div>
 
-                  {/* Venue logo */}
+                  {/* Venue logo / cover */}
                   {theme.logo ? (
                     <div class="shrink-0 rounded-lg bg-white/90 dark:bg-white/95 p-2 shadow-sm">
                       <img
                         src={theme.logo.src}
                         alt={entry.data.venue}
-                        class="h-8 md:h-10 w-auto object-contain"
+                        class={`w-auto object-contain rounded ${theme.isCover ? "h-20 md:h-24" : "h-8 md:h-10"}`}
                       />
-                    </div>
-                  ) : entry.data.venue === "Algorithmica" ? (
-                    <div class="shrink-0 rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-2">
-                      <span class="text-base font-bold !text-rose-700 dark:!text-rose-300">
-                        Algorithmica
-                      </span>
                     </div>
                   ) : null}
                 </div>
