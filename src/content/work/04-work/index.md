@@ -5,6 +5,16 @@ dateStart: "03/01/2026"
 dateEnd: "Present"
 status: "Under Preparation"
 venue: "Algorithmica"
+contribution: "Runtime Analysis & Proofs"
+tags:
+  - Genetic Programming
+  - Randomised Search Heuristics
+  - Runtime Analysis
+  - Theoretical Computer Science
 ---
 
 Working on the theoretical analysis of randomised search heuristics and genetic programming, supervised by Prof. Pietro Simone Oliveto in collaboration with Mingxuan Yin. The current direction focuses on runtime analysis and generalisation bounds, with a submission target including *Algorithmica*.
+
+**My contribution** includes deriving runtime bounds, formalising proof arguments, and exploring how algorithmic parameters affect generalisation in evolutionary search.
+
+**Keywords / skills involved:** probabilistic methods, drift theorems, runtime analysis, evolutionary algorithms, mathematical proofs.

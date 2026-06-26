@@ -124,6 +124,10 @@ dateStart: "2024-01-01"
 dateEnd: "2026-02-01"  # 或 "Present" 表示在职
 status: "Under Review"  # 可选: Submitted / Under Review / Under Preparation / In Progress
 venue: "NeurIPS 2026"   # 可选: 目标会议/期刊
+contribution: "Concept & Feasibility"  # 可选: 贡献角色
+tags:
+  - Context Engineering
+  - Large Language Models
 ---
 
 工作内容描述...

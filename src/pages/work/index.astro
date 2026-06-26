@@ -6,6 +6,9 @@ import GlassCard from "@components/GlassCard.astro";
 import { dateRange } from "@lib/utils";
 import { WORK } from "@consts";
 
+import NeurIPSLogo from "@assets/NeurIPS-logo.svg";
+import AAAILogo from "@assets/AAAI-Logo-Title-FullColor.svg";
+
 const collection = (await getCollection("work"))
   .sort((a, b) => new Date(b.data.dateStart).valueOf() - new Date(a.data.dateStart).valueOf());
 
@@ -15,6 +18,54 @@ const work = await Promise.all(
     return { ...item, Content };
   })
 );
+
+const venueTheme = (venue?: string) => {
+  switch (venue) {
+    case "NeurIPS 2026":
+      return {
+        bar: "from-blue-500 via-indigo-500 to-purple-500",
+        badge: "border-blue-500/30 bg-blue-500/10 !text-blue-700 dark:!text-blue-300",
+        logo: NeurIPSLogo,
+        watermark: "NeurIPS",
+      };
+    case "AAAI 2027":
+      return {
+        bar: "from-amber-500 via-orange-500 to-rose-500",
+        badge: "border-amber-500/30 bg-amber-500/10 !text-amber-700 dark:!text-amber-300",
+        logo: AAAILogo,
+        watermark: "AAAI",
+      };
+    case "Algorithmica":
+      return {
+        bar: "from-rose-500 via-pink-500 to-fuchsia-500",
+        badge: "border-rose-500/30 bg-rose-500/10 !text-rose-700 dark:!text-rose-300",
+        logo: null,
+        watermark: "ALGO",
+      };
+    default:
+      return {
+        bar: "from-slate-400 to-slate-600",
+        badge: "border-white/20 bg-white/10",
+        logo: null,
+        watermark: "WORK",
+      };
+  }
+};
+
+const statusTheme = (status?: string) => {
+  switch (status) {
+    case "Submitted":
+      return "border-emerald-500/30 bg-emerald-500/10 !text-emerald-700 dark:!text-emerald-300";
+    case "Under Review":
+      return "border-blue-500/30 bg-blue-500/10 !text-blue-700 dark:!text-blue-300";
+    case "Under Preparation":
+      return "border-amber-500/30 bg-amber-500/10 !text-amber-700 dark:!text-amber-300";
+    case "In Progress":
+      return "border-purple-500/30 bg-purple-500/10 !text-purple-700 dark:!text-purple-300";
+    default:
+      return "border-white/20 bg-white/10";
+  }
+};
 ---
 
 <PageLayout title={WORK.TITLE} description={WORK.DESCRIPTION}>
@@ -29,40 +80,109 @@ const work = await Promise.all(
       </div>
 
       <div class="grid gap-6">
-        {work.map((entry, index) => (
-          <GlassCard glow class="animate hover-lift" padding="p-6 md:p-8">
-            <div class="flex flex-wrap gap-2 items-center text-sm mb-4">
-              <span class="badge-tech">
-                {dateRange(entry.data.dateStart, entry.data.dateEnd)}
-              </span>
-              {entry.data.venue && (
-                <span class="badge-tech">
-                  {entry.data.venue}
-                </span>
-              )}
-              {entry.data.status && (
-                <span class="badge-tech">
-                  {entry.data.status}
-                </span>
-              )}
-            </div>
-            <h3 class="text-xl font-bold text-black dark:text-white mb-1 text-gradient-subtle">
-              {entry.data.company}
-            </h3>
-            <p class="text-sm text-black/60 dark:text-white/70 mb-4">{entry.data.role}</p>
-            <article class="prose-sm">
-              <entry.Content />
-            </article>
-            <div class="mt-5 flex flex-wrap gap-2">
-              <button disabled class="btn-glass text-xs opacity-50 cursor-not-allowed">
-                Paper (coming soon)
-              </button>
-              <button disabled class="btn-glass text-xs opacity-50 cursor-not-allowed">
-                Code (coming soon)
-              </button>
-            </div>
-          </GlassCard>
-        ))}
+        {work.map((entry, index) => {
+          const theme = venueTheme(entry.data.venue);
+          return (
+            <GlassCard
+              glow
+              class="animate hover-lift relative overflow-hidden"
+              padding="p-0"
+            >
+              {/* Top colored accent bar */}
+              <div class={`h-1.5 w-full bg-gradient-to-r ${theme.bar}`} />
+
+              {/* Large watermark */}
+              <div
+                class="absolute -right-4 -top-2 text-7xl md:text-8xl font-black tracking-tighter text-black/[0.04] dark:text-white/[0.04] select-none pointer-events-none z-0"
+                aria-hidden="true"
+              >
+                {theme.watermark}
+              </div>
+
+              <div class="relative z-10 p-6 md:p-8">
+                {/* Header: meta + logo */}
+                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex flex-wrap gap-2 items-center text-sm mb-3">
+                      <span class="badge-tech">
+                        {dateRange(entry.data.dateStart, entry.data.dateEnd)}
+                      </span>
+                      {entry.data.venue && (
+                        <span class={`badge-tech ${theme.badge}`}>
+                          {entry.data.venue}
+                        </span>
+                      )}
+                      {entry.data.status && (
+                        <span class={`badge-tech ${statusTheme(entry.data.status)}`}>
+                          {entry.data.status}
+                        </span>
+                      )}
+                      <span class="badge-tech">
+                        {entry.data.role}
+                      </span>
+                      {entry.data.contribution && (
+                        <span class="badge-tech border-purple-500/30 bg-purple-500/10 !text-purple-700 dark:!text-purple-300">
+                          {entry.data.contribution}
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 class="text-xl md:text-2xl font-bold text-black dark:text-white text-gradient-subtle">
+                      {entry.data.company}
+                    </h3>
+                  </div>
+
+                  {/* Venue logo */}
+                  {theme.logo ? (
+                    <div class="shrink-0 rounded-lg bg-white/90 dark:bg-white/95 p-2 shadow-sm">
+                      <img
+                        src={theme.logo.src}
+                        alt={entry.data.venue}
+                        class="h-8 md:h-10 w-auto object-contain"
+                      />
+                    </div>
+                  ) : entry.data.venue === "Algorithmica" ? (
+                    <div class="shrink-0 rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-2">
+                      <span class="text-base font-bold !text-rose-700 dark:!text-rose-300">
+                        Algorithmica
+                      </span>
+                    </div>
+                  ) : null}
+                </div>
+
+                {/* Tags */}
+                {entry.data.tags && entry.data.tags.length > 0 && (
+                  <div class="flex flex-wrap gap-2 mb-5">
+                    {entry.data.tags.map((tag) => (
+                      <span class="badge-tech text-xs">{tag}</span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Content */}
+                <article class="prose-sm">
+                  <entry.Content />
+                </article>
+
+                {/* Action buttons */}
+                <div class="mt-6 flex flex-wrap gap-2">
+                  <button
+                    disabled
+                    class="btn-glass text-xs opacity-50 cursor-not-allowed"
+                  >
+                    Paper (coming soon)
+                  </button>
+                  <button
+                    disabled
+                    class="btn-glass text-xs opacity-50 cursor-not-allowed"
+                  >
+                    Code (coming soon)
+                  </button>
+                </div>
+              </div>
+            </GlassCard>
+          );
+        })}
       </div>
     </div>
   </Container>
