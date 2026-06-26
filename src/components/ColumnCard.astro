@@ -1,0 +1,75 @@
+---
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "@components/FormattedDate.astro";
+
+interface Props {
+  column: string;
+  description: string;
+  posts: CollectionEntry<"blog">[];
+  icon: string;
+  color: string;
+}
+
+const { column, description, posts, icon, color } = Astro.props;
+const latestPosts = posts.slice(0, 3);
+---
+
+<a
+  href={`/blog/column/${encodeURIComponent(column)}`}
+  class="group relative block p-6 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-black/5 dark:from-white/5 to-transparent hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300 overflow-hidden"
+>
+  <div
+    class={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${color} opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:opacity-20 transition-opacity duration-300`}
+  >
+  </div>
+
+  <div class="relative z-10">
+    <div class="flex items-start justify-between mb-4">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">{icon}</span>
+        <div>
+          <h3 class="text-xl font-bold text-black dark:text-white group-hover:text-black/80 dark:group-hover:text-white/80 transition-colors">
+            {column}
+          </h3>
+          <p class="text-sm text-black/50 dark:text-white/50">
+            {posts.length} 篇文章
+          </p>
+        </div>
+      </div>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="size-5 text-black/30 dark:text-white/30 group-hover:translate-x-1 transition-transform duration-300"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path d="M5 12h14M12 5l7 7-7 7"></path>
+      </svg>
+    </div>
+
+    <p class="text-sm text-black/60 dark:text-white/60 mb-5 leading-relaxed">
+      {description}
+    </p>
+
+    {latestPosts.length > 0 && (
+      <div class="space-y-3">
+        <div class="text-xs font-medium text-black/40 dark:text-white/40 uppercase tracking-wider">
+          Latest
+        </div>
+        <ul class="space-y-2">
+          {latestPosts.map((post) => (
+            <li class="flex items-center gap-3 text-sm">
+              <span class="text-black/40 dark:text-white/40 text-xs shrink-0">
+                <FormattedDate date={post.data.date} />
+              </span>
+              <span class="text-black/70 dark:text-white/70 truncate group-hover:text-black dark:group-hover:text-white transition-colors">
+                {post.data.title}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+</a>

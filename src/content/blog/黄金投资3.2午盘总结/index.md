@@ -1,10 +1,11 @@
 ---
 title: "黄金投资2026.3.2午盘总结"
-description: "今日黄金分析"
+description: "2026.3.2 午盘总结：伊美冲突刺激避险情绪，伦敦金逼近 5400 美元/盎司。"
 date: "2026-03-02"
 draft: false
 tags: ["investment", "gold"]
 column: "投资"
+series: "黄金投资日报"
 ---
 
 ## 目前持仓

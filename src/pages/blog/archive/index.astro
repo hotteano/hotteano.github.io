@@ -1,0 +1,33 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "@layouts/PageLayout.astro";
+import Container from "@components/Container.astro";
+import ArchiveTimeline from "@components/ArchiveTimeline.astro";
+import { BLOG } from "@consts";
+
+const posts = (await getCollection("blog"))
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<PageLayout title={`Archive | ${BLOG.TITLE}`} description="按时间线浏览所有博客文章">
+  <Container>
+    <div class="space-y-10">
+      <div class="animate space-y-4">
+        <div class="flex items-center gap-2 text-sm text-black/50 dark:text-white/50">
+          <a href="/blog" class="hover:text-black dark:hover:text-white transition-colors">Blog</a>
+          <span>/</span>
+          <span>Archive</span>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold text-black dark:text-white">
+          归档
+        </h1>
+        <p class="text-black/60 dark:text-white/60 max-w-2xl">
+          按年份与月份整理的全部文章时间线。
+        </p>
+      </div>
+
+      <ArchiveTimeline posts={posts} />
+    </div>
+  </Container>
+</PageLayout>

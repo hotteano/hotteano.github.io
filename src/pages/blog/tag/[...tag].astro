@@ -4,6 +4,7 @@ import PageLayout from "@layouts/PageLayout.astro";
 import Container from "@components/Container.astro";
 import ArrowCard from "@components/ArrowCard.astro";
 import { BLOG } from "@consts";
+import { slugify, tagHref } from "@lib/utils";
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -11,7 +12,7 @@ export async function getStaticPaths() {
   
   posts.forEach(post => {
     if (post.data.tags) {
-      post.data.tags.forEach(tag => allTags.add(tag.toLowerCase()));
+      post.data.tags.forEach(tag => allTags.add(slugify(tag)));
     }
   });
   
@@ -28,8 +29,10 @@ interface Props {
 const { tag } = Astro.props;
 
 const posts = (await getCollection("blog"))
-  .filter(post => !post.data.draft && post.data.tags?.some(t => t.toLowerCase() === tag))
+  .filter(post => !post.data.draft && post.data.tags?.some(t => slugify(t) === tag))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const displayName = posts[0]?.data.tags?.find(t => slugify(t) === tag) || tag;
 
 type Acc = {
   [year: string]: CollectionEntry<"blog">[];
@@ -47,7 +50,7 @@ const postsByYear = posts.reduce((acc: Acc, post) => {
 const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a));
 ---
 
-<PageLayout title={`Tag: ${tag} | ${BLOG.TITLE}`} description={`Posts tagged with ${tag}`}>
+<PageLayout title={`Tag: ${displayName} | ${BLOG.TITLE}`} description={`Posts tagged with ${displayName}`}>
   <Container>
     <div class="space-y-10">
       <div class="animate space-y-2">
@@ -56,7 +59,7 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
         </a>
         <div class="flex items-center gap-3">
           <span class="px-3 py-1 rounded-full text-sm bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-blue-700 dark:text-blue-300 border border-blue-500/30">
-            #{tag}
+            #{displayName}
           </span>
           <span class="text-black/50 dark:text-white/50 text-sm">
             {posts.length} post{posts.length !== 1 ? 's' : ''}

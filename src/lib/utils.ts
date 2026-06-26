@@ -21,6 +21,19 @@ export function readingTime(html: string) {
   return `${readingTimeMinutes} min read`;
 }
 
+export function slugify(str: string): string {
+  return str
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export function tagHref(tag: string): string {
+  return `/blog/tag/${slugify(tag)}`;
+}
+
 export function dateRange(startDate: Date, endDate?: Date | string): string {
   const startMonth = startDate.toLocaleString("default", { month: "short" });
   const startYear = startDate.getFullYear().toString();

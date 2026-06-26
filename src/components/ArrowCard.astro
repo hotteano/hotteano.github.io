@@ -1,11 +1,14 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import FormattedDate from "@components/FormattedDate.astro";
 
 type Props = {
   entry: CollectionEntry<"blog"> | CollectionEntry<"projects">;
+  showMeta?: boolean;
 }
 
-const { entry } = Astro.props;
+const { entry, showMeta = false } = Astro.props;
+const isBlog = entry.collection === "blog";
 ---
 
 <a href={`/${entry.collection}/${entry.slug}`} class="relative group flex w-full py-3 px-4 pr-10 rounded-lg border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out">
@@ -13,6 +16,16 @@ const { entry } = Astro.props;
     <div class="font-semibold truncate">
       {entry.data.title}
     </div>
+    {showMeta && isBlog && "date" in entry.data && (
+      <div class="flex items-center gap-2 text-xs text-black/40 dark:text-white/40 mt-1">
+        <FormattedDate date={entry.data.date} />
+        {"column" in entry.data && entry.data.column && (
+          <span class="px-1.5 py-0.5 rounded-full bg-black/5 dark:bg-white/10">
+            {entry.data.column}
+          </span>
+        )}
+      </div>
+    )}
     <div class="text-sm text-black/60 dark:text-white/60 line-clamp-2 break-words">
       {entry.data.description}
     </div>

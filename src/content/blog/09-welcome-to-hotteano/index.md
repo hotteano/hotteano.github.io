@@ -4,6 +4,7 @@ description: "The first post of my blog, introducing this modern blog system bui
 date: "2026-02-17"
 draft: false
 tags: ["blog", "astro", "web"]
+column: "说明"
 ---
 
 ## 🎉 Welcome to My Digital Garden

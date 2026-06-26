@@ -2,1101 +2,724 @@
 import Container from "@components/Container.astro";
 import PageLayout from "@layouts/PageLayout.astro";
 import Link from "@components/Link.astro";
+import GlassCard from "@components/GlassCard.astro";
 import { SITE, ABOUT, SOCIALS } from "@consts";
 import { Image } from "astro:assets";
 import avatarImage from "../assets/soci.png";
+
+const sections = [
+  { id: "about-me", label: "About Me" },
+  { id: "education", label: "Education" },
+  { id: "research", label: "Research" },
+  { id: "skills", label: "Skills" },
+  { id: "publications", label: "Publications" },
+  { id: "awards", label: "Awards" },
+  { id: "interests", label: "Interests" },
+  { id: "contact", label: "Contact" },
+];
+
+const identityBadges = [
+  { label: "Enthusiastic Theorist", color: "from-rose-500/10 to-pink-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20" },
+  { label: "Algorithm Explorer", color: "from-amber-500/10 to-orange-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" },
+  { label: "AI Developer", color: "from-emerald-500/10 to-green-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" },
+  { label: "Lifelong Learner", color: "from-sky-500/10 to-blue-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20" },
+];
+
+const education = [
+  {
+    period: "2021 - 2024",
+    role: "Middle School Student",
+    school: "Shenzhen Middle School",
+    description: "Top Middle School in China, where I developed my interest in computer science and mathematics.",
+    dotClass: "bg-indigo-500 ring-indigo-500",
+    badgeClass: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400",
+  },
+  {
+    period: "2024 - 2028",
+    role: "Undergraduate",
+    school: "South University of Science and Technology",
+    description: "Department of Computer Science and Engineering, Turing Class.",
+    dotClass: "bg-sky-500 ring-sky-500",
+    badgeClass: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
+  },
+];
+
+const researchItems = [
+  {
+    title: "Research Interests",
+    period: "Present",
+    role: "Focus Areas",
+    description: "Theoretical Computer Science, Reinforcement Learning, Learning Theory, Agentic AI / Context Engineering.",
+    tags: ["Theory", "Algorithms", "Machine Learning", "Context Engineering"],
+  },
+  {
+    title: "SUSTech Theory of AI Lab",
+    period: "2026",
+    role: "Undergraduate Researcher",
+    description: "Randomised Search Heuristics under Prof. Pietro Simone Oliveto, collaborating with Mingxuan Yin. Target: Algorithmica, TCS, ACM TELO or TEVC.",
+    tags: ["Randomised Search Heuristics", "Genetic Programming"],
+  },
+  {
+    title: "Research Internship",
+    period: "2027",
+    role: "Incoming Research Intern",
+    description: "Target: Top Companies, Top Research Institutes, and Top Universities. Coming Soon.",
+    tags: ["To be announced"],
+  },
+];
+
+const skills = [
+  { name: "C++", emoji: "📜", color: "from-yellow-400 to-orange-500" },
+  { name: "Java", emoji: "🔷", color: "from-blue-400 to-blue-600" },
+  { name: "Python", emoji: "🐍", color: "from-cyan-400 to-blue-500" },
+  { name: "C", emoji: "🟢", color: "from-green-400 to-green-600" },
+  { name: "PostgreSQL", emoji: "🐘", color: "from-blue-400 to-yellow-400" },
+  { name: "LaTeX", emoji: "🚀", color: "from-orange-400 to-red-500" },
+  { name: "SystemVerilog", emoji: "🎨", color: "from-cyan-400 to-teal-500" },
+  { name: "Git", emoji: "📦", color: "from-red-400 to-orange-500" },
+];
+
+const knowledgeGroups = [
+  {
+    category: "Mathematics",
+    items: ["Linear Algebra", "Stochastic Processes", "Probability & Statistics", "Combinatorics", "Calculus", "Optimization", "Mathematical Logic"],
+  },
+  {
+    category: "Computer Science",
+    items: ["Data Structures and Algorithms", "Computer Networks", "Database Systems", "Theory of Computation"],
+  },
+  {
+    category: "AI & ML",
+    items: ["Machine Learning", "Deep Learning", "Reinforcement Learning"],
+  },
+];
+
+const publications = [
+  {
+    year: "2026",
+    status: "Submitted",
+    statusColor: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
+    authors: "Yanqiao Chen, Dongsheng Hou, Yuhan Rui, Zhen Cao, Yepang Liu",
+    venue: "NeurIPS 2026",
+  },
+  {
+    year: "2026",
+    status: "Under Review",
+    statusColor: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
+    authors: "Yuhan Rui, Shihan Qiao, et al.",
+    venue: "NeurIPS 2026",
+  },
+  {
+    year: "2026",
+    status: "Under Preparation",
+    statusColor: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+    authors: "Dongsheng Hou, Yanqiao Chen, Yuhan Rui, et al.",
+    venue: "ICLR 2027",
+  },
+  {
+    year: "2026",
+    status: "Under Preparation",
+    statusColor: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+    authors: "Yanqiao Chen, Mingxuan Yin, et al.",
+    venue: "Algorithmica",
+  },
+];
+
+const appointments = [
+  {
+    period: "2025 - Present",
+    role: "Vice President",
+    org: "SUSTech Theoretical Computer Science Society",
+    description: "Organizing lectures, workshops, and the translation of Boaz Barak's introduction to TCS.",
+  },
+];
+
+const awards = [
+  {
+    icon: "🏆",
+    year: "2025",
+    title: "Star of Academic Excellence Scholarship",
+    desc: "Outstanding academic performance in the 2024 academic year.",
+  },
+  {
+    icon: "🏆",
+    year: "2025",
+    title: "Annual Outstanding Student Award",
+    desc: "Exceptional academic achievements and contributions to the university community.",
+  },
+  {
+    icon: "🥉",
+    year: "2024",
+    title: "Third Place in SUSTech Orientation Chess Tournament",
+    desc: "Competed against 64 participants.",
+  },
+];
+
+const courseGrades = [
+  { name: "Introduction to Computer Programming", grade: "A (95/100)" },
+  { name: "Data Structures and Algorithms Analysis (Honor)", grade: "A (95/100)" },
+  { name: "Principles of Database (Honor)", grade: "A- (92/100)" },
+  { name: "Digital Logic", grade: "A- (90/100)" },
+  { name: "Discrete Mathematics (Honor)", grade: "B (85/100)" },
+  { name: "Introduction to Mathematical Logic", grade: "B+ (89/100)" },
+  { name: "Calculus", grade: "A- (90/100)" },
+  { name: "College Physics", grade: "A- (90/100)" },
+];
+
+const interests = [
+  { icon: "💻", title: "Coding", desc: "Coding is not my profession, but it's definitely my passion." },
+  { icon: "🧮", title: "Math", desc: "If you ask me which language is the most elegant, I will say it's math." },
+  { icon: "🎾", title: "Tennis", desc: "Amateur tennis player." },
+  { icon: "🎮", title: "Gaming", desc: "FPS, strategy, RPG. Recently Wuthering Waves. Chinese Chess candidate master (2017)." },
+  { icon: "🎵", title: "Music", desc: "City-Pop and Symphony. ABRSM Grade 8 Piano (Amateur), now playing electric guitar." },
+  { icon: "🎬", title: "ACGN", desc: "Used to be a Galgame fan. Now RPGs and Anime." },
+];
+
+const funFacts = [
+  { label: "Location", value: "Shenzhen, Guangdong, China" },
+  { label: "Coffee consumed", value: "1~2 cups per day" },
+  { label: "Favorite algorithm", value: "Euclidean Algorithm" },
+  { label: "Favorite Open Problem", value: "Karchmer-Raz-Wigderson Conjecture" },
+  { label: "Height and Weight", value: "178cm / 70kg" },
+];
 ---
 
 <PageLayout title={ABOUT.TITLE} description={ABOUT.DESCRIPTION}>
   <Container>
-    <div class="space-y-16">
-      <!-- Hero Section -->
-      <section class="animate space-y-8">
-        <div class="flex flex-col md:flex-row gap-8 items-start">
-          <!-- Avatar -->
-          <div class="animate animate-scale-in shrink-0">
-            <div
-              class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-1 hover-lift overflow-hidden"
-            >
-              <Image
-                src={avatarImage}
-                alt={SITE.NAME}
-                class="w-full h-full rounded-full object-cover"
-                width={160}
-                height={160}
-              />
-            </div>
-          </div>
-
-          <div class="flex-1 space-y-4">
-            <h1
-              class="animate animate-delay-100 text-3xl md:text-4xl font-bold text-black dark:text-white"
-            >
-              Hi, I'm {SITE.NAME}
-            </h1>
-
-            <p
-              class="animate animate-delay-200 text-lg text-black/60 dark:text-white/60 leading-relaxed"
-            >
-              Member of Turing Class of SUSTech Department of CSE
-            </p>
-
-            <p
-              class="animate animate-delay-200 text-lg text-black/60 dark:text-white/60 leading-relaxed"
-            >
-              Academic Advisor: Prof. Pietro Simone Oliveto, SUSTech Department
-              of CSE. Click here: <Link href="https://peteroliveto.github.io/"
-                >https://peteroliveto.github.io/</Link
-              >
-            </p>
-
-            <p
-              class="animate animate-delay-200 text-lg text-black/60 dark:text-white/60 leading-relaxed"
-            >
-              College Advisor: Prof. Yanqing Hu, SUSTech Department of
-              Statistics and Data Science. Click here: <Link
-                href="http://www.huyanqing.com/">http://www.huyanqing.com/</Link
-              >
-            </p>
-
-            <p
-              class="animate animate-delay-200 text-lg text-black/60 dark:text-white/60 leading-relaxed"
-            >
-              An Enthusiaistic Theorist, An Algorithm Explorer, An AI Developer,
-              and A Lifelong Learner.
-            </p>
-
-            <!-- Volunteer Stats -->
-            <div class="animate animate-delay-250 flex flex-wrap gap-2 pt-1">
-              <span
-                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/20"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="size-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                  ></path>
-                </svg>
-                114+ Voluntary Service Hours
-              </span>
-              <span
-                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="size-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <polygon
-                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-                  ></polygon>
-                </svg>
-                1 star Volunteer of Shenzhen Volunteer Union
-              </span>
-            </div>
-
-            <div class="animate animate-delay-300 flex flex-wrap gap-3 pt-2">
-              <a
-                href={`mailto:${SITE.EMAIL}`}
-                class="magnetic-btn inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-medium hover:scale-105 transition-transform duration-200"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="size-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-                  ></path>
-                  <polyline points="22,6 12,13 2,6"></polyline>
-                </svg>
-                Get in Touch
-              </a>
-              <a
-                href="/work"
-                class="magnetic-btn inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-black/20 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200"
-              >
-                View My Work
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Background Story -->
-      <section class="animate space-y-6">
-        <h2
-          class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
-        >
-          <span class="animate-float inline-block">📖</span>
-          About Me
-        </h2>
-
-        <div class="space-y-4 text-black/60 dark:text-white/60 leading-relaxed">
-          <p class="animate">
-            I was born in Shenzhen, Guangdong Province, China, the Silicon
-            Valley of China. Graduated from Shenzhen Middle School, I was
-            admitted to the Southern University of Science and Technology
-            (SUSTech, located in Shenzhen), where I pursue my bachelor degree of
-            engineering in computer science. Now I am in my Sophomore year, and
-            I have a strong interest in AI development and algorithm research. I
-            am currently working on several projects that explore the
-            intersection of reinforcement learning and natural language
-            processing, aiming to create more intelligent and adaptive systems.
-          </p>
-
-          <p class="animate">
-            In this blog, you may getting to know about me, catch up with my
-            recent motion and also feel free to reach out to me if you have any
-            interesting ideas or just want to say hi!
-          </p>
-        </div>
-      </section>
-
-      <!-- Education -->
-      <section class="animate space-y-6">
-        <h2
-          class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
-        >
-          <span
-            class="animate-float inline-block"
-            style="animation-delay: 0.4s;">🎓</span
-          >
-          Education
-        </h2>
-
-        <div class="space-y-4">
-          <div
-            class="animate p-5 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300"
-          >
-            <div
-              class="flex flex-wrap gap-2 items-center text-sm text-black/40 dark:text-white/40 mb-2"
-            >
-              <span>2021 - 2024</span>
-              <span
-                class="px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
-                >Middle School Student</span
-              >
-            </div>
-            <h3 class="font-semibold text-black dark:text-white text-lg mb-1">
-              Shenzhen Middle School
-            </h3>
-            <p class="text-black/60 dark:text-white/60">
-              Top Middle School in China, well known for its reform in high
-              school education, where students are allow to bring phones to
-              class, wear any clothes they like, and also choose courses freely.
-              I had a wonderful time there, where I developed my interest in
-              computer science and mathematics, and also made many good friends.
-            </p>
-          </div>
-        </div>
-        <div class="space-y-4">
-          <div
-            class="animate p-5 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300"
-          >
-            <div
-              class="flex flex-wrap gap-2 items-center text-sm text-black/40 dark:text-white/40 mb-2"
-            >
-              <span>2024 - 2028</span>
-              <span
-                class="px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400"
-                >Undergraduate</span
-              >
-            </div>
-            <h3 class="font-semibold text-black dark:text-white text-lg mb-1">
-              South University of Science and Technology
-            </h3>
-            <p class="text-black/60 dark:text-white/60">
-              Department of Computer Science and Engineering
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Research Interest -->
-      <section class="animate space-y-6">
-        <h2
-          class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
-        >
-          <span
-            class="animate-float inline-block"
-            style="animation-delay: 0.45s;">🔬</span
-          >
-          Research Interest
-        </h2>
-
-        <div class="space-y-4">
-          <div
-            class="animate p-5 rounded-xl border border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-transparent hover:border-purple-500/30 hover-lift transition-all duration-300"
-          >
-            <div class="flex flex-wrap gap-2 mb-3">
-              <span
-                class="px-3 py-1 rounded-full text-sm bg-rose-500/10 text-rose-600 dark:text-rose-400"
-                >Theory</span
-              >
-              <span
-                class="px-3 py-1 rounded-full text-sm bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                >Algorithms</span
-              >
-              <span
-                class="px-3 py-1 rounded-full text-sm bg-green-500/10 text-green-600 dark:text-green-400"
-                >Machine Learning</span
-              >
-              <span
-                class="px-3 py-1 rounded-full text-sm bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                >Context Engineering</span
-              >
-            </div>
-            <p class="text-black/60 dark:text-white/60 leading-relaxed">
-              My research interests lie at the intersection of theoretical
-              computer science and machine learning. I am particularly
-              interested in:
-            </p>
-            <ul class="mt-3 space-y-2 text-black/60 dark:text-white/60">
-              <li class="flex items-start gap-2">
-                <span class="text-purple-500 mt-1">•</span>
-                <span
-                  ><strong>Theoretical Computer Science:</strong> Understanding the
-                  computational power and limitations of Boolean circuits, particularly
-                  in the context of pseudorandomness, circuit complexity and communication
-                  complexity.</span
-                >
-              </li>
-              <li class="flex items-start gap-2">
-                <span class="text-purple-500 mt-1">•</span>
-                <span
-                  ><strong>Reinforcement Learning:</strong> Sample efficiency, exploration-exploitation
-                  trade-offs, and theoretical foundations of RL algorithms.</span
-                >
-              </li>
-              <li class="flex items-start gap-2">
-                <span class="text-purple-500 mt-1">•</span>
-                <span
-                  ><strong>Learning Theory:</strong> Generalization bounds, optimization
-                  landscapes, and the theoretical underpinnings of deep learning.</span
-                >
-              </li>
-              <li class="flex items-start gap-2">
-                <span class="text-purple-500 mt-1">•</span>
-                <span
-                  ><strong>Agentic AI:</strong> Context Engineering, Agent Design
-                  and Knowledge Representation.</span
-                >
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- Lab Experience -->
-        <section class="animate space-y-6">
-          <h2
-            class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
-          >
-            <span
-              class="animate-float inline-block"
-              style="animation-delay: 0.47s;">🧪</span
-            >
-            Lab Experience
-          </h2>
-
-          <div class="space-y-4">
-            <div
-              class="animate p-5 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300"
-            >
-              <div
-                class="flex flex-wrap gap-2 items-center text-sm text-black/40 dark:text-white/40 mb-2"
-              >
-                <span>2026</span>
-                <span
-                  class="px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-600 dark:text-cyan-400"
-                  >Undergraduate Researcher</span
-                >
+    <div class="grid grid-cols-1 xl:grid-cols-[1fr_280px] gap-12 relative">
+      <!-- Main Content -->
+      <div class="space-y-20">
+        <!-- Hero -->
+        <section id="about-me" class="animate space-y-6">
+          <div class="flex flex-col md:flex-row gap-8 items-start">
+            <div class="animate animate-scale-in shrink-0">
+              <div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-1 hover-lift overflow-hidden">
+                <Image
+                  src={avatarImage}
+                  alt={SITE.NAME}
+                  class="w-full h-full rounded-full object-cover"
+                  width={160}
+                  height={160}
+                />
               </div>
-              <h3 class="font-semibold text-black dark:text-white text-lg mb-1">
-                SUSTech Theory of AI Lab
-              </h3>
-              <p class="text-sm text-black/50 dark:text-white/50 mb-2">
-                Directed by Prof. Pietro Simone Oliveto
+            </div>
+
+            <div class="flex-1 space-y-4">
+              <h1 class="animate animate-delay-100 text-3xl md:text-4xl font-bold text-black dark:text-white">
+                Hi, I'm {SITE.NAME}
+              </h1>
+
+              <p class="animate animate-delay-200 text-lg text-black/60 dark:text-white/60 leading-relaxed">
+                Member of Turing Class, SUSTech Department of CSE. Undergraduate researcher interested in AI and algorithms.
               </p>
-              <p class="text-black/60 dark:text-white/60">
-                Currently I am doing research in the field of Randomised Search
-                Heuristcs under the supervision of Prof. Oliveto, collaborated
-                with Mingxuan Yin. We are making progress in geometric semantic
-                genetic programming and we are writing paper to submit to
-                Algorithmica, TCS, ACM TELO or TEVC.
-              </p>
+
+              <div class="animate animate-delay-250 flex flex-wrap gap-2">
+                {identityBadges.map(badge => (
+                  <span class={`px-3 py-1.5 rounded-full text-sm border bg-gradient-to-r ${badge.color}`}>
+                    {badge.label}
+                  </span>
+                ))}
+              </div>
+
+              <div class="animate animate-delay-300 flex flex-wrap gap-3 pt-2">
+                <a
+                  href={`mailto:${SITE.EMAIL}`}
+                  class="magnetic-btn inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-medium hover:scale-105 transition-transform duration-200"
+                >
+                  Get in Touch
+                </a>
+                <a
+                  href="/work"
+                  class="magnetic-btn inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-black/20 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200"
+                >
+                  View My Work
+                </a>
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- Internship -->
+        <!-- About Me -->
         <section class="animate space-y-6">
-          <h2
-            class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
-          >
-            <span
-              class="animate-float inline-block"
-              style="animation-delay: 0.48s;">💼</span
-            >
-            Internship
+          <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+            <span class="animate-float inline-block">📖</span>
+            About Me
+          </h2>
+          <div class="space-y-4 text-black/60 dark:text-white/60 leading-relaxed">
+            <p>
+              I was born in Shenzhen, Guangdong Province, China. Graduated from Shenzhen Middle School, I was admitted to the Southern University of Science and Technology (SUSTech), where I pursue my bachelor degree in computer science. Now I am in my Sophomore year, and I have a strong interest in AI development and algorithm research.
+            </p>
+            <p>
+              In this blog, you may get to know about me, catch up with my recent motion, and feel free to reach out if you have any interesting ideas or just want to say hi!
+            </p>
+          </div>
+        </section>
+
+        <!-- Education -->
+        <section id="education" class="animate space-y-6">
+          <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+            <span class="animate-float inline-block" style="animation-delay: 0.4s;">🎓</span>
+            Education
+          </h2>
+
+          <div class="relative pl-6 md:pl-8 space-y-8">
+            <div class="absolute left-0 top-2 bottom-2 w-0.5 bg-gradient-to-b from-indigo-500/30 via-sky-500/30 to-transparent"></div>
+            {education.map((edu, index) => (
+              <div class="relative animate" style={`animation-delay: ${index * 100}ms`}>
+                <div class={`absolute -left-6 md:-left-8 top-1.5 w-3 h-3 rounded-full ${edu.dotClass} ring-4 ring-white dark:ring-stone-900`}></div>
+                <div class="p-5 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300">
+                  <div class="flex flex-wrap gap-2 items-center text-sm text-black/40 dark:text-white/40 mb-2">
+                    <span>{edu.period}</span>
+                    <span class={`px-2 py-0.5 rounded-full ${edu.badgeClass}`}>
+                      {edu.role}
+                    </span>
+                  </div>
+                  <h3 class="font-semibold text-black dark:text-white text-lg mb-1">
+                    {edu.school}
+                  </h3>
+                  <p class="text-black/60 dark:text-white/60">
+                    {edu.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Research & Experience -->
+        <section id="research" class="animate space-y-6">
+          <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+            <span class="animate-float inline-block" style="animation-delay: 0.47s;">🔬</span>
+            Research & Experience
           </h2>
 
           <div class="space-y-4">
-            <div
-              class="animate p-5 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300"
-            >
+            {researchItems.map((item, index) => (
               <div
-                class="flex flex-wrap gap-2 items-center text-sm text-black/40 dark:text-white/40 mb-2"
+                class={`animate p-5 rounded-xl border hover-lift transition-all duration-300 ${
+                  index === 0
+                    ? "border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-transparent hover:border-purple-500/30"
+                    : "border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20"
+                }`}
+                style={`animation-delay: ${index * 100}ms`}
               >
-                <span>2027</span>
-                <span
-                  class="px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400"
-                  >Research Intern</span
-                >
+                <div class="flex flex-wrap gap-2 items-center text-sm text-black/40 dark:text-white/40 mb-2">
+                  <span>{item.period}</span>
+                  <span class="px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-black/60 dark:text-white/60">
+                    {item.role}
+                  </span>
+                </div>
+                <h3 class="font-semibold text-black dark:text-white text-lg mb-2">
+                  {item.title}
+                </h3>
+                <p class="text-black/60 dark:text-white/60 leading-relaxed mb-3">
+                  {item.description}
+                </p>
+                <div class="flex flex-wrap gap-2">
+                  {item.tags.map(tag => (
+                    <span class="px-2 py-0.5 rounded-full text-xs bg-black/5 dark:bg-white/10 text-black/60 dark:text-white/60 border border-black/10 dark:border-white/10">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <h3 class="font-semibold text-black dark:text-white text-lg mb-1">
-                Target: Top Companies, Top Research Institutes, and Top
-                Universities.
-              </h3>
-              <p class="text-sm text-black/50 dark:text-white/50 mb-2">
-                Presently No.
-              </p>
-              <p class="text-black/60 dark:text-white/60">Coming Soon.</p>
-            </div>
+            ))}
           </div>
         </section>
 
         <!-- Skills & Knowledge -->
-        <section class="animate space-y-6">
+        <section id="skills" class="animate space-y-6">
           <div class="grid md:grid-cols-2 gap-8">
             <!-- Skills -->
             <div class="space-y-4">
-              <h2
-                class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
-              >
-                <span
-                  class="animate-float inline-block"
-                  style="animation-delay: 0.5s;">🛠️</span
-                >
+              <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+                <span class="animate-float inline-block" style="animation-delay: 0.5s;">🛠️</span>
                 Skills
               </h2>
               <div class="grid grid-cols-2 gap-3">
-                {
-                  [
-                    {
-                      name: "C++",
-                      emoji: "📜",
-                      color: "from-yellow-400 to-orange-500",
-                    },
-                    {
-                      name: "Java",
-                      emoji: "🔷",
-                      color: "from-blue-400 to-blue-600",
-                    },
-                    {
-                      name: "Python",
-                      emoji: "⚛️",
-                      color: "from-cyan-400 to-blue-500",
-                    },
-                    {
-                      name: "C",
-                      emoji: "🟢",
-                      color: "from-green-400 to-green-600",
-                    },
-                    {
-                      name: "PostgreSQL",
-                      emoji: "🐍",
-                      color: "from-blue-400 to-yellow-400",
-                    },
-                    {
-                      name: "LaTeX",
-                      emoji: "🚀",
-                      color: "from-orange-400 to-red-500",
-                    },
-                    {
-                      name: "SystemVerilog",
-                      emoji: "🎨",
-                      color: "from-cyan-400 to-teal-500",
-                    },
-                    {
-                      name: "Git",
-                      emoji: "📦",
-                      color: "from-red-400 to-orange-500",
-                    },
-                  ].map((skill, index) => (
-                    <div
-                      class={`animate p-3 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300`}
-                      style={`animation-delay: ${index * 50}ms`}
-                    >
-                      <div
-                        class={`w-8 h-8 rounded-lg bg-gradient-to-br ${skill.color} flex items-center justify-center text-base mb-2`}
-                      >
-                        {skill.emoji}
-                      </div>
-                      <h3 class="font-medium text-black dark:text-white text-sm">
-                        {skill.name}
-                      </h3>
+                {skills.map((skill, index) => (
+                  <div
+                    class="animate p-3 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300"
+                    style={`animation-delay: ${index * 50}ms`}
+                  >
+                    <div class={`w-8 h-8 rounded-lg bg-gradient-to-br ${skill.color} flex items-center justify-center text-base mb-2`}>
+                      {skill.emoji}
                     </div>
-                  ))
-                }
+                    <h3 class="font-medium text-black dark:text-white text-sm">
+                      {skill.name}
+                    </h3>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <!-- Knowledge I have learned and explored -->
+            <!-- Knowledge -->
             <div class="space-y-4">
-              <h2
-                class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
-              >
-                <span
-                  class="animate-float inline-block"
-                  style="animation-delay: 0.6s;">📚</span
-                >
-                Knowledge Explored
+              <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+                <span class="animate-float inline-block" style="animation-delay: 0.6s;">📚</span>
+                Knowledge
               </h2>
-              <div class="flex flex-wrap gap-2">
-                {
-                  [
-                    "Machine Learning",
-                    "Deep Learning",
-                    "Data Structures and Algorithms",
-                    "Computer Networks",
-                    "Database Systems",
-                    "Linear Algebra",
-                    "Stochastic Processes",
-                    "Probability & Statistics",
-                    "Conbinatorics",
-                    "Calculus",
-                    "Optimization",
-                    "Reinforcement Learning",
-                    "Mathematical Logic",
-                    "Theory of Computation",
-                  ].map((item, index) => (
-                    <span
-                      class="animate px-3 py-1.5 rounded-lg text-sm border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10 hover:border-black/20 dark:hover:border-white/20 transition-all duration-200"
-                      style={`animation-delay: ${index * 30}ms`}
-                    >
-                      {item}
-                    </span>
-                  ))
-                }
+              <div class="space-y-4">
+                {knowledgeGroups.map((group, gIndex) => (
+                  <div class="animate" style={`animation-delay: ${gIndex * 100}ms`}>
+                    <div class="text-sm font-medium text-black/50 dark:text-white/50 mb-2">
+                      {group.category}
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                      {group.items.map((item, index) => (
+                        <span
+                          class="px-3 py-1 rounded-lg text-sm border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                          style={`animation-delay: ${index * 30}ms`}
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Interests -->
-        <section class="animate space-y-6">
-          <h2
-            class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
-          >
-            <span
-              class="animate-float inline-block"
-              style="animation-delay: 1s;">✨</span
-            >
-            Miscellaneous
-          </h2>
-
-          <div class="grid md:grid-cols-3 gap-6">
-            <div
-              class="animate p-6 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5 hover-lift"
-            >
-              <div class="text-3xl mb-4">💻</div>
-              <h3 class="font-semibold text-black dark:text-white mb-2">
-                Coding
-              </h3>
-              <p class="text-sm text-black/50 dark:text-white/50">
-                Coding is not my profession, but it's definitely my passion. I
-                love building things and solving problems with code.
-              </p>
-            </div>
-
-            <div
-              class="animate p-6 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5 hover-lift"
-            >
-              <div class="text-3xl mb-4">🧮</div>
-              <h3 class="font-semibold text-black dark:text-white mb-2">
-                Math
-              </h3>
-              <p class="text-sm text-black/50 dark:text-white/50">
-                If you ask me which language is the most elegant, I will say
-                it's math.
-              </p>
-            </div>
-
-            <div
-              class="animate p-6 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5 hover-lift"
-              style="animation-delay: 100ms;"
-            >
-              <div class="text-3xl mb-4">📚</div>
-              <h3 class="font-semibold text-black dark:text-white mb-2">
-                Tennis
-              </h3>
-              <p class="text-sm text-black/50 dark:text-white/50">
-                Amateur tennis player.
-              </p>
-            </div>
-
-            <div
-              class="animate p-6 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5 hover-lift"
-              style="animation-delay: 200ms;"
-            >
-              <div class="text-3xl mb-4">🎮</div>
-              <h3 class="font-semibold text-black dark:text-white mb-2">
-                Gaming
-              </h3>
-              <p class="text-sm text-black/50 dark:text-white/50">
-                FPS games, strategy games, RPG games. Recently Wuthering Waves.
-                I love playing chess also. I earn a candidate master title of
-                Chinese Chess Association in 2017, and I am still playing chess
-                casually.
-              </p>
-            </div>
-
-            <div
-              class="animate p-6 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5 hover-lift"
-              style="animation-delay: 200ms;"
-            >
-              <div class="text-3xl mb-4">🎵</div>
-              <h3 class="font-semibold text-black dark:text-white mb-2">
-                Favourite Music Genres
-              </h3>
-              <p class="text-sm text-black/50 dark:text-white/50">
-                City-Pop and Symphony. I also pass ABRSM Grade 8 Piano for
-                Amateur, but I don't play piano anymore. Now I engage in playing
-                electric guitar.
-              </p>
-            </div>
-
-            <div
-              class="animate p-6 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5 hover-lift"
-              style="animation-delay: 200ms;"
-            >
-              <div class="text-3xl mb-4">🎬</div>
-              <h3 class="font-semibold text-black dark:text-white mb-2">
-                ACGN
-              </h3>
-              <p class="text-sm text-black/50 dark:text-white/50">
-                Used to be Galgame fan. Now RPGs and Anime. Mainly because there
-                is no spare time for me to go through long storylines.
-              </p>
             </div>
           </div>
         </section>
 
         <!-- Publications & Appointments -->
-        <section class="animate space-y-6">
+        <section id="publications" class="animate space-y-6">
           <div class="grid md:grid-cols-2 gap-8">
             <!-- Publications -->
             <div class="space-y-4">
-              <h2
-                class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
-              >
-                <span
-                  class="animate-float inline-block"
-                  style="animation-delay: 1.2s;">📚</span
-                >
+              <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+                <span class="animate-float inline-block" style="animation-delay: 1.2s;">📚</span>
                 Publications
               </h2>
               <div class="space-y-3">
-                <div
-                  class="animate p-4 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300"
-                >
-                  <div class="text-sm text-black/40 dark:text-white/40 mb-1">
-                    2026
+                {publications.map((pub, index) => (
+                  <div
+                    class="animate p-4 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300"
+                    style={`animation-delay: ${index * 100}ms`}
+                  >
+                    <div class="flex flex-wrap items-center gap-2 mb-2">
+                      <span class="text-sm text-black/40 dark:text-white/40">{pub.year}</span>
+                      <span class={`px-2 py-0.5 rounded-full text-xs border ${pub.statusColor}`}>
+                        {pub.status}
+                      </span>
+                    </div>
+                    <p class="text-sm text-black/70 dark:text-white/70 mb-1">
+                      {pub.authors}
+                    </p>
+                    <p class="text-sm text-black/40 dark:text-white/40">
+                      {pub.venue}
+                    </p>
                   </div>
-                  <h3 class="font-medium text-black dark:text-white mb-1">
-                    Submitted, Under Review
-                  </h3>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Yanqiao Chen, Dongsheng Hou, Yuhan Rui, Zhen Cao, Yepang
-                    Liu.
-                  </p>
-                  <p class="text-sm text-black/40 dark:text-white/40 mt-1">
-                    NeurIPS 2026
-                  </p>
-                </div>
-
-                <div
-                  class="animate p-4 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300"
-                  style="animation-delay: 100ms;"
-                >
-                  <div class="text-sm text-black/40 dark:text-white/40 mb-1">
-                    2026
-                  </div>
-                  <h3 class="font-medium text-black dark:text-white mb-1">
-                    Submitted, Under Review
-                  </h3>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Yuhan Rui, Shihan Qiao, et al.
-                  </p>
-                  <p class="text-sm text-black/40 dark:text-white/40 mt-1">
-                    NeurIPS 2026
-                  </p>
-                </div>
-
-                <div
-                  class="animate p-4 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300"
-                  style="animation-delay: 100ms;"
-                >
-                  <div class="text-sm text-black/40 dark:text-white/40 mb-1">
-                    2026
-                  </div>
-                  <h3 class="font-medium text-black dark:text-white mb-1">
-                    Under Preparation
-                  </h3>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Dongsheng Hou, Yanqiao Chen, Yuhan Rui, et al.
-                  </p>
-                  <p class="text-sm text-black/40 dark:text-white/40 mt-1">
-                    ICLR 2027
-                  </p>
-                </div>
-
-                <div
-                  class="animate p-4 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300"
-                  style="animation-delay: 100ms;"
-                >
-                  <div class="text-sm text-black/40 dark:text-white/40 mb-1">
-                    2026
-                  </div>
-                  <h3 class="font-medium text-black dark:text-white mb-1">
-                    Under Preparation
-                  </h3>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Yanqiao Chen, Mingxuan Yin, et al.
-                  </p>
-                  <p class="text-sm text-black/40 dark:text-white/40 mt-1">
-                    Algorithmica
-                  </p>
-                </div>
+                ))}
               </div>
             </div>
 
             <!-- Appointments -->
             <div class="space-y-4">
-              <h2
-                class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
-              >
-                <span
-                  class="animate-float inline-block"
-                  style="animation-delay: 1.3s;">🏛️</span
-                >
+              <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+                <span class="animate-float inline-block" style="animation-delay: 1.3s;">🏛️</span>
                 Appointments
               </h2>
               <div class="space-y-3">
-                <div
-                  class="animate p-4 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300"
-                >
-                  <div class="text-sm text-black/40 dark:text-white/40 mb-1">
-                    2025 - Present
+                {appointments.map((app, index) => (
+                  <div
+                    class="animate p-4 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300"
+                    style={`animation-delay: ${index * 100}ms`}
+                  >
+                    <div class="text-sm text-black/40 dark:text-white/40 mb-1">
+                      {app.period}
+                    </div>
+                    <h3 class="font-medium text-black dark:text-white mb-1">
+                      {app.role}
+                    </h3>
+                    <p class="text-sm text-black/60 dark:text-white/60 mb-2">
+                      {app.org}
+                    </p>
+                    <p class="text-sm text-black/50 dark:text-white/50">
+                      {app.description}
+                    </p>
                   </div>
-                  <h3 class="font-medium text-black dark:text-white mb-1">
-                    Vice President
-                  </h3>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    SUSTech Theoretical Computer Science Society
-                  </p>
-                  <p class="text-sm text-black/40 dark:text-white/40 mt-1">
-                    Organizing Lectures and Workshops (we have organized 1
-                    lecture up to now), organizing the translation work of
-                    introduction to TCS by Boaz Barak (see intro-to-tcs-zh-cn
-                    repo), and also responsible for the daily operation of the
-                    society.
-                  </p>
-                </div>
+                ))}
               </div>
             </div>
           </div>
         </section>
 
         <!-- Honors & Awards -->
-        <section class="animate space-y-6">
-          <h2
-            class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
-          >
-            <span
-              class="animate-float inline-block"
-              style="animation-delay: 2.1s;">🏆</span
-            >
-            Grade, Honors & Awards
+        <section id="awards" class="animate space-y-6">
+          <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+            <span class="animate-float inline-block" style="animation-delay: 2.1s;">🏆</span>
+            Honors & Awards
           </h2>
 
           <div class="grid md:grid-cols-2 gap-4">
-            <div
-              class="animate p-5 rounded-xl border border-yellow-500/20 bg-gradient-to-br from-yellow-500/5 to-transparent hover:border-yellow-500/30 hover-lift transition-all duration-300"
-            >
-              <div class="flex items-start gap-4">
-                <div class="text-3xl">📊</div>
+            <!-- GPA Featured -->
+            <div class="animate md:col-span-2 p-6 rounded-2xl border border-yellow-500/20 bg-gradient-to-br from-yellow-500/10 to-transparent hover:border-yellow-500/30 hover-lift transition-all">
+              <div class="flex flex-col md:flex-row md:items-center gap-6">
+                <div class="text-5xl">📊</div>
                 <div class="flex-1">
-                  <div class="text-sm text-black/40 dark:text-white/40 mb-1">
-                    GPA
+                  <div class="text-sm text-black/50 dark:text-white/50 mb-1">Cumulative GPA</div>
+                  <h3 class="text-3xl font-bold text-black dark:text-white mb-2">3.83 / 4.0</h3>
+                  <div class="grid grid-cols-3 gap-2 text-sm text-black/60 dark:text-white/60">
+                    <span>Fall 2024: 3.72</span>
+                    <span>Spring 2024: 3.91</span>
+                    <span>Fall 2025: 3.85</span>
                   </div>
-                  <h3 class="font-semibold text-black dark:text-white mb-1">
-                    Total GPA: 3.83/4.0
-                  </h3>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Fall 2024: 3.72/4.0
-                  </p>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Spring 2024: 3.91/4.0
-                  </p>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Fall 2025: 3.85/4.0
-                  </p>
                 </div>
               </div>
             </div>
 
-            <div
-              class="animate p-5 rounded-xl border border-yellow-500/20 bg-gradient-to-br from-yellow-500/5 to-transparent hover:border-yellow-500/30 hover-lift transition-all duration-300"
-              style="animation-delay: 100ms;"
-            >
-              <div class="flex items-start gap-4">
-                <div class="text-3xl">🏆</div>
-                <div class="flex-1">
-                  <div class="text-sm text-black/40 dark:text-white/40 mb-1">
-                    2025
+            {awards.map((award, index) => (
+              <div
+                class="animate p-5 rounded-xl border border-yellow-500/20 bg-gradient-to-br from-yellow-500/5 to-transparent hover:border-yellow-500/30 hover-lift transition-all"
+                style={`animation-delay: ${(index + 1) * 100}ms`}
+              >
+                <div class="flex items-start gap-4">
+                  <div class="text-3xl">{award.icon}</div>
+                  <div class="flex-1">
+                    <div class="text-sm text-black/40 dark:text-white/40 mb-1">{award.year}</div>
+                    <h3 class="font-semibold text-black dark:text-white mb-1">{award.title}</h3>
+                    <p class="text-sm text-black/50 dark:text-white/50">{award.desc}</p>
                   </div>
-                  <h3 class="font-semibold text-black dark:text-white mb-1">
-                    Star of Academic Excellence Scholarship
-                  </h3>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Awarded for outstanding academic performance in the 2024
-                    academic year.
-                  </p>
                 </div>
               </div>
-            </div>
+            ))}
 
-            <div
-              class="animate p-5 rounded-xl border border-yellow-500/20 bg-gradient-to-br from-yellow-500/5 to-transparent hover:border-yellow-500/30 hover-lift transition-all duration-300"
-              style="animation-delay: 100ms;"
-            >
-              <div class="flex items-start gap-4">
-                <div class="text-3xl">🏆</div>
-                <div class="flex-1">
-                  <div class="text-sm text-black/40 dark:text-white/40 mb-1">
-                    2025
-                  </div>
-                  <h3 class="font-semibold text-black dark:text-white mb-1">
-                    Annual Outstanding Student Award
-                  </h3>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Recognized for exceptional academic achievements and
-                    contributions to the university community in 2024 academic
-                    year.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div
-              class="animate p-5 rounded-xl border border-yellow-500/20 bg-gradient-to-br from-yellow-500/5 to-transparent hover:border-yellow-500/30 hover-lift transition-all duration-300"
-              style="animation-delay: 100ms;"
-            >
-              <div class="flex items-start gap-4">
-                <div class="text-3xl">🥉</div>
-                <div class="flex-1">
-                  <div class="text-sm text-black/40 dark:text-white/40 mb-1">
-                    2024
-                  </div>
-                  <h3 class="font-semibold text-black dark:text-white mb-1">
-                    Third Place in SUSTech Orientation Chess Tournament
-                  </h3>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Competed against 64 participants and secured third place in
-                    the SUSTech Orientation Chess Tournament, demonstrating
-                    strategic thinking and composure under pressure.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div
-              class="animate p-5 rounded-xl border border-yellow-500/20 bg-gradient-to-br from-yellow-500/5 to-transparent hover:border-yellow-500/30 hover-lift transition-all duration-300"
-              style="animation-delay: 100ms;"
-            >
-              <div class="flex items-start gap-4">
-                <div class="text-3xl">🎓</div>
-                <div class="flex-1">
-                  <div class="text-sm text-black/40 dark:text-white/40 mb-1">
-                    2026
-                  </div>
-                  <h3 class="font-semibold text-black dark:text-white mb-1">
-                    Key Course Grade (I)
-                  </h3>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Introduction to Computer Programming: A (95/100)
-                  </p>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Data Structures and Algorithms Analysis (Honor): A (95/100)
-                  </p>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Principles of Database (Honor): A- (92/100)
-                  </p>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Digital Logic: A- (90/100)
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div
-              class="animate p-5 rounded-xl border border-yellow-500/20 bg-gradient-to-br from-yellow-500/5 to-transparent hover:border-yellow-500/30 hover-lift transition-all duration-300"
-              style="animation-delay: 100ms;"
-            >
-              <div class="flex items-start gap-4">
-                <div class="text-3xl">🎓</div>
-                <div class="flex-1">
-                  <div class="text-sm text-black/40 dark:text-white/40 mb-1">
-                    2026
-                  </div>
-                  <h3 class="font-semibold text-black dark:text-white mb-1">
-                    Key Course Grade (II)
-                  </h3>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Discrete Mathematics (Honor): B (85/100)
-                  </p>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Introduction to Mathematical Logic: B+ (89/100)
-                  </p>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    Calculus: A- (90/100)
-                  </p>
-                  <p class="text-sm text-black/50 dark:text-white/50">
-                    College Physics: A- (90/100)
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div
-              class="animate p-5 rounded-xl border border-yellow-500/20 bg-gradient-to-br from-yellow-500/5 to-transparent hover:border-yellow-500/30 hover-lift transition-all duration-300 md:col-span-2"
-            >
+            <!-- English Proficiency -->
+            <div class="animate md:col-span-2 p-5 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all">
               <div class="flex items-start gap-4">
                 <div class="text-3xl">🌐</div>
                 <div class="flex-1 min-w-0">
-                  <div class="text-sm text-black/40 dark:text-white/40 mb-2">
-                    English Proficiency
-                  </div>
+                  <div class="text-sm text-black/50 dark:text-white/50 mb-2">English Proficiency</div>
                   <div class="grid md:grid-cols-2 gap-4">
                     <div>
-                      <h3 class="font-semibold text-black dark:text-white mb-2">
-                        Standardized Tests
-                      </h3>
-                      <ul
-                        class="text-sm text-black/60 dark:text-white/60 space-y-1"
-                      >
-                        <li>
-                          • CET-4: <span
-                            class="font-medium text-black dark:text-white"
-                            >620/710</span
-                          >
-                        </li>
-                        <li>
-                          • CET-6: <span
-                            class="font-medium text-black dark:text-white"
-                            >624/710</span
-                          >
-                        </li>
-                        <li>
-                          • TOEFL: <span
-                            class="font-medium text-black dark:text-white"
-                            >To be taken in 2026</span
-                          >
-                        </li>
+                      <h3 class="font-semibold text-black dark:text-white mb-2 text-sm">Standardized Tests</h3>
+                      <ul class="text-sm text-black/60 dark:text-white/60 space-y-1">
+                        <li>• CET-4: <span class="font-medium text-black dark:text-white">620/710</span></li>
+                        <li>• CET-6: <span class="font-medium text-black dark:text-white">624/710</span></li>
+                        <li>• TOEFL: <span class="font-medium text-black dark:text-white">To be taken in 2026</span></li>
                       </ul>
                     </div>
                     <div>
-                      <h3 class="font-semibold text-black dark:text-white mb-2">
-                        Academic Courses
-                      </h3>
-                      <ul
-                        class="text-sm text-black/60 dark:text-white/60 space-y-1"
-                      >
-                        <li>
-                          • SUSTech English II: <span
-                            class="font-medium text-green-600 dark:text-green-400"
-                            >A (96/100)</span
-                          >
-                        </li>
-                        <li>
-                          • SUSTech English III: <span
-                            class="font-medium text-green-600 dark:text-green-400"
-                            >A+ (97/100)</span
-                          >
-                        </li>
+                      <h3 class="font-semibold text-black dark:text-white mb-2 text-sm">Academic Courses</h3>
+                      <ul class="text-sm text-black/60 dark:text-white/60 space-y-1">
+                        <li>• SUSTech English II: <span class="font-medium text-green-600 dark:text-green-400">A (96/100)</span></li>
+                        <li>• SUSTech English III: <span class="font-medium text-green-600 dark:text-green-400">A+ (97/100)</span></li>
                       </ul>
                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Key Course Grades -->
+            <div class="animate md:col-span-2 p-5 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all">
+              <div class="flex items-start gap-4">
+                <div class="text-3xl">🎓</div>
+                <div class="flex-1">
+                  <div class="text-sm text-black/50 dark:text-white/50 mb-2">Key Course Grades</div>
+                  <div class="grid md:grid-cols-2 gap-x-6 gap-y-1 text-sm text-black/60 dark:text-white/60">
+                    {courseGrades.map(course => (
+                      <div class="flex justify-between py-1 border-b border-black/5 dark:border-white/5">
+                        <span>{course.name}</span>
+                        <span class="font-medium text-black dark:text-white">{course.grade}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </section>
 
-          <!-- Connect -->
-          <section class="animate space-y-6">
-            <h2
-              class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
-            >
-              <span
-                class="animate-float inline-block"
-                style="animation-delay: 1.5s;">🤝</span
+        <!-- Interests -->
+        <section id="interests" class="animate space-y-6">
+          <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+            <span class="animate-float inline-block" style="animation-delay: 1s;">✨</span>
+            Interests
+          </h2>
+
+          <div class="grid md:grid-cols-3 gap-4">
+            {interests.map((item, index) => (
+              <div
+                class="animate p-5 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5 hover-lift transition-all"
+                style={`animation-delay: ${index * 100}ms`}
               >
-              Contact Me
-            </h2>
+                <div class="text-3xl mb-3">{item.icon}</div>
+                <h3 class="font-semibold text-black dark:text-white mb-2">{item.title}</h3>
+                <p class="text-sm text-black/50 dark:text-white/50">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
-            <div
-              class="p-8 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5"
-            >
-              <p class="text-lg mb-6 text-black/60 dark:text-white/60">
-                I'm always open to interesting conversations and collaboration
-                opportunities. Feel free to reach out through any of these
-                platforms 👇
-              </p>
+        <!-- Contact -->
+        <section id="contact" class="animate space-y-6">
+          <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+            <span class="animate-float inline-block" style="animation-delay: 1.5s;">🤝</span>
+            Contact Me
+          </h2>
 
-              <div class="flex flex-wrap gap-3">
-                {
-                  SOCIALS.map((SOCIAL, index) => (
-                    <a
-                      href={SOCIAL.HREF}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="magnetic-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 transition-colors duration-200 capitalize"
-                    >
-                      {SOCIAL.NAME}
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="size-3"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" />
-                      </svg>
-                    </a>
-                  ))
-                }
+          <div class="p-6 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5">
+            <p class="text-lg mb-6 text-black/60 dark:text-white/60">
+              I'm always open to interesting conversations and collaboration opportunities. Feel free to reach out through any of these platforms 👇
+            </p>
+
+            <div class="flex flex-wrap gap-3">
+              {SOCIALS.map((SOCIAL) => (
                 <a
-                  href={`mailto:${SITE.EMAIL}`}
-                  class="magnetic-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black dark:bg-white text-white dark:text-black hover:opacity-80 transition-opacity duration-200"
+                  href={SOCIAL.HREF}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="magnetic-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 transition-colors duration-200 capitalize"
                 >
-                  Email
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="size-3"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path
-                      d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-                    ></path>
-                    <polyline points="22,6 12,13 2,6"></polyline>
+                  {SOCIAL.NAME}
+                  <svg xmlns="http://www.w3.org/2000/svg" class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" />
                   </svg>
                 </a>
+              ))}
+              <a
+                href={`mailto:${SITE.EMAIL}`}
+                class="magnetic-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black dark:bg-white text-white dark:text-black hover:opacity-80 transition-opacity duration-200"
+              >
+                Email
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Fun Facts -->
+        <section id="fun-facts" class="animate space-y-6">
+          <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+            <span class="animate-float inline-block" style="animation-delay: 2s;">🎯</span>
+            Fun Facts
+          </h2>
+
+          <div class="flex flex-wrap gap-3">
+            {funFacts.map((fact, index) => (
+              <div
+                class="animate px-4 py-2 rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5"
+                style={`animation-delay: ${index * 100}ms`}
+              >
+                <span class="text-sm text-black/50 dark:text-white/50">{fact.label}:</span>
+                <span class="text-sm font-medium text-black dark:text-white ml-1">{fact.value}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="hidden xl:block">
+        <div class="sticky top-24 space-y-6 pb-8">
+          <!-- Mini Profile -->
+          <div class="p-5 rounded-xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-black/5 dark:from-white/5 to-transparent">
+            <div class="flex items-center gap-4 mb-4">
+              <Image
+                src={avatarImage}
+                alt={SITE.NAME}
+                class="w-14 h-14 rounded-full object-cover border border-white dark:border-stone-800"
+                width={56}
+                height={56}
+              />
+              <div>
+                <h3 class="font-bold text-black dark:text-white">{SITE.NAME}</h3>
+                <p class="text-xs text-black/50 dark:text-white/50">Turing Class @ SUSTech</p>
               </div>
             </div>
-          </section>
-
-          <!-- Fun Facts -->
-          <section class="animate space-y-6">
-            <h2
-              class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
+            <a
+              href={`mailto:${SITE.EMAIL}`}
+              class="block w-full text-center py-2 rounded-lg bg-black dark:bg-white text-white dark:text-black font-medium hover:opacity-80 transition-opacity"
             >
-              <span
-                class="animate-float inline-block"
-                style="animation-delay: 2s;">🎯</span
-              >
-              Fun Facts
-            </h2>
+              Say Hello
+            </a>
+          </div>
 
-            <div class="flex flex-wrap gap-4">
-              {
-                [
-                  { label: "Location", value: "Shenzhen, Guangdong, China" },
-                  { label: "Coffee consumed", value: "1~2 cups per day" },
-                  { label: "Lines of code", value: "I don't know" },
-                  { label: "Do I have a girlfriend?", value: "Not yet." },
-                  {
-                    label: "What's my favorite algorithm?",
-                    value: "Euclidean Algorithm",
-                  },
-                  {
-                    label: "My favorite Open Problem?",
-                    value: "Karchmer-Raz-Wigderson Conjecture",
-                  },
-                  { label: "Height and Weight?", value: "178cm and 70 kg" },
-                ].map((fact, index) => (
-                  <div
-                    class="animate px-4 py-2 rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5"
-                    style={`animation-delay: ${index * 100}ms`}
+          <!-- Section Nav -->
+          <nav class="p-4 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5">
+            <h3 class="text-sm font-semibold text-black dark:text-white mb-3 px-2">On this page</h3>
+            <ul class="space-y-1" id="about-nav">
+              {sections.map(section => (
+                <li>
+                  <a
+                    href={`#${section.id}`}
+                    class="about-nav-link block px-2 py-1.5 text-sm rounded-lg text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors"
+                    data-target={section.id}
                   >
-                    <span class="text-sm text-black/50 dark:text-white/50">
-                      {fact.label}:
-                    </span>
-                    <span class="text-sm font-medium text-black dark:text-white ml-1">
-                      {fact.value}
-                    </span>
-                  </div>
-                ))
-              }
-            </div>
-          </section>
-        </section>
-      </section>
+                    {section.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      </aside>
     </div>
+  </Container>
 
-    <script>
-      // Scroll reveal animation
-      const observerOptions = {
-        root: null,
-        rootMargin: "0px",
-        threshold: 0.1,
-      };
+  <script>
+    // Scroll reveal animation
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.1,
+    };
 
-      const observer = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const animateElements = document.querySelectorAll(".animate");
+      animateElements.forEach((el) => observer.observe(el));
+    });
+
+    // Section nav scroll spy
+    const navLinks = document.querySelectorAll(".about-nav-link");
+    const sections = Array.from(navLinks).map((link) =>
+      document.getElementById(link.getAttribute("data-target") || "")
+    ).filter(Boolean);
+
+    const spyObserver = new IntersectionObserver(
+      (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("show");
-            observer.unobserve(entry.target);
+            navLinks.forEach((link) => {
+              link.classList.remove("bg-black/10", "dark:bg-white/10", "text-black", "dark:text-white", "font-medium");
+              if (link.getAttribute("data-target") === entry.target.id) {
+                link.classList.add("bg-black/10", "dark:bg-white/10", "text-black", "dark:text-white", "font-medium");
+              }
+            });
           }
         });
-      }, observerOptions);
+      },
+      { rootMargin: "-20% 0px -60% 0px", threshold: 0 }
+    );
 
-      document.addEventListener("DOMContentLoaded", () => {
-        const animateElements = document.querySelectorAll(".animate");
-        animateElements.forEach((el) => observer.observe(el));
+    sections.forEach((section) => spyObserver.observe(section));
+
+    // Magnetic button effect
+    document.querySelectorAll(".magnetic-btn").forEach((btn) => {
+      btn.addEventListener("mousemove", (e) => {
+        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        const x = (e as MouseEvent).clientX - rect.left - rect.width / 2;
+        const y = (e as MouseEvent).clientY - rect.top - rect.height / 2;
+        (e.currentTarget as HTMLElement).style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
       });
 
-      // Magnetic button effect
-      document.querySelectorAll(".magnetic-btn").forEach((btn) => {
-        btn.addEventListener("mousemove", (e) => {
-          const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-          const x = (e as MouseEvent).clientX - rect.left - rect.width / 2;
-          const y = (e as MouseEvent).clientY - rect.top - rect.height / 2;
-
-          (e.currentTarget as HTMLElement).style.transform =
-            `translate(${x * 0.1}px, ${y * 0.1}px)`;
-        });
-
-        btn.addEventListener("mouseleave", (e) => {
-          (e.currentTarget as HTMLElement).style.transform = "translate(0, 0)";
-        });
+      btn.addEventListener("mouseleave", (e) => {
+        (e.currentTarget as HTMLElement).style.transform = "translate(0, 0)";
       });
-    </script>
-  </Container></PageLayout
->
+    });
+  </script>
+</PageLayout>

@@ -22,7 +22,12 @@ type Acc = {
   [year: string]: YearData;
 };
 
-const COLUMNS = ["投资", "学习笔记"] as const;
+// Quick nav links for sub-pages
+const quickLinks = [
+  { label: "专栏", href: "/blog/columns" },
+  { label: "标签", href: "/blog/tags" },
+  { label: "归档", href: "/blog/archive" },
+];
 
 const posts = data.reduce((acc: Acc, post) => {
     const year = post.data.date.getFullYear().toString();
@@ -56,22 +61,28 @@ const allColumns = [...new Set(data.map(post => post.data.column).filter(Boolean
         Blog
       </div>
       
-      {/* 专栏导航 */}
-      {allColumns.length > 0 && (
-        <div class="animate space-y-3">
-          <div class="text-sm text-gray-500 dark:text-gray-400">专栏</div>
-          <div class="flex flex-wrap gap-2">
-            {allColumns.map(column => (
-              <a
-                href={`/blog/column/${encodeURIComponent(column)}`}
-                class="px-3 py-1.5 text-sm rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              >
-                {column}
-              </a>
-            ))}
-          </div>
+      {/* 快速导航 */}
+      <div class="animate flex flex-wrap gap-4 items-center">
+        <div class="text-sm text-black/50 dark:text-white/50">浏览方式</div>
+        <div class="flex flex-wrap gap-2">
+          {allColumns.map(column => (
+            <a
+              href={`/blog/column/${encodeURIComponent(column)}`}
+              class="px-3 py-1.5 text-sm rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            >
+              {column}
+            </a>
+          ))}
+          {quickLinks.map(link => (
+            <a
+              href={link.href}
+              class="px-3 py-1.5 text-sm rounded-full border border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            >
+              {link.label}
+            </a>
+          ))}
         </div>
-      )}
+      </div>
       
       <div class="space-y-8">
         {years.map(year => {

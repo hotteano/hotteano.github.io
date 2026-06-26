@@ -1,0 +1,91 @@
+---
+import type { CollectionEntry } from "astro:content";
+import ArrowCard from "@components/ArrowCard.astro";
+
+interface Props {
+  posts: CollectionEntry<"blog">[];
+}
+
+const { posts } = Astro.props;
+
+type MonthData = {
+  month: string;
+  monthNum: number;
+  posts: CollectionEntry<"blog">[];
+};
+
+type YearData = {
+  year: string;
+  months: MonthData[];
+};
+
+const grouped = posts.reduce((acc: Record<string, MonthData[]>, post) => {
+  const date = post.data.date;
+  const year = date.getFullYear().toString();
+  const monthNum = date.getMonth();
+  const month = date.toLocaleString("en-US", { month: "long" });
+
+  if (!acc[year]) acc[year] = [];
+
+  const existing = acc[year].find((m) => m.monthNum === monthNum);
+  if (existing) {
+    existing.posts.push(post);
+  } else {
+    acc[year].push({ month, monthNum, posts: [post] });
+  }
+
+  return acc;
+}, {});
+
+const years: YearData[] = Object.entries(grouped)
+  .sort(([a], [b]) => parseInt(b) - parseInt(a))
+  .map(([year, months]) => ({
+    year,
+    months: months.sort((a, b) => b.monthNum - a.monthNum),
+  }));
+---
+
+<div class="space-y-12">
+  {years.map((yearData) => (
+    <div class="relative">
+      <div class="sticky top-24 z-10 mb-6">
+        <h3 class="inline-flex items-center px-4 py-2 rounded-full bg-black dark:bg-white text-white dark:text-black font-bold text-lg">
+          {yearData.year}
+        </h3>
+      </div>
+
+      <div class="relative pl-6 md:pl-8">
+        <div class="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-black/20 via-black/10 to-transparent dark:from-white/20 dark:via-white/10"></div>
+
+        <div class="space-y-10">
+          {yearData.months.map((monthData) => (
+            <div class="relative">
+              <div class="absolute -left-6 md:-left-8 top-1 flex items-center h-6">
+                <div class="w-2 h-2 rounded-full bg-black/30 dark:bg-white/30 ring-4 ring-stone-100 dark:ring-stone-900"></div>
+              </div>
+
+              <div class="space-y-4">
+                <h4 class="text-sm font-semibold text-black/60 dark:text-white/60 uppercase tracking-wider">
+                  {monthData.month}
+                  <span class="ml-2 text-xs text-black/40 dark:text-white/40">
+                    ({monthData.posts.length})
+                  </span>
+                </h4>
+
+                <ul class="flex flex-col gap-3">
+                  {monthData.posts
+                    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+                    .map((post) => (
+                      <li class="animate">
+                        <ArrowCard entry={post} showMeta />
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  ))}
+</div>

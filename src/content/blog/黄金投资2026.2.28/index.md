@@ -1,10 +1,11 @@
 ---
 title: "黄金投资2026.2.28黄金下周走势预测"
-description: "今日黄金分析"
+description: "2026.2.28 黄金周报：国际暗金逼近 1171 元/克，伊以冲突升级下的心理关口预测。"
 date: "2026-02-28"
 draft: false
 tags: ["investment", "gold"]
 column: "投资"
+series: "黄金投资日报"
 ---
 
 ## 金价走势预测

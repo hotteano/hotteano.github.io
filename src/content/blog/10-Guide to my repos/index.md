@@ -4,6 +4,7 @@ description: "Here is a guide to my repositories, including the notes I have mad
 date: "2026-02-17"
 draft: false
 tags: ["notes", "repository", "guide"]
+column: "说明"
 ---
 
 ## Notes

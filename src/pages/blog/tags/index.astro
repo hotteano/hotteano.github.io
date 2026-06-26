@@ -1,0 +1,76 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "@layouts/PageLayout.astro";
+import Container from "@components/Container.astro";
+import { BLOG } from "@consts";
+import { slugify, tagHref } from "@lib/utils";
+
+const posts = await getCollection("blog");
+
+const tagCount: Record<string, number> = {};
+const tagDisplayNames: Record<string, string> = {};
+posts.forEach(post => {
+  if (post.data.tags && !post.data.draft) {
+    post.data.tags.forEach(tag => {
+      const slug = slugify(tag);
+      tagCount[slug] = (tagCount[slug] || 0) + 1;
+      if (!tagDisplayNames[slug]) {
+        tagDisplayNames[slug] = tag;
+      }
+    });
+  }
+});
+
+const tags = Object.entries(tagCount)
+  .map(([slug, count]) => ({ slug, displayName: tagDisplayNames[slug], count }))
+  .sort((a, b) => b.count - a.count);
+
+const colors = [
+  "from-blue-500/20 to-cyan-500/20 text-blue-700 dark:text-blue-300 border-blue-500/30",
+  "from-purple-500/20 to-pink-500/20 text-purple-700 dark:text-purple-300 border-purple-500/30",
+  "from-green-500/20 to-emerald-500/20 text-green-700 dark:text-green-300 border-green-500/30",
+  "from-orange-500/20 to-red-500/20 text-orange-700 dark:text-orange-300 border-orange-500/30",
+  "from-indigo-500/20 to-violet-500/20 text-indigo-700 dark:text-indigo-300 border-indigo-500/30",
+  "from-amber-500/20 to-yellow-500/20 text-amber-700 dark:text-amber-300 border-amber-500/30",
+];
+---
+
+<PageLayout title={`Tags | ${BLOG.TITLE}`} description="按标签浏览博客文章">
+  <Container>
+    <div class="space-y-10">
+      <div class="animate space-y-4">
+        <div class="flex items-center gap-2 text-sm text-black/50 dark:text-white/50">
+          <a href="/blog" class="hover:text-black dark:hover:text-white transition-colors">Blog</a>
+          <span>/</span>
+          <span>Tags</span>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold text-black dark:text-white">
+          标签
+        </h1>
+        <p class="text-black/60 dark:text-white/60 max-w-2xl">
+          共 {tags.length} 个标签，{posts.filter(p => !p.data.draft).length} 篇文章。
+        </p>
+      </div>
+
+      {tags.length === 0 ? (
+        <div class="animate text-black/60 dark:text-white/60">
+          暂无标签。
+        </div>
+      ) : (
+        <div class="animate flex flex-wrap gap-3">
+          {tags.map((tag, index) => (
+            <a
+              href={tagHref(tag.slug)}
+              class={`group px-4 py-2 rounded-full border bg-gradient-to-r ${colors[index % colors.length]} hover:scale-105 hover:shadow-lg transition-all duration-300`}
+            >
+              <span class="font-medium">#{tag.displayName}</span>
+              <span class="ml-1.5 text-xs opacity-70 group-hover:opacity-100 transition-opacity">
+                {tag.count}
+              </span>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </Container>
+</PageLayout>

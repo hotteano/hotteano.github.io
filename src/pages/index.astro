@@ -21,7 +21,11 @@ const allBlog = (await getCollection("blog"))
   .filter(post => !post.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const blog = allBlog.slice(0,SITE.NUM_POSTS_ON_HOMEPAGE);
+const nonInvestmentBlog = allBlog.filter(post => post.data.series !== "黄金投资日报");
+const investmentBlog = allBlog.filter(post => post.data.series === "黄金投资日报");
+
+const blog = nonInvestmentBlog.slice(0, SITE.NUM_POSTS_ON_HOMEPAGE);
+const marketNotes = investmentBlog.slice(0, 2);
 
 const allProjects = (await getCollection("projects"))
   .filter(project => !project.data.draft)
@@ -113,13 +117,15 @@ const work = await Promise.all(
           </div>
         </GlassCard>
         
-        <GlassCard>
-          <div class="text-center">
-            <div class="text-4xl mb-3 animate-pulse-glow">📊</div>
-            <div class="text-3xl font-bold text-black dark:text-white mb-1">10+</div>
-            <div class="text-sm text-black/50 dark:text-white/50">Research Notes</div>
-          </div>
-        </GlassCard>
+        <a href="/blog/columns" class="block group">
+          <GlassCard class="h-full">
+            <div class="text-center">
+              <div class="text-4xl mb-3 animate-pulse-glow group-hover:scale-110 transition-transform duration-300">📂</div>
+              <div class="text-lg font-bold text-black dark:text-white mb-1">Browse Columns</div>
+              <div class="text-sm text-black/50 dark:text-white/50">按专栏浏览笔记</div>
+            </div>
+          </GlassCard>
+        </a>
       </section>
 
       <!-- Latest Posts -->
@@ -141,6 +147,28 @@ const work = await Promise.all(
           ))}
         </ul>
       </section>
+
+      <!-- Market Notes -->
+      {marketNotes.length > 0 && (
+        <section class="animate space-y-6">
+          <div class="flex flex-wrap gap-y-2 items-center justify-between">
+            <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+              <span class="animate-float inline-block" style="animation-delay: 0.7s;">📈</span>
+              Market Notes
+            </h2>
+            <Link href="/blog/column/投资" class="hover-lift">
+              View All →
+            </Link>
+          </div>
+          <ul class="flex flex-col gap-4 w-full">
+            {marketNotes.map((post, index) => (
+              <li class={`animate animate-delay-${(index + 1) * 100} w-full overflow-hidden`}>
+                <ArrowCard entry={post} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <!-- Work Experience -->
       <section class="animate space-y-6">
@@ -238,9 +266,7 @@ const work = await Promise.all(
         <div class="sticky top-24 space-y-10 pb-8">
           <ProfileCard postCount={allBlog.length} projectCount={allProjects.length} pubCount={allwork.length} />
           <Calendar importantDates={[
-            { date: "2026-05-07", title: "NIPS Paper Submission", type: "deadline" },
-            { date: "2026-12-02", title: "NeurIPS 2026", type: "event" },
-            { date: "2026-04-27", title: "Stat Mid Term", type: "event" }
+            { date: "2026-12-02", title: "NeurIPS 2026", type: "event" }
           ]} />
           <TagCloud />
           
@@ -263,6 +289,18 @@ const work = await Promise.all(
               <a href="/work" class="flex items-center gap-2 text-sm text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
                 <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
                 Research
+              </a>
+              <a href="/blog/columns" class="flex items-center gap-2 text-sm text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
+                Columns
+              </a>
+              <a href="/blog/tags" class="flex items-center gap-2 text-sm text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
+                <span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>
+                Tags
+              </a>
+              <a href="/blog/archive" class="flex items-center gap-2 text-sm text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                Archive
               </a>
             </div>
           </GlassCard>

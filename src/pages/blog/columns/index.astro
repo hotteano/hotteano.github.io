@@ -1,0 +1,88 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "@layouts/PageLayout.astro";
+import Container from "@components/Container.astro";
+import ColumnCard from "@components/ColumnCard.astro";
+import { BLOG } from "@consts";
+
+const posts = (await getCollection("blog"))
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const columnMeta: Record<string, { description: string; icon: string; color: string }> = {
+  "学习笔记": {
+    description: "计算机科学、数学、算法等课程与技术的系统学习笔记。",
+    icon: "📝",
+    color: "from-blue-500 to-cyan-500",
+  },
+  "投资": {
+    description: "黄金市场分析、投资复盘与交易日记。",
+    icon: "📈",
+    color: "from-amber-500 to-orange-500",
+  },
+  "读书笔记": {
+    description: "哲学、文学与专业书籍的读书札记。",
+    icon: "📚",
+    color: "from-emerald-500 to-green-500",
+  },
+  "说明": {
+    description: "博客说明、仓库导航与站务公告。",
+    icon: "📌",
+    color: "from-purple-500 to-pink-500",
+  },
+};
+
+const columns = Object.entries(
+  posts.reduce((acc, post) => {
+    const column = post.data.column || "其他";
+    if (!acc[column]) acc[column] = [];
+    acc[column].push(post);
+    return acc;
+  }, {} as Record<string, typeof posts>)
+).sort(([a], [b]) => {
+  const order = ["学习笔记", "投资", "读书笔记", "说明"];
+  const ai = order.indexOf(a);
+  const bi = order.indexOf(b);
+  if (ai === -1 && bi === -1) return a.localeCompare(b);
+  if (ai === -1) return 1;
+  if (bi === -1) return -1;
+  return ai - bi;
+});
+---
+
+<PageLayout title={`Columns | ${BLOG.TITLE}`} description="按专栏浏览博客文章">
+  <Container>
+    <div class="space-y-10">
+      <div class="animate space-y-4">
+        <div class="flex items-center gap-2 text-sm text-black/50 dark:text-white/50">
+          <a href="/blog" class="hover:text-black dark:hover:text-white transition-colors">Blog</a>
+          <span>/</span>
+          <span>Columns</span>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold text-black dark:text-white">
+          专栏
+        </h1>
+        <p class="text-black/60 dark:text-white/60 max-w-2xl">
+          所有文章按主题专栏分类，便于按兴趣查阅。
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        {columns.map(([column, columnPosts], index) => {
+          const meta = columnMeta[column] || { description: "", icon: "📄", color: "from-gray-500 to-slate-500" };
+          return (
+            <div class={`animate ${index % 2 === 1 ? 'animate-delay-100' : ''}`}>
+              <ColumnCard
+                column={column}
+                description={meta.description}
+                posts={columnPosts}
+                icon={meta.icon}
+                color={meta.color}
+              />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </Container>
+</PageLayout>

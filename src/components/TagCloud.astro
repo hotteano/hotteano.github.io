@@ -1,24 +1,30 @@
 ---
 // Tag cloud component - dynamically fetches tags from blog posts
 import { getCollection } from "astro:content";
+import { slugify, tagHref } from "@lib/utils";
 
 const posts = await getCollection("blog");
 
 // Extract and count tags
 const tagCount: Record<string, number> = {};
+const tagDisplayNames: Record<string, string> = {};
 posts.forEach(post => {
   if (post.data.tags && !post.data.draft) {
     post.data.tags.forEach(tag => {
-      const lowerTag = tag.toLowerCase();
-      tagCount[lowerTag] = (tagCount[lowerTag] || 0) + 1;
+      const slug = slugify(tag);
+      tagCount[slug] = (tagCount[slug] || 0) + 1;
+      if (!tagDisplayNames[slug]) {
+        tagDisplayNames[slug] = tag;
+      }
     });
   }
 });
 
 // Convert to array and sort by count
 const tags = Object.entries(tagCount)
-  .map(([name, count]) => ({
-    name,
+  .map(([slug, count]) => ({
+    slug,
+    displayName: tagDisplayNames[slug],
     count,
     // Determine size based on count
     size: count >= 5 ? "xl" : count >= 3 ? "lg" : count >= 2 ? "md" : "sm" as const,
@@ -58,12 +64,12 @@ const colors = [
     <div class="flex flex-wrap gap-2">
       {tags.map((tag, index) => (
         <a 
-          href={`/blog/tag/${tag.name.toLowerCase().replace(/\s+/g, '-')}`}
+          href={tagHref(tag.slug)}
           class={`tag-item inline-block rounded-full border bg-gradient-to-r ${colors[index % colors.length]} ${sizeClasses[tag.size]} hover:scale-110 hover:shadow-lg transition-all duration-300 animate-float`}
           style={`animation-delay: ${index * 0.1}s; animation-duration: ${3 + index * 0.2}s;`}
           title={`${tag.count} posts`}
         >
-          {tag.name}
+          {tag.displayName}
           <span class="ml-1 opacity-60 text-xs">({tag.count})</span>
         </a>
       ))}
