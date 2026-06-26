@@ -3,7 +3,6 @@ import { getCollection } from "astro:content";
 import Container from "@components/Container.astro";
 import PageLayout from "@layouts/PageLayout.astro";
 import ArrowCard from "@components/ArrowCard.astro";
-import Link from "@components/Link.astro";
 import Typewriter from "@components/Typewriter.astro";
 import ParticleBackground from "@components/ParticleBackground.astro";
 import ScrambleText from "@components/ScrambleText.astro";
@@ -11,7 +10,6 @@ import ProfileCard from "@components/ProfileCard.astro";
 import TagCloud from "@components/TagCloud.astro";
 import Calendar from "@components/Calendar.astro";
 import GlassCard from "@components/GlassCard.astro";
-import GridBackground from "@components/GridBackground.astro";
 import { dateRange } from "@lib/utils";
 import { SITE, HOME, SOCIALS } from "@consts";
 import { Image } from "astro:assets";
@@ -50,7 +48,6 @@ const work = await Promise.all(
 
 <PageLayout title={HOME.TITLE} description={HOME.DESCRIPTION}>
   <ParticleBackground />
-  <GridBackground />
   <Container>
     <!-- Hero Section with Typewriter -->
     <section class="min-h-[40vh] flex flex-col justify-center mb-16">
@@ -69,7 +66,7 @@ const work = await Promise.all(
         </div>
         
         <div class="animate">
-          <span class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-black/5 dark:bg-white/10 text-black/70 dark:text-white/70">
+          <span class="badge-tech">
             👋 Welcome to my Blog.
           </span>
         </div>
@@ -87,13 +84,13 @@ const work = await Promise.all(
         </p>
         
         <div class="animate animate-delay-400 flex flex-wrap gap-4 pt-4">
-          <a href="/blog" class="magnetic-btn inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-black dark:bg-white text-white dark:text-black font-medium hover:scale-105 transition-transform duration-200">
+          <a href="/blog" class="btn-glass-primary magnetic-btn">
             Read My Blogs
             <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
           </a>
-          <a href="/projects" class="magnetic-btn inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-black/20 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200">
+          <a href="/projects" class="btn-glass magnetic-btn">
             See My Projects
           </a>
         </div>
@@ -143,13 +140,13 @@ const work = await Promise.all(
       <!-- Latest Posts -->
       <section class="animate space-y-6">
         <div class="flex flex-wrap gap-y-2 items-center justify-between">
-          <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+          <h2 class="section-title flex items-center gap-2">
             <span class="animate-float inline-block">📝</span>
             What's New?
           </h2>
-          <Link href="/blog" class="hover-lift">
+          <a href="/blog" class="btn-glass text-xs py-1.5">
             View All →
-          </Link>
+          </a>
         </div>
         <ul class="flex flex-col gap-4 w-full">
           {blog.map((post, index) => (
@@ -164,13 +161,13 @@ const work = await Promise.all(
       {finalReviews.length > 0 && (
         <section class="animate space-y-6">
           <div class="flex flex-wrap gap-y-2 items-center justify-between">
-            <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+            <h2 class="section-title flex items-center gap-2">
               <span class="animate-float inline-block" style="animation-delay: 0.3s;">🎓</span>
               Final Reviews
             </h2>
-            <Link href="/blog/column/期末复习" class="hover-lift">
+            <a href="/blog/column/期末复习" class="btn-glass text-xs py-1.5">
               View All →
-            </Link>
+            </a>
           </div>
           <ul class="flex flex-col gap-4 w-full">
             {finalReviews.map((post, index) => (
@@ -186,13 +183,13 @@ const work = await Promise.all(
       {marketNotes.length > 0 && (
         <section class="animate space-y-6">
           <div class="flex flex-wrap gap-y-2 items-center justify-between">
-            <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+            <h2 class="section-title flex items-center gap-2">
               <span class="animate-float inline-block" style="animation-delay: 0.7s;">📈</span>
               Market Notes
             </h2>
-            <Link href="/blog/column/投资" class="hover-lift">
+            <a href="/blog/column/投资" class="btn-glass text-xs py-1.5">
               View All →
-            </Link>
+            </a>
           </div>
           <ul class="flex flex-col gap-4 w-full">
             {marketNotes.map((post, index) => (
@@ -207,30 +204,30 @@ const work = await Promise.all(
       <!-- Work Experience -->
       <section class="animate space-y-6">
         <div class="flex flex-wrap gap-y-2 items-center justify-between">
-          <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+          <h2 class="section-title flex items-center gap-2">
             <span class="animate-float inline-block" style="animation-delay: 0.5s;">💼</span>
             My Work in Research
           </h2>
-          <Link href="/work" class="hover-lift">
+          <a href="/work" class="btn-glass text-xs py-1.5">
             View All →
-          </Link>
+          </a>
         </div>
         <div class="grid gap-6">
           {work.map((entry, index) => (
-            <div class={`animate p-6 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300 ${index % 2 === 0 ? 'animate-slide-left' : 'animate-slide-right'}`} style={`animation-delay: ${index * 100}ms`}>
-              <div class="flex flex-wrap gap-2 items-center text-sm opacity-60 mb-2">
-                <span class="px-2 py-0.5 rounded bg-black/5 dark:bg-white/10">
+            <GlassCard glow class={`animate ${index % 2 === 0 ? 'animate-slide-left' : 'animate-slide-right'}`} style={`animation-delay: ${index * 100}ms`} padding="p-6 md:p-8">
+              <div class="flex flex-wrap gap-2 items-center text-sm mb-3">
+                <span class="badge-tech">
                   {dateRange(entry.data.dateStart, entry.data.dateEnd)}
                 </span>
               </div>
-              <h3 class="text-lg font-semibold text-black dark:text-white mb-1">
+              <h3 class="text-lg font-bold text-black dark:text-white mb-1 text-gradient-subtle">
                 {entry.data.company}
               </h3>
-              <p class="text-sm opacity-75 mb-3">{entry.data.role}</p>
+              <p class="text-sm text-black/60 dark:text-white/70 mb-4">{entry.data.role}</p>
               <article class="prose-sm">
                 <entry.Content />
               </article>
-            </div>
+            </GlassCard>
           ))}
         </div>
       </section>
@@ -238,13 +235,13 @@ const work = await Promise.all(
       <!-- Recent Projects -->
       <section class="animate space-y-6">
         <div class="flex flex-wrap gap-y-2 items-center justify-between">
-          <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+          <h2 class="section-title flex items-center gap-2">
             <span class="animate-float inline-block" style="animation-delay: 1s;">🚀</span>
             Recently, I am working on...
           </h2>
-          <Link href="/projects" class="hover-lift">
+          <a href="/projects" class="btn-glass text-xs py-1.5">
             View All →
-          </Link>
+          </a>
         </div>
         <ul class="grid md:grid-cols-2 gap-4 w-full">
           {projects.map((project, index) => (
@@ -257,12 +254,12 @@ const work = await Promise.all(
 
       <!-- Connect Section -->
       <section class="animate space-y-6">
-        <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
+        <h2 class="section-title flex items-center gap-2">
           <span class="animate-float inline-block" style="animation-delay: 1.5s;">🤝</span>
           Keep in Touch...
         </h2>
-        <div class="p-8 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5">
-          <p class="text-lg mb-6 text-black/60 dark:text-white/60">
+        <GlassCard glow padding="p-6 md:p-8">
+          <p class="text-lg mb-6 text-black/65 dark:text-white/75">
             Feel Free to Contact Me via: 👇
           </p>
           <div class="flex flex-wrap gap-3">
@@ -271,7 +268,7 @@ const work = await Promise.all(
                 href={SOCIAL.HREF} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                class="magnetic-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 transition-colors duration-200"
+                class="btn-glass magnetic-btn"
                 style={`animation-delay: ${index * 50}ms`}
               >
                 <span class="capitalize">{SOCIAL.NAME}</span>
@@ -282,7 +279,7 @@ const work = await Promise.all(
             ))}
             <a 
               href={`mailto:${SITE.EMAIL}`}
-              class="magnetic-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black dark:bg-white text-white dark:text-black hover:opacity-80 transition-opacity duration-200"
+              class="btn-glass-primary magnetic-btn"
             >
               <span>Email</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -291,7 +288,7 @@ const work = await Promise.all(
               </svg>
             </a>
           </div>
-        </div>
+        </GlassCard>
       </section>
       </div>
       
@@ -306,36 +303,15 @@ const work = await Promise.all(
           
           <!-- Quick Links -->
           <GlassCard>
-            <h3 class="text-sm font-semibold text-black dark:text-white mb-4">Quick Links</h3>
-            <div class="space-y-2">
-              <a href="/blog" class="flex items-center gap-2 text-sm text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
-                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                Latest Posts
-              </a>
-              <a href="/projects" class="flex items-center gap-2 text-sm text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
-                <span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
-                Projects
-              </a>
-              <a href="/about" class="flex items-center gap-2 text-sm text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
-                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                About Me
-              </a>
-              <a href="/work" class="flex items-center gap-2 text-sm text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
-                <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                Research
-              </a>
-              <a href="/blog/columns" class="flex items-center gap-2 text-sm text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
-                <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
-                Columns
-              </a>
-              <a href="/blog/tags" class="flex items-center gap-2 text-sm text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
-                <span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span>
-                Tags
-              </a>
-              <a href="/blog/archive" class="flex items-center gap-2 text-sm text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-colors">
-                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                Archive
-              </a>
+            <h3 class="text-sm font-bold text-black dark:text-white mb-4">Quick Links</h3>
+            <div class="flex flex-wrap gap-2">
+              <a href="/blog" class="badge-tech text-xs">Latest Posts</a>
+              <a href="/projects" class="badge-tech text-xs">Projects</a>
+              <a href="/about" class="badge-tech text-xs">About Me</a>
+              <a href="/work" class="badge-tech text-xs">Research</a>
+              <a href="/blog/columns" class="badge-tech text-xs">Columns</a>
+              <a href="/blog/tags" class="badge-tech text-xs">Tags</a>
+              <a href="/blog/archive" class="badge-tech text-xs">Archive</a>
             </div>
           </GlassCard>
         </div>

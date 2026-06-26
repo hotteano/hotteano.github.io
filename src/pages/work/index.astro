@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import PageLayout from "@layouts/PageLayout.astro";
 import Container from "@components/Container.astro";
+import GlassCard from "@components/GlassCard.astro";
 import { dateRange } from "@lib/utils";
 import { WORK } from "@consts";
 
@@ -19,33 +20,32 @@ const work = await Promise.all(
 <PageLayout title={WORK.TITLE} description={WORK.DESCRIPTION}>
   <Container>
     <div class="space-y-10">
-      <div class="animate font-semibold text-black dark:text-white">
-        Work
+      <div class="animate space-y-2">
+        <div class="text-sm text-black/50 dark:text-white/50">Experience</div>
+        <h1 class="section-title">Work & Research</h1>
+        <p class="text-black/65 dark:text-white/75 max-w-2xl">
+          Research internships, academic collaborations, and ongoing projects.
+        </p>
       </div>
-      <ul class="flex flex-col space-y-4">
-        { 
-          work.map(entry => (
-            <li class="animate">
-              <div class="text-sm opacity-75">
-                {dateRange(entry.data.dateStart, entry.data.dateEnd)}
-              </div>
-              <div class="font-semibold text-black dark:text-white">
-                {entry.data.company}
-              </div>
-              <div class="text-sm opacity-75">
-                {entry.data.role}
-              </div>
-              <article>
-                <entry.Content />
-              </article>
-            </li>
-          ))
-        }
-      </ul>
-<!-- 
-      <ul class="animate flex flex-col gap-4">
 
-      </ul> -->
+      <div class="grid gap-6">
+        {work.map((entry, index) => (
+          <GlassCard glow class="animate" padding="p-6 md:p-8">
+            <div class="flex flex-wrap gap-2 items-center text-sm mb-3">
+              <span class="badge-tech">
+                {dateRange(entry.data.dateStart, entry.data.dateEnd)}
+              </span>
+            </div>
+            <h3 class="text-xl font-bold text-black dark:text-white mb-1 text-gradient-subtle">
+              {entry.data.company}
+            </h3>
+            <p class="text-sm text-black/60 dark:text-white/70 mb-4">{entry.data.role}</p>
+            <article class="prose-sm">
+              <entry.Content />
+            </article>
+          </GlassCard>
+        ))}
+      </div>
     </div>
   </Container>
 </PageLayout>

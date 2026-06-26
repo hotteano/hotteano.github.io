@@ -1,4 +1,6 @@
 ---
+import GlassCard from "@components/GlassCard.astro";
+
 interface Props {
   category?: string;
   categoryId?: string;
@@ -10,14 +12,14 @@ const {
 } = Astro.props;
 ---
 
-<div class="comments-section animate mt-16 pt-8 border-t border-black/10 dark:border-white/10">
-  <h3 class="text-xl font-semibold text-black dark:text-white mb-6 flex items-center gap-2">
+<GlassCard class="comments-section animate mt-16" padding="p-6 md:p-8">
+  <h3 class="text-xl font-bold text-black dark:text-white mb-6 flex items-center gap-2 text-gradient-subtle">
     <svg xmlns="http://www.w3.org/2000/svg" class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
     </svg>
     Comments
   </h3>
-  
+
   <div class="giscus-wrapper">
     <script 
       src="https://giscus.app/client.js"
@@ -30,24 +32,24 @@ const {
       data-reactions-enabled="1"
       data-emit-metadata="0"
       data-input-position="bottom"
-      data-theme="catppuccin_latte"
+      data-theme="light"
       data-lang="en"
       data-loading="lazy"
       crossorigin="anonymous"
       async
     ></script>
   </div>
-</div>
+</GlassCard>
 
 <script>
   // Listen for theme changes and update giscus theme
   function updateGiscusTheme() {
     const iframe = document.querySelector('iframe.giscus-frame') as HTMLIFrameElement;
     if (!iframe) return;
-    
+
     const isDark = document.documentElement.classList.contains('dark');
     const theme = isDark ? 'dark' : 'light';
-    
+
     iframe.contentWindow?.postMessage(
       { giscus: { setConfig: { theme } } },
       'https://giscus.app'
@@ -58,9 +60,15 @@ const {
   document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('theme-toggle');
     themeToggle?.addEventListener('click', () => {
-      // Wait a bit for the theme to change, then update giscus
       setTimeout(updateGiscusTheme, 100);
     });
+
+    // Set initial giscus theme
+    const isDark = document.documentElement.classList.contains('dark');
+    const giscusScript = document.querySelector('.giscus-wrapper script');
+    if (giscusScript) {
+      giscusScript.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    }
   });
 
   // Also watch for system theme changes
@@ -71,12 +79,11 @@ const {
   .comments-section {
     scroll-margin-top: 100px;
   }
-  
+
   .giscus-wrapper {
     min-height: 200px;
   }
-  
-  /* Ensure giscus iframe takes full width */
+
   .giscus-wrapper :global(iframe) {
     width: 100% !important;
   }

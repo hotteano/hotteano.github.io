@@ -64,15 +64,13 @@ const columns = Object.entries(
           <span>/</span>
           <span>Columns</span>
         </div>
-        <h1 class="text-3xl md:text-4xl font-bold text-black dark:text-white">
-          专栏
-        </h1>
-        <p class="text-black/60 dark:text-white/60 max-w-2xl">
+        <h1 class="section-title">专栏</h1>
+        <p class="text-black/65 dark:text-white/75 max-w-2xl">
           所有文章按主题专栏分类，便于按兴趣查阅。
         </p>
       </div>
 
-      <div class="grid md:grid-cols-2 gap-6">
+      <div class="grid md:grid-cols-2 gap-6 items-start">
         {columns.map(([column, columnPosts], index) => {
           const meta = columnMeta[column] || { description: "", icon: "📄", color: "from-gray-500 to-slate-500" };
           return (

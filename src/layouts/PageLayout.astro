@@ -5,6 +5,7 @@ import Footer from "@components/Footer.astro";
 import ReadingProgress from "@components/ReadingProgress.astro";
 import MouseGlow from "@components/MouseGlow.astro";
 import FAQ from "@components/FAQ.astro";
+import GridBackground from "@components/GridBackground.astro";
 import { SITE } from "@consts";
 
 type Props = {
@@ -21,11 +22,12 @@ const { title, description, showSidebar = false } = Astro.props;
   <head>
     <Head title={`${title} | ${SITE.NAME}`} description={description} />
   </head>
-  <body>
+  <body class="noise-overlay">
     <ReadingProgress />
     <MouseGlow />
+    <GridBackground />
     <Header />
-    <main class={showSidebar ? "with-sidebar" : ""}>
+    <main class={`pt-24 ${showSidebar ? "with-sidebar" : ""}`}>
       <slot />
     </main>
     <Footer />

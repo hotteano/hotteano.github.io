@@ -2,6 +2,7 @@
 import { type CollectionEntry, getCollection } from "astro:content";
 import PageLayout from "@layouts/PageLayout.astro";
 import Container from "@components/Container.astro";
+import GlassCard from "@components/GlassCard.astro";
 import FormattedDate from "@components/FormattedDate.astro";
 import { readingTime } from "@lib/utils";
 import BackToPrev from "@components/BackToPrev.astro";
@@ -25,46 +26,83 @@ const { Content } = await project.render();
 
 <PageLayout title={project.data.title} description={project.data.description}>
   <Container>
-    <div class="animate">
+    <div class="animate mb-8">
       <BackToPrev href="/projects">
         Back to projects
       </BackToPrev>
     </div>
-    <div class="space-y-1 my-10">
-      <div class="animate flex items-center gap-1.5">
-        <div class="font-base text-sm">
+
+    <div class="space-y-4 mb-10">
+      <div class="animate flex items-center gap-3 text-sm">
+        <span class="badge-tech">
           <FormattedDate date={project.data.date} />
-        </div>
-        &bull;
-        <div class="font-base text-sm">
-          {readingTime(project.body)}
-        </div>
+        </span>
+        <span class="text-black/30 dark:text-white/30">•</span>
+        <span class="text-black/50 dark:text-white/50">{readingTime(project.body)}</span>
       </div>
-      <div class="animate text-2xl font-semibold text-black dark:text-white">
+
+      <h1 class="animate text-3xl md:text-5xl font-bold leading-tight text-gradient-subtle">
         {project.data.title}
-      </div>
+      </h1>
+
+      <p class="animate text-lg md:text-xl text-black/70 dark:text-white/80 leading-relaxed">
+        {project.data.description}
+      </p>
+
       {(project.data.demoURL || project.data.repoURL) && (
-        <nav class="animate flex gap-1">
+        <nav class="animate flex flex-wrap gap-3">
           {project.data.demoURL && (
-            <Link href={project.data.demoURL} external>
-              demo
-            </Link>
-          )}
-          {project.data.demoURL && project.data.repoURL && (
-            <span>/</span>
+            <a href={project.data.demoURL} target="_blank" rel="noopener noreferrer" class="btn-glass-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+              </svg>
+              Live Demo
+            </a>
           )}
           {project.data.repoURL && (
-            <Link href={project.data.repoURL} external>
-              repo
-            </Link>
+            <a href={project.data.repoURL} target="_blank" rel="noopener noreferrer" class="btn-glass">
+              <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+              </svg>
+              Repository
+            </a>
           )}
         </nav>
       )}
     </div>
-    <article class="animate">
-      <Content />
-    </article>
-    
+
+    <GlassCard glow padding="p-6 md:p-10" class="mb-10">
+      <article class="prose dark:prose-invert prose-p:text-black/85 dark:prose-p:text-white/90 prose-strong:text-black dark:prose-strong:text-white prose-li:text-black/85 dark:prose-li:text-white/90 w-full max-w-none overflow-x-auto">
+        <Content />
+      </article>
+    </GlassCard>
+
     <Comments />
   </Container>
 </PageLayout>
+
+<style>
+  article.prose {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .prose pre {
+    max-width: 100%;
+    overflow-x: auto;
+    border-radius: 0.75rem;
+  }
+
+  .prose table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    border-radius: 0.75rem;
+  }
+
+  .prose img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+  }
+</style>

@@ -4,33 +4,32 @@ import { SITE } from "@consts";
 import BackToTop from "@components/BackToTop.astro";
 ---
 
-<footer class="animate relative">
+<footer class="animate relative mt-16">
   <!-- Decorative top border -->
-  <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-black/20 dark:via-white/20 to-transparent"></div>
-  
+  <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-black/10 dark:via-white/10 to-transparent"></div>
+
   <Container>
     <div class="relative">
-      <div class="absolute right-0 -top-20">
+      <div class="absolute right-0 -top-14">
         <BackToTop />
       </div>
     </div>
-    
+
     <div class="flex flex-col md:flex-row justify-between items-center gap-4 py-6">
-      <div class="flex items-center gap-2 text-sm opacity-60">
-        <span class="inline-block animate-pulse">©</span>
+      <div class="flex items-center gap-2 text-sm text-black/50 dark:text-white/50">
+        <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-black/5 dark:bg-white/10 text-xs">©</span>
         <span>{new Date().getFullYear()}</span>
-        <span class="opacity-50">|</span>
-        <span class="font-medium">{SITE.NAME}</span>
-        <span class="opacity-50">•</span>
-        <span>Made with ❤️</span>
+        <span class="opacity-30">|</span>
+        <span class="font-medium text-black/75 dark:text-white/85">{SITE.NAME}</span>
+        <span class="opacity-30">•</span>
+        <span>Made with <span class="text-rose-500">❤️</span></span>
       </div>
-      
-      <div class="flex flex-wrap gap-2 items-center">
-        <span class="text-xs opacity-40 mr-2">Theme:</span>
+
+      <div class="flex flex-wrap gap-2 items-center p-1 rounded-full border border-white/20 dark:border-white/10 bg-white/10 dark:bg-white/5 backdrop-blur-md">
         <button
           id="light-theme-button"
           aria-label="Light theme"
-          class="group size-8 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 hover:scale-110"
+          class="group size-8 flex items-center justify-center rounded-full text-black/50 dark:text-white/50 hover:bg-white/30 dark:hover:bg-white/15 hover:text-black dark:hover:text-white transition-all duration-300 hover:scale-110"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -42,7 +41,7 @@ import BackToTop from "@components/BackToTop.astro";
             stroke-width="1.5"
             stroke-linecap="round"
             stroke-linejoin="round"
-            class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out group-hover:rotate-90"
+            class="group-hover:rotate-90 transition-transform duration-300"
           >
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -58,7 +57,7 @@ import BackToTop from "@components/BackToTop.astro";
         <button
           id="dark-theme-button"
           aria-label="Dark theme"
-          class="group size-8 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 hover:scale-110"
+          class="group size-8 flex items-center justify-center rounded-full text-black/50 dark:text-white/50 hover:bg-white/30 dark:hover:bg-white/15 hover:text-black dark:hover:text-white transition-all duration-300 hover:scale-110"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +69,7 @@ import BackToTop from "@components/BackToTop.astro";
             stroke-width="1.5"
             stroke-linecap="round"
             stroke-linejoin="round"
-            class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out group-hover:-rotate-12"
+            class="group-hover:-rotate-12 transition-transform duration-300"
           >
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
           </svg>
@@ -78,7 +77,7 @@ import BackToTop from "@components/BackToTop.astro";
         <button
           id="system-theme-button"
           aria-label="System theme"
-          class="group size-8 flex items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 hover:scale-110"
+          class="group size-8 flex items-center justify-center rounded-full text-black/50 dark:text-white/50 hover:bg-white/30 dark:hover:bg-white/15 hover:text-black dark:hover:text-white transition-all duration-300 hover:scale-110"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +89,6 @@ import BackToTop from "@components/BackToTop.astro";
             stroke-width="1.5"
             stroke-linecap="round"
             stroke-linejoin="round"
-            class="group-hover:stroke-black group-hover:dark:stroke-white transition-colors duration-300 ease-in-out"
           >
             <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
             <line x1="8" y1="21" x2="16" y2="21"></line>
@@ -101,3 +99,25 @@ import BackToTop from "@components/BackToTop.astro";
     </div>
   </Container>
 </footer>
+
+<script>
+  const lightBtn = document.getElementById('light-theme-button');
+  const darkBtn = document.getElementById('dark-theme-button');
+  const systemBtn = document.getElementById('system-theme-button');
+  const html = document.documentElement;
+
+  function setTheme(theme) {
+    if (theme === 'system') {
+      localStorage.removeItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      html.classList.toggle('dark', prefersDark);
+    } else {
+      localStorage.setItem('theme', theme);
+      html.classList.toggle('dark', theme === 'dark');
+    }
+  }
+
+  lightBtn?.addEventListener('click', () => setTheme('light'));
+  darkBtn?.addEventListener('click', () => setTheme('dark'));
+  systemBtn?.addEventListener('click', () => setTheme('system'));
+</script>

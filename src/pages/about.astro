@@ -1,7 +1,6 @@
 ---
 import Container from "@components/Container.astro";
 import PageLayout from "@layouts/PageLayout.astro";
-import Link from "@components/Link.astro";
 import GlassCard from "@components/GlassCard.astro";
 import { SITE, ABOUT, SOCIALS } from "@consts";
 import { Image } from "astro:assets";
@@ -293,7 +292,7 @@ const funFacts = [
                 {
                   identityBadges.map((badge) => (
                     <span
-                      class={`px-3 py-1.5 rounded-full text-sm border bg-gradient-to-r ${badge.color}`}
+                      class={`px-3 py-1.5 rounded-full text-sm font-medium border bg-gradient-to-r backdrop-blur-sm ${badge.color} hover:scale-105 transition-transform`}
                     >
                       {badge.label}
                     </span>
@@ -304,13 +303,13 @@ const funFacts = [
               <div class="animate animate-delay-300 flex flex-wrap gap-3 pt-2">
                 <a
                   href={`mailto:${SITE.EMAIL}`}
-                  class="magnetic-btn inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-black dark:bg-white text-white dark:text-black font-medium hover:scale-105 transition-transform duration-200"
+                  class="btn-glass-primary magnetic-btn"
                 >
                   Get in Touch
                 </a>
                 <a
                   href="/work"
-                  class="magnetic-btn inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-black/20 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 transition-colors duration-200"
+                  class="btn-glass magnetic-btn"
                 >
                   View My Work
                 </a>
@@ -322,7 +321,7 @@ const funFacts = [
         <!-- About Me -->
         <section class="animate space-y-6">
           <h2
-            class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
+            class="section-title flex items-center gap-2"
           >
             <span class="animate-float inline-block">📖</span>
             About Me
@@ -354,7 +353,7 @@ const funFacts = [
         <!-- Education -->
         <section id="education" class="animate space-y-6">
           <h2
-            class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
+            class="section-title flex items-center gap-2"
           >
             <span
               class="animate-float inline-block"
@@ -377,22 +376,22 @@ const funFacts = [
                   <div
                     class={`absolute -left-6 md:-left-8 top-1.5 w-3 h-3 rounded-full ${edu.dotClass} ring-4 ring-white dark:ring-stone-900`}
                   />
-                  <div class="p-5 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300">
+                  <GlassCard class="hover-lift" padding="p-5">
                     <div class="flex flex-wrap gap-2 items-center text-sm text-black/40 dark:text-white/40 mb-2">
                       <span>{edu.period}</span>
                       <span
-                        class={`px-2 py-0.5 rounded-full ${edu.badgeClass}`}
+                        class={`px-2 py-0.5 rounded-full text-xs font-medium border backdrop-blur-sm ${edu.badgeClass}`}
                       >
                         {edu.role}
                       </span>
                     </div>
-                    <h3 class="font-semibold text-black dark:text-white text-lg mb-1">
+                    <h3 class="font-bold text-black dark:text-white text-lg mb-1 text-gradient-subtle">
                       {edu.school}
                     </h3>
-                    <p class="text-black/60 dark:text-white/60">
+                    <p class="text-black/65 dark:text-white/75">
                       {edu.description}
                     </p>
-                  </div>
+                  </GlassCard>
                 </div>
               ))
             }
@@ -402,7 +401,7 @@ const funFacts = [
         <!-- Research & Experience -->
         <section id="research" class="animate space-y-6">
           <h2
-            class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
+            class="section-title flex items-center gap-2"
           >
             <span
               class="animate-float inline-block"
@@ -414,34 +413,27 @@ const funFacts = [
           <div class="space-y-4">
             {
               researchItems.map((item, index) => (
-                <div
-                  class={`animate p-5 rounded-xl border hover-lift transition-all duration-300 ${
-                    index === 0
-                      ? "border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-transparent hover:border-purple-500/30"
-                      : "border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20"
-                  }`}
-                  style={`animation-delay: ${index * 100}ms`}
-                >
+                <GlassCard glow={index === 0} class="hover-lift" style={`animation-delay: ${index * 100}ms`} padding="p-5 md:p-6">
                   <div class="flex flex-wrap gap-2 items-center text-sm text-black/40 dark:text-white/40 mb-2">
                     <span>{item.period}</span>
-                    <span class="px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-black/60 dark:text-white/60">
+                    <span class="badge-tech text-xs">
                       {item.role}
                     </span>
                   </div>
-                  <h3 class="font-semibold text-black dark:text-white text-lg mb-2">
+                  <h3 class="font-bold text-black dark:text-white text-lg mb-2 text-gradient-subtle">
                     {item.title}
                   </h3>
-                  <p class="text-black/60 dark:text-white/60 leading-relaxed mb-3">
+                  <p class="text-black/65 dark:text-white/75 leading-relaxed mb-3">
                     {item.description}
                   </p>
                   <div class="flex flex-wrap gap-2">
                     {item.tags.map((tag) => (
-                      <span class="px-2 py-0.5 rounded-full text-xs bg-black/5 dark:bg-white/10 text-black/60 dark:text-white/60 border border-black/10 dark:border-white/10">
+                      <span class="badge-tech text-xs">
                         {tag}
                       </span>
                     ))}
                   </div>
-                </div>
+                </GlassCard>
               ))
             }
           </div>
@@ -453,7 +445,7 @@ const funFacts = [
             <!-- Skills -->
             <div class="space-y-4">
               <h2
-                class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
+                class="section-title flex items-center gap-2"
               >
                 <span
                   class="animate-float inline-block"
@@ -464,19 +456,20 @@ const funFacts = [
               <div class="grid grid-cols-2 gap-3">
                 {
                   skills.map((skill, index) => (
-                    <div
-                      class="animate p-3 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300"
+                    <GlassCard
+                      class="animate hover-lift"
                       style={`animation-delay: ${index * 50}ms`}
+                      padding="p-3"
                     >
                       <div
-                        class={`w-8 h-8 rounded-lg bg-gradient-to-br ${skill.color} flex items-center justify-center text-base mb-2`}
+                        class={`w-9 h-9 rounded-xl bg-gradient-to-br ${skill.color} flex items-center justify-center text-base mb-2 shadow-lg`}
                       >
                         {skill.emoji}
                       </div>
-                      <h3 class="font-medium text-black dark:text-white text-sm">
+                      <h3 class="font-semibold text-black dark:text-white text-sm">
                         {skill.name}
                       </h3>
-                    </div>
+                    </GlassCard>
                   ))
                 }
               </div>
@@ -485,7 +478,7 @@ const funFacts = [
             <!-- Knowledge -->
             <div class="space-y-4">
               <h2
-                class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
+                class="section-title flex items-center gap-2"
               >
                 <span
                   class="animate-float inline-block"
@@ -506,7 +499,7 @@ const funFacts = [
                       <div class="flex flex-wrap gap-2">
                         {group.items.map((item, index) => (
                           <span
-                            class="px-3 py-1 rounded-lg text-sm border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                            class="badge-tech text-sm"
                             style={`animation-delay: ${index * 30}ms`}
                           >
                             {item}
@@ -527,7 +520,7 @@ const funFacts = [
             <!-- Publications -->
             <div class="space-y-4">
               <h2
-                class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
+                class="section-title flex items-center gap-2"
               >
                 <span
                   class="animate-float inline-block"
@@ -538,16 +531,17 @@ const funFacts = [
               <div class="space-y-3">
                 {
                   publications.map((pub, index) => (
-                    <div
-                      class="animate p-4 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300"
+                    <GlassCard
+                      class="animate hover-lift"
                       style={`animation-delay: ${index * 100}ms`}
+                      padding="p-4"
                     >
                       <div class="flex flex-wrap items-center gap-2 mb-2">
                         <span class="text-sm text-black/40 dark:text-white/40">
                           {pub.year}
                         </span>
                         <span
-                          class={`px-2 py-0.5 rounded-full text-xs border ${pub.statusColor}`}
+                          class={`px-2 py-0.5 rounded-full text-xs font-medium border backdrop-blur-sm ${pub.statusColor}`}
                         >
                           {pub.status}
                         </span>
@@ -555,10 +549,10 @@ const funFacts = [
                       <p class="text-sm text-black/70 dark:text-white/70 mb-1">
                         {pub.authors}
                       </p>
-                      <p class="text-sm text-black/40 dark:text-white/40">
+                      <p class="text-sm text-black/45 dark:text-white/55">
                         {pub.venue}
                       </p>
-                    </div>
+                    </GlassCard>
                   ))
                 }
               </div>
@@ -567,7 +561,7 @@ const funFacts = [
             <!-- Appointments -->
             <div class="space-y-4">
               <h2
-                class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
+                class="section-title flex items-center gap-2"
               >
                 <span
                   class="animate-float inline-block"
@@ -578,23 +572,24 @@ const funFacts = [
               <div class="space-y-3">
                 {
                   appointments.map((app, index) => (
-                    <div
-                      class="animate p-4 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all duration-300"
+                    <GlassCard
+                      class="animate hover-lift"
                       style={`animation-delay: ${index * 100}ms`}
+                      padding="p-4"
                     >
                       <div class="text-sm text-black/40 dark:text-white/40 mb-1">
                         {app.period}
                       </div>
-                      <h3 class="font-medium text-black dark:text-white mb-1">
+                      <h3 class="font-bold text-black dark:text-white mb-1 text-gradient-subtle">
                         {app.role}
                       </h3>
-                      <p class="text-sm text-black/60 dark:text-white/60 mb-2">
+                      <p class="text-sm text-black/65 dark:text-white/75 mb-2">
                         {app.org}
                       </p>
-                      <p class="text-sm text-black/50 dark:text-white/50">
+                      <p class="text-sm text-black/55 dark:text-white/65">
                         {app.description}
                       </p>
-                    </div>
+                    </GlassCard>
                   ))
                 }
               </div>
@@ -605,7 +600,7 @@ const funFacts = [
         <!-- Honors & Awards -->
         <section id="awards" class="animate space-y-6">
           <h2
-            class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
+            class="section-title flex items-center gap-2"
           >
             <span
               class="animate-float inline-block"
@@ -616,8 +611,10 @@ const funFacts = [
 
           <div class="grid md:grid-cols-2 gap-4">
             <!-- GPA Featured -->
-            <div
-              class="animate md:col-span-2 p-6 rounded-2xl border border-yellow-500/20 bg-gradient-to-br from-yellow-500/10 to-transparent hover:border-yellow-500/30 hover-lift transition-all"
+            <GlassCard
+              glow
+              class="animate hover-lift md:col-span-2"
+              padding="p-6"
             >
               <div class="flex flex-col md:flex-row md:items-center gap-6">
                 <div class="text-5xl">📊</div>
@@ -640,13 +637,14 @@ const funFacts = [
                   </div>
                 </div>
               </div>
-            </div>
+            </GlassCard>
 
             {
               awards.map((award, index) => (
-                <div
-                  class="animate p-5 rounded-xl border border-yellow-500/20 bg-gradient-to-br from-yellow-500/5 to-transparent hover:border-yellow-500/30 hover-lift transition-all"
+                <GlassCard
+                  class="animate hover-lift"
                   style={`animation-delay: ${(index + 1) * 100}ms`}
+                  padding="p-5"
                 >
                   <div class="flex items-start gap-4">
                     <div class="text-3xl">{award.icon}</div>
@@ -662,13 +660,14 @@ const funFacts = [
                       </p>
                     </div>
                   </div>
-                </div>
+                </GlassCard>
               ))
             }
 
             <!-- English Proficiency -->
-            <div
-              class="animate md:col-span-2 p-5 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all"
+            <GlassCard
+              class="animate hover-lift md:col-span-2"
+              padding="p-5"
             >
               <div class="flex items-start gap-4">
                 <div class="text-3xl">🌐</div>
@@ -727,11 +726,12 @@ const funFacts = [
                   </div>
                 </div>
               </div>
-            </div>
+            </GlassCard>
 
             <!-- Key Course Grades -->
-            <div
-              class="animate md:col-span-2 p-5 rounded-xl border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover-lift transition-all"
+            <GlassCard
+              class="animate hover-lift md:col-span-2"
+              padding="p-5"
             >
               <div class="flex items-start gap-4">
                 <div class="text-3xl">🎓</div>
@@ -755,14 +755,14 @@ const funFacts = [
                   </div>
                 </div>
               </div>
-            </div>
+            </GlassCard>
           </div>
         </section>
 
         <!-- Interests -->
         <section id="interests" class="animate space-y-6">
           <h2
-            class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
+            class="section-title flex items-center gap-2"
           >
             <span
               class="animate-float inline-block"
@@ -774,18 +774,19 @@ const funFacts = [
           <div class="grid md:grid-cols-3 gap-4">
             {
               interests.map((item, index) => (
-                <div
-                  class="animate p-5 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5 hover-lift transition-all"
+                <GlassCard
+                  class="animate hover-lift"
                   style={`animation-delay: ${index * 100}ms`}
+                  padding="p-5"
                 >
                   <div class="text-3xl mb-3">{item.icon}</div>
-                  <h3 class="font-semibold text-black dark:text-white mb-2">
+                  <h3 class="font-bold text-black dark:text-white mb-2 text-gradient-subtle">
                     {item.title}
                   </h3>
-                  <p class="text-sm text-black/50 dark:text-white/50">
+                  <p class="text-sm text-black/60 dark:text-white/70">
                     {item.desc}
                   </p>
-                </div>
+                </GlassCard>
               ))
             }
           </div>
@@ -794,7 +795,7 @@ const funFacts = [
         <!-- Contact -->
         <section id="contact" class="animate space-y-6">
           <h2
-            class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
+            class="section-title flex items-center gap-2"
           >
             <span
               class="animate-float inline-block"
@@ -803,9 +804,7 @@ const funFacts = [
             Contact Me
           </h2>
 
-          <div
-            class="p-6 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5"
-          >
+          <GlassCard padding="p-6">
             <p class="text-lg mb-6 text-black/60 dark:text-white/60">
               I welcome discussions on research collaborations, academic
               opportunities, and related topics. Please reach out via email or
@@ -819,7 +818,7 @@ const funFacts = [
                     href={SOCIAL.HREF}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="magnetic-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 transition-colors duration-200 capitalize"
+                    class="btn-glass magnetic-btn capitalize"
                   >
                     {SOCIAL.NAME}
                     <svg
@@ -837,7 +836,7 @@ const funFacts = [
               }
               <a
                 href={`mailto:${SITE.EMAIL}`}
-                class="magnetic-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black dark:bg-white text-white dark:text-black hover:opacity-80 transition-opacity duration-200"
+                class="btn-glass-primary magnetic-btn"
               >
                 Email
                 <svg
@@ -855,13 +854,13 @@ const funFacts = [
                 </svg>
               </a>
             </div>
-          </div>
+          </GlassCard>
         </section>
 
         <!-- Fun Facts -->
         <section id="fun-facts" class="animate space-y-6">
           <h2
-            class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2"
+            class="section-title flex items-center gap-2"
           >
             <span
               class="animate-float inline-block"
@@ -874,13 +873,13 @@ const funFacts = [
             {
               funFacts.map((fact, index) => (
                 <div
-                  class="animate px-4 py-2 rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5"
+                  class="animate badge-tech"
                   style={`animation-delay: ${index * 100}ms`}
                 >
-                  <span class="text-sm text-black/50 dark:text-white/50">
+                  <span class="text-black/50 dark:text-white/50">
                     {fact.label}:
                   </span>
-                  <span class="text-sm font-medium text-black dark:text-white ml-1">
+                  <span class="text-black dark:text-white ml-1">
                     {fact.value}
                   </span>
                 </div>
@@ -894,17 +893,17 @@ const funFacts = [
       <aside class="hidden xl:block">
         <div class="sticky top-24 space-y-6 pb-8">
           <!-- Mini Profile -->
-          <div
-            class="p-5 rounded-xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-black/5 dark:from-white/5 to-transparent"
-          >
+          <GlassCard padding="p-5">
             <div class="flex items-center gap-4 mb-4">
-              <Image
-                src={avatarImage}
-                alt={SITE.NAME}
-                class="w-14 h-14 rounded-full object-cover border border-white dark:border-stone-800"
-                width={56}
-                height={56}
-              />
+              <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-0.5">
+                <Image
+                  src={avatarImage}
+                  alt={SITE.NAME}
+                  class="w-full h-full rounded-full object-cover"
+                  width={56}
+                  height={56}
+                />
+              </div>
               <div>
                 <h3 class="font-bold text-black dark:text-white">
                   {SITE.NAME}
@@ -916,16 +915,15 @@ const funFacts = [
             </div>
             <a
               href={`mailto:${SITE.EMAIL}`}
-              class="block w-full text-center py-2 rounded-lg bg-black dark:bg-white text-white dark:text-black font-medium hover:opacity-80 transition-opacity"
+              class="block w-full text-center py-2 rounded-full btn-glass-primary"
             >
               Contact Me
             </a>
-          </div>
+          </GlassCard>
 
           <!-- Section Nav -->
-          <nav
-            class="p-4 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5"
-          >
+          <GlassCard padding="p-4">
+          <nav>
             <h3
               class="text-sm font-semibold text-black dark:text-white mb-3 px-2"
             >
@@ -947,6 +945,7 @@ const funFacts = [
               }
             </ul>
           </nav>
+        </GlassCard>
         </div>
       </aside>
     </div>
