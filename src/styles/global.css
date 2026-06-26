@@ -211,3 +211,118 @@ html {
 ::selection {
   @apply bg-black/20 dark:bg-white/20;
 }
+/* Glass text gradient */
+.text-glass {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-black dark:from-white to-black/70 dark:to-white/70;
+}
+
+/* Reveal animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.reveal.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.reveal-left.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.reveal-right.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.reveal-scale.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Blur-in animation */
+@keyframes blur-in {
+  from {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+.animate-blur-in {
+  animation: blur-in 0.8s ease-out forwards;
+}
+
+/* Glow border animation */
+@keyframes border-glow {
+  0%, 100% {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+}
+
+.animate-border-glow {
+  animation: border-glow 3s ease-in-out infinite;
+}
+
+/* Subtle floating for cards */
+@keyframes float-subtle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-float-subtle {
+  animation: float-subtle 4s ease-in-out infinite;
+}
+
+/* Prose enhancements */
+.prose :global(hr) {
+  @apply border-black/10 dark:border-white/10;
+}
+
+.prose :global(blockquote) {
+  @apply border-l-4 border-blue-500/50 pl-4 italic;
+  @apply bg-white/5 dark:bg-white/5 rounded-r-lg py-2 pr-4;
+}
+
+.prose :global(code) {
+  @apply px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10 text-sm;
+}
+
+.prose :global(pre code) {
+  @apply p-0 bg-transparent;
+}
+
+/* Focus visible glow */
+a:focus-visible,
+button:focus-visible {
+  @apply outline-none ring-2 ring-blue-500/50 ring-offset-2 ring-offset-stone-100 dark:ring-offset-stone-900;
+}

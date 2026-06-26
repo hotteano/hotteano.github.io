@@ -4,65 +4,102 @@ interface Props {
   hover?: boolean;
   glow?: boolean;
   padding?: string;
+  shine?: boolean;
 }
 
-const { class: className = "", hover = true, glow = false, padding = "p-6" } = Astro.props;
+const {
+  class: className = "",
+  hover = true,
+  glow = false,
+  padding = "p-6",
+  shine = true,
+} = Astro.props;
 ---
 
-<div class={`glass-card relative overflow-hidden rounded-2xl border border-white/20 dark:border-white/10 bg-white/10 dark:bg-white/5 backdrop-blur-lg ${hover ? 'hover-lift' : ''} ${glow ? 'glass-glow' : ''} ${className}`}>
-  <div class="glass-shine absolute inset-0 opacity-0 transition-opacity duration-500"></div>
-  <div class={`relative z-10 ${padding}`}>
+<div
+  class:list={[
+    "glass-card relative overflow-hidden rounded-2xl",
+    "border border-white/25 dark:border-white/15",
+    "bg-white/15 dark:bg-white/8 backdrop-blur-xl",
+    "shadow-[0_8px_32px_-8px_rgba(0,0,0,0.1)]",
+    "dark:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.3)]",
+    hover && "hover-lift",
+    glow && "glass-glow",
+    className,
+  ]}
+>
+  {shine && <div class="glass-shine absolute inset-0 opacity-0 transition-opacity duration-500 pointer-events-none" />}
+  <div class:list={["relative z-10", padding]}>
     <slot />
   </div>
 </div>
 
 <style>
   .glass-card {
-    box-shadow: 
-      0 4px 6px -1px rgba(0, 0, 0, 0.1),
-      0 2px 4px -1px rgba(0, 0, 0, 0.06),
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.08),
+      0 2px 4px -1px rgba(0, 0, 0, 0.04),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
+      inset 0 -1px 0 0 rgba(255, 255, 255, 0.05);
+    transition:
+      transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
   }
-  
+
+  .glass-card:hover {
+    box-shadow:
+      0 20px 40px -12px rgba(0, 0, 0, 0.15),
+      0 8px 16px -6px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.25),
+      inset 0 -1px 0 0 rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
   .glass-card:hover .glass-shine {
     opacity: 1;
   }
-  
+
   .glass-shine {
     background: linear-gradient(
       105deg,
-      transparent 40%,
-      rgba(255, 255, 255, 0.1) 45%,
-      rgba(255, 255, 255, 0.2) 50%,
-      rgba(255, 255, 255, 0.1) 55%,
-      transparent 60%
+      transparent 35%,
+      rgba(255, 255, 255, 0.12) 45%,
+      rgba(255, 255, 255, 0.25) 50%,
+      rgba(255, 255, 255, 0.12) 55%,
+      transparent 65%
     );
     transform: translateX(-100%);
-    animation: shine 3s ease-in-out infinite;
+    animation: shine 4s ease-in-out infinite;
   }
-  
+
   @keyframes shine {
-    0% { transform: translateX(-100%); }
-    20%, 100% { transform: translateX(100%); }
+    0% {
+      transform: translateX(-100%);
+    }
+    25%,
+    100% {
+      transform: translateX(100%);
+    }
   }
-  
+
   .glass-glow {
     position: relative;
   }
-  
+
   .glass-glow::before {
-    content: '';
+    content: "";
     position: absolute;
-    inset: -1px;
+    inset: -2px;
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.5), rgba(147, 51, 234, 0.5));
     border-radius: inherit;
     z-index: -1;
-    filter: blur(8px);
+    filter: blur(12px);
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.4s ease;
   }
-  
+
   .glass-glow:hover::before {
-    opacity: 1;
+    opacity: 0.7;
   }
 </style>

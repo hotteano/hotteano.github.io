@@ -30,6 +30,11 @@ const columnMeta: Record<string, { description: string; icon: string; color: str
     icon: "📌",
     color: "from-purple-500 to-pink-500",
   },
+  "期末复习": {
+    description: "本科课程期末复习笔记，覆盖重点、公式、模板与易错点。",
+    icon: "🎓",
+    color: "from-rose-500 to-red-500",
+  },
 };
 
 const columns = Object.entries(
@@ -40,7 +45,7 @@ const columns = Object.entries(
     return acc;
   }, {} as Record<string, typeof posts>)
 ).sort(([a], [b]) => {
-  const order = ["学习笔记", "投资", "读书笔记", "说明"];
+  const order = ["学习笔记", "期末复习", "投资", "读书笔记", "说明"];
   const ai = order.indexOf(a);
   const bi = order.indexOf(b);
   if (ai === -1 && bi === -1) return a.localeCompare(b);

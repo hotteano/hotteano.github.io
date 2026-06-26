@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import PageLayout from "@layouts/PageLayout.astro";
 import Container from "@components/Container.astro";
+import GlassCard from "@components/GlassCard.astro";
 import { BLOG } from "@consts";
 import { slugify, tagHref } from "@lib/utils";
 
@@ -57,19 +58,21 @@ const colors = [
           暂无标签。
         </div>
       ) : (
-        <div class="animate flex flex-wrap gap-3">
-          {tags.map((tag, index) => (
-            <a
-              href={tagHref(tag.slug)}
-              class={`group px-4 py-2 rounded-full border bg-gradient-to-r ${colors[index % colors.length]} hover:scale-105 hover:shadow-lg transition-all duration-300`}
-            >
-              <span class="font-medium">#{tag.displayName}</span>
-              <span class="ml-1.5 text-xs opacity-70 group-hover:opacity-100 transition-opacity">
-                {tag.count}
-              </span>
-            </a>
-          ))}
-        </div>
+        <GlassCard glow padding="p-6 md:p-8" class="animate">
+          <div class="flex flex-wrap gap-3">
+            {tags.map((tag, index) => (
+              <a
+                href={tagHref(tag.slug)}
+                class={`group px-4 py-2 rounded-full border bg-gradient-to-r ${colors[index % colors.length]} backdrop-blur-sm hover:scale-110 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300`}
+              >
+                <span class="font-medium">#{tag.displayName}</span>
+                <span class="ml-1.5 text-xs opacity-70 group-hover:opacity-100 transition-opacity">
+                  {tag.count}
+                </span>
+              </a>
+            ))}
+          </div>
+        </GlassCard>
       )}
     </div>
   </Container>

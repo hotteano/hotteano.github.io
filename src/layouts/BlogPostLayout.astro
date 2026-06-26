@@ -5,6 +5,7 @@ import Container from "@components/Container.astro";
 import TableOfContents from "@components/TableOfContents.astro";
 import ProfileCard from "@components/ProfileCard.astro";
 import TagCloud from "@components/TagCloud.astro";
+import GlassCard from "@components/GlassCard.astro";
 import FormattedDate from "@components/FormattedDate.astro";
 import BackToPrev from "@components/BackToPrev.astro";
 import Comments from "@components/Comments.astro";
@@ -27,37 +28,50 @@ const allwork = await getCollection("work");
 <PageLayout title={post.data.title} description={post.data.description} showSidebar={true}>
   <Container>
     <div class="flex justify-center">
-      <!-- Main Content - Wider width, centered -->
+      <!-- Main Content -->
       <div class="w-full max-w-5xl">
         <div class="animate mb-8">
           <BackToPrev href="/blog">
             Back to blog
           </BackToPrev>
         </div>
-        
+
         <!-- Post Header -->
-        <div class="space-y-4 mb-10">
+        <div class="space-y-5 mb-10">
           <div class="animate flex items-center gap-3 text-sm text-black/50 dark:text-white/50">
-            <FormattedDate date={post.data.date} />
+            <span class="px-2 py-0.5 rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5">
+              <FormattedDate date={post.data.date} />
+            </span>
             <span>•</span>
             <span>{readingTime(post.body)}</span>
+            {post.data.column && (
+              <>
+                <span>•</span>
+                <a
+                  href={`/blog/column/${encodeURIComponent(post.data.column)}`}
+                  class="px-2 py-0.5 rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                >
+                  {post.data.column}
+                </a>
+              </>
+            )}
           </div>
-          
-          <h1 class="animate text-3xl md:text-4xl font-bold text-black dark:text-white leading-tight">
+
+          <h1 class="animate text-3xl md:text-5xl font-bold text-black dark:text-white leading-tight bg-gradient-to-r from-black dark:from-white to-black/70 dark:to-white/70 bg-clip-text">
             {post.data.title}
           </h1>
-          
-          <p class="animate text-lg text-black/60 dark:text-white/60">
+
+          <p class="animate text-lg md:text-xl text-black/60 dark:text-white/60 leading-relaxed">
             {post.data.description}
           </p>
-          
+
           <!-- Tags -->
           {post.data.tags && (
             <div class="animate flex flex-wrap gap-2">
               {post.data.tags.map((tag: string) => (
                 <a
                   href={tagHref(tag)}
-                  class="px-3 py-1 rounded-full text-xs bg-black/5 dark:bg-white/10 text-black/70 dark:text-white/70 hover:bg-black/10 dark:hover:bg-white/20 transition-colors"
+                  class="px-3 py-1 rounded-full text-xs border border-white/20 dark:border-white/10 bg-white/10 dark:bg-white/5 backdrop-blur-sm text-black/70 dark:text-white/70 hover:bg-white/20 dark:hover:bg-white/10 hover:scale-105 transition-all"
                 >
                   {tag}
                 </a>
@@ -65,22 +79,26 @@ const allwork = await getCollection("work");
             </div>
           )}
         </div>
-        
-        <!-- Article Content -->
-        <article class="animate prose dark:prose-invert w-full max-w-none overflow-x-auto">
-          <Content />
-        </article>
+
+        <!-- Article Content in Glass Card -->
+        <GlassCard glow padding="p-6 md:p-10" class="article-glass mb-10">
+          <article class="prose dark:prose-invert w-full max-w-none overflow-x-auto">
+            <Content />
+          </article>
+        </GlassCard>
 
         <!-- Series Navigation -->
         {post.data.series && (
-          <SeriesNav series={post.data.series} currentSlug={post.slug} />
+          <div class="mb-10">
+            <SeriesNav series={post.data.series} currentSlug={post.slug} />
+          </div>
         )}
-        
+
         <!-- Comments -->
         <Comments />
       </div>
-      
-      <!-- Sidebar - Right side, outside the content area -->
+
+      <!-- Sidebar -->
       <aside class="hidden xl:block ml-16 w-64 flex-shrink-0">
         <div class="sticky top-24 space-y-8 pb-8">
           <ProfileCard postCount={allBlog.length} projectCount={allProjects.length} pubCount={allwork.length} />
@@ -93,28 +111,79 @@ const allwork = await getCollection("work");
 </PageLayout>
 
 <style>
-  /* Ensure consistent article width */
   article.prose {
     width: 100%;
     max-width: 100%;
   }
-  
-  /* Prevent code blocks from expanding width */
+
   .prose pre {
     max-width: 100%;
     overflow-x: auto;
+    border-radius: 0.75rem;
   }
-  
-  /* Prevent tables from expanding width */
+
   .prose table {
     display: block;
     max-width: 100%;
     overflow-x: auto;
+    border-radius: 0.75rem;
   }
-  
-  /* Ensure images don't overflow */
+
   .prose img {
     max-width: 100%;
     height: auto;
+    border-radius: 0.75rem;
+  }
+
+  /* Add subtle reveal targets inside article */
+  .prose :global(h2),
+  .prose :global(h3),
+  .prose :global(h4),
+  .prose :global(blockquote),
+  .prose :global(pre),
+  .prose :global(table),
+  .prose :global(ul),
+  .prose :global(ol) {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+
+  .prose :global(h2.revealed),
+  .prose :global(h3.revealed),
+  .prose :global(h4.revealed),
+  .prose :global(blockquote.revealed),
+  .prose :global(pre.revealed),
+  .prose :global(table.revealed),
+  .prose :global(ul.revealed),
+  .prose :global(ol.revealed) {
+    opacity: 1;
+    transform: translateY(0);
   }
 </style>
+
+<script>
+  // Reveal article elements on scroll
+  document.addEventListener('DOMContentLoaded', () => {
+    const article = document.querySelector('article.prose');
+    if (!article) return;
+
+    const selectors = ['h2', 'h3', 'h4', 'blockquote', 'pre', 'table', 'ul', 'ol'];
+    const elements = article.querySelectorAll(selectors.join(', '));
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      root: null,
+      rootMargin: '0px 0px -10% 0px',
+      threshold: 0,
+    });
+
+    elements.forEach(el => observer.observe(el));
+  });
+</script>

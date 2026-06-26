@@ -26,14 +26,13 @@ const tags = Object.entries(tagCount)
     slug,
     displayName: tagDisplayNames[slug],
     count,
-    // Determine size based on count
     size: count >= 5 ? "xl" : count >= 3 ? "lg" : count >= 2 ? "md" : "sm" as const,
   }))
   .sort((a, b) => b.count - a.count)
-  .slice(0, 15); // Limit to top 15 tags
+  .slice(0, 15);
 
 const sizeClasses = {
-  sm: "text-xs px-2 py-1",
+  sm: "text-xs px-2.5 py-1",
   md: "text-sm px-3 py-1.5",
   lg: "text-base px-4 py-2",
   xl: "text-lg px-5 py-2.5 font-semibold",
@@ -49,7 +48,7 @@ const colors = [
 ];
 ---
 
-<div class="tag-cloud animate p-5 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5">
+<div class="tag-cloud animate p-5 rounded-2xl border border-white/20 dark:border-white/10 bg-white/10 dark:bg-white/5 backdrop-blur-xl shadow-lg">
   <h3 class="text-sm font-semibold text-black dark:text-white mb-4 flex items-center gap-2">
     <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
@@ -57,15 +56,15 @@ const colors = [
     </svg>
     Tags
   </h3>
-  
+
   {tags.length === 0 ? (
     <p class="text-sm text-black/50 dark:text-white/50">No tags yet</p>
   ) : (
     <div class="flex flex-wrap gap-2">
       {tags.map((tag, index) => (
-        <a 
+        <a
           href={tagHref(tag.slug)}
-          class={`tag-item inline-block rounded-full border bg-gradient-to-r ${colors[index % colors.length]} ${sizeClasses[tag.size]} hover:scale-110 hover:shadow-lg transition-all duration-300 animate-float`}
+          class={`tag-item inline-block rounded-full border bg-gradient-to-r ${colors[index % colors.length]} ${sizeClasses[tag.size]} backdrop-blur-sm hover:scale-110 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300`}
           style={`animation-delay: ${index * 0.1}s; animation-duration: ${3 + index * 0.2}s;`}
           title={`${tag.count} posts`}
         >
@@ -82,12 +81,16 @@ const colors = [
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-5px); }
   }
-  
+
   .animate-float {
     animation: float ease-in-out infinite;
   }
-  
+
   .tag-item:hover {
     z-index: 10;
+  }
+
+  .tag-item {
+    animation: float ease-in-out infinite;
   }
 </style>
