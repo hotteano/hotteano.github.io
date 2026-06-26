@@ -40,6 +40,7 @@ src/
 │   ├── ReadingProgress.astro   # 阅读进度条
 │   ├── ArrowCard.astro         # 箭头卡片链接
 │   ├── ProfileCard.astro       # 个人资料卡
+│   ├── SeriesNav.astro         # 系列文章导航（上一期/下一期/目录）
 │   ├── Comments.astro          # Giscus 评论
 │   └── ...
 ├── content/              # 内容集合 (Astro Content Collections)
@@ -84,6 +85,9 @@ column: "投资"  # 可选值: "投资", "学习笔记", "读书笔记", "说明
 series: "黄金投资日报"  # 可选：系列名称，用于聚合系列文章
 lastUpdated: "2026-03-25"  # 可选：最后更新时间
 ---
+
+> 提示：过长的笔记建议按主题拆分为多期，使用相同的 `series` 名称，BlogPostLayout 会自动在文末渲染 `SeriesNav` 系列导航。
+
 
 文章内容支持 Markdown 和数学公式：
 

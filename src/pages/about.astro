@@ -19,10 +19,10 @@ const sections = [
 ];
 
 const identityBadges = [
-  { label: "Enthusiastic Theorist", color: "from-rose-500/10 to-pink-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20" },
-  { label: "Algorithm Explorer", color: "from-amber-500/10 to-orange-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" },
-  { label: "AI Developer", color: "from-emerald-500/10 to-green-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" },
-  { label: "Lifelong Learner", color: "from-sky-500/10 to-blue-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20" },
+  { label: "Optimization Theory", color: "from-rose-500/10 to-pink-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20" },
+  { label: "Genetic Programming Theory", color: "from-amber-500/10 to-orange-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" },
+  { label: "Reinforcement Learning", color: "from-emerald-500/10 to-green-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" },
+  { label: "Agentic AI & Context Engineering", color: "from-sky-500/10 to-blue-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20" },
 ];
 
 const education = [
@@ -49,22 +49,22 @@ const researchItems = [
     title: "Research Interests",
     period: "Present",
     role: "Focus Areas",
-    description: "Theoretical Computer Science, Reinforcement Learning, Learning Theory, Agentic AI / Context Engineering.",
-    tags: ["Theory", "Algorithms", "Machine Learning", "Context Engineering"],
+    description: "My research focuses on the theoretical foundations of learning and optimization. Current interests include: (1) spectral optimizers and optimization theory for deep neural networks; (2) theoretical analysis of genetic programming, with emphasis on generalization and runtime bounds; (3) reinforcement learning and world action models; and (4) agent systems, particularly context engineering and its underlying theory.",
+    tags: ["Optimization Theory", "Genetic Programming", "Reinforcement Learning", "Agent Systems", "Context Engineering"],
   },
   {
     title: "SUSTech Theory of AI Lab",
     period: "2026",
     role: "Undergraduate Researcher",
-    description: "Randomised Search Heuristics under Prof. Pietro Simone Oliveto, collaborating with Mingxuan Yin. Target: Algorithmica, TCS, ACM TELO or TEVC.",
-    tags: ["Randomised Search Heuristics", "Genetic Programming"],
+    description: "Working on theoretical analysis of randomised search heuristics and genetic programming under the supervision of Prof. Pietro Simone Oliveto, in collaboration with Mingxuan Yin. Current work targets venues including Algorithmica, TCS, ACM TELO, and TEVC.",
+    tags: ["Randomised Search Heuristics", "Genetic Programming", "Runtime Analysis"],
   },
   {
     title: "Research Internship",
     period: "2027",
     role: "Incoming Research Intern",
-    description: "Target: Top Companies, Top Research Institutes, and Top Universities. Coming Soon.",
-    tags: ["To be announced"],
+    description: "Seeking research internships at leading institutions in optimization, machine learning theory, and artificial intelligence.",
+    tags: ["Open to opportunities"],
   },
 ];
 
@@ -160,6 +160,10 @@ const courseGrades = [
   { name: "Data Structures and Algorithms Analysis (Honor)", grade: "A (95/100)" },
   { name: "Principles of Database (Honor)", grade: "A- (92/100)" },
   { name: "Digital Logic", grade: "A- (90/100)" },
+  { name: "Computer Organization", grade: "90 (GPA 3.85)" },
+  { name: "Artificial Intelligence", grade: "90 (GPA 3.85)" },
+  { name: "Algorithm Design and Analysis", grade: "93 (GPA 3.94)" },
+  { name: "Introduction to Theory of Computation", grade: "93 (GPA 3.94)" },
   { name: "Discrete Mathematics (Honor)", grade: "B (85/100)" },
   { name: "Introduction to Mathematical Logic", grade: "B+ (89/100)" },
   { name: "Calculus", grade: "A- (90/100)" },
@@ -167,20 +171,15 @@ const courseGrades = [
 ];
 
 const interests = [
-  { icon: "💻", title: "Coding", desc: "Coding is not my profession, but it's definitely my passion." },
-  { icon: "🧮", title: "Math", desc: "If you ask me which language is the most elegant, I will say it's math." },
-  { icon: "🎾", title: "Tennis", desc: "Amateur tennis player." },
-  { icon: "🎮", title: "Gaming", desc: "FPS, strategy, RPG. Recently Wuthering Waves. Chinese Chess candidate master (2017)." },
-  { icon: "🎵", title: "Music", desc: "City-Pop and Symphony. ABRSM Grade 8 Piano (Amateur), now playing electric guitar." },
-  { icon: "🎬", title: "ACGN", desc: "Used to be a Galgame fan. Now RPGs and Anime." },
+  { icon: "🧮", title: "Mathematics", desc: "I maintain a broad interest in discrete mathematics, probability, and theoretical computer science, which serve as the foundation for my research." },
+  { icon: "🎾", title: "Sports", desc: "Tennis and chess help me maintain focus and strategic thinking outside of research." },
+  { icon: "🎵", title: "Music", desc: "Classical music and City-Pop; previously studied piano, and currently exploring electric guitar." },
 ];
 
 const funFacts = [
   { label: "Location", value: "Shenzhen, Guangdong, China" },
-  { label: "Coffee consumed", value: "1~2 cups per day" },
-  { label: "Favorite algorithm", value: "Euclidean Algorithm" },
+  { label: "Favorite Algorithm", value: "Euclidean Algorithm" },
   { label: "Favorite Open Problem", value: "Karchmer-Raz-Wigderson Conjecture" },
-  { label: "Height and Weight", value: "178cm / 70kg" },
 ];
 ---
 
@@ -206,11 +205,11 @@ const funFacts = [
 
             <div class="flex-1 space-y-4">
               <h1 class="animate animate-delay-100 text-3xl md:text-4xl font-bold text-black dark:text-white">
-                Hi, I'm {SITE.NAME}
+                {SITE.NAME}
               </h1>
 
               <p class="animate animate-delay-200 text-lg text-black/60 dark:text-white/60 leading-relaxed">
-                Member of Turing Class, SUSTech Department of CSE. Undergraduate researcher interested in AI and algorithms.
+                Undergraduate student in the Turing Class, Department of Computer Science and Engineering, Southern University of Science and Technology (SUSTech). My research lies at the intersection of optimization theory, machine learning, and artificial intelligence.
               </p>
 
               <div class="animate animate-delay-250 flex flex-wrap gap-2">
@@ -247,10 +246,13 @@ const funFacts = [
           </h2>
           <div class="space-y-4 text-black/60 dark:text-white/60 leading-relaxed">
             <p>
-              I was born in Shenzhen, Guangdong Province, China. Graduated from Shenzhen Middle School, I was admitted to the Southern University of Science and Technology (SUSTech), where I pursue my bachelor degree in computer science. Now I am in my Sophomore year, and I have a strong interest in AI development and algorithm research.
+              I am currently an undergraduate student in the Turing Class at SUSTech, majoring in Computer Science and Engineering. My academic background combines rigorous training in algorithms, mathematics, and machine learning, with a growing research focus on theoretical aspects of optimization and intelligent systems.
             </p>
             <p>
-              In this blog, you may get to know about me, catch up with my recent motion, and feel free to reach out if you have any interesting ideas or just want to say hi!
+              I am particularly interested in understanding the theoretical foundations that underpin modern AI systems, including optimization dynamics in deep learning, the behavior of evolutionary algorithms, decision-making in reinforcement learning, and the design principles of agentic systems.
+            </p>
+            <p>
+              Please feel free to reach out if you are interested in my research or would like to discuss related topics.
             </p>
           </div>
         </section>
@@ -460,10 +462,11 @@ const funFacts = [
                 <div class="flex-1">
                   <div class="text-sm text-black/50 dark:text-white/50 mb-1">Cumulative GPA</div>
                   <h3 class="text-3xl font-bold text-black dark:text-white mb-2">3.83 / 4.0</h3>
-                  <div class="grid grid-cols-3 gap-2 text-sm text-black/60 dark:text-white/60">
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-black/60 dark:text-white/60">
                     <span>Fall 2024: 3.72</span>
                     <span>Spring 2024: 3.91</span>
                     <span>Fall 2025: 3.85</span>
+                    <span>Spring 2026: 3.83</span>
                   </div>
                 </div>
               </div>
@@ -562,7 +565,7 @@ const funFacts = [
 
           <div class="p-6 rounded-2xl border border-black/10 dark:border-white/10 bg-gradient-to-br from-transparent to-black/5 dark:to-white/5">
             <p class="text-lg mb-6 text-black/60 dark:text-white/60">
-              I'm always open to interesting conversations and collaboration opportunities. Feel free to reach out through any of these platforms 👇
+              I welcome discussions on research collaborations, academic opportunities, and related topics. Please reach out via email or any of the platforms below.
             </p>
 
             <div class="flex flex-wrap gap-3">
@@ -597,7 +600,7 @@ const funFacts = [
         <section id="fun-facts" class="animate space-y-6">
           <h2 class="text-2xl font-semibold text-black dark:text-white flex items-center gap-2">
             <span class="animate-float inline-block" style="animation-delay: 2s;">🎯</span>
-            Fun Facts
+            Quick Facts
           </h2>
 
           <div class="flex flex-wrap gap-3">
@@ -636,7 +639,7 @@ const funFacts = [
               href={`mailto:${SITE.EMAIL}`}
               class="block w-full text-center py-2 rounded-lg bg-black dark:bg-white text-white dark:text-black font-medium hover:opacity-80 transition-opacity"
             >
-              Say Hello
+              Contact Me
             </a>
           </div>
 

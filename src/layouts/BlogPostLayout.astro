@@ -8,6 +8,7 @@ import TagCloud from "@components/TagCloud.astro";
 import FormattedDate from "@components/FormattedDate.astro";
 import BackToPrev from "@components/BackToPrev.astro";
 import Comments from "@components/Comments.astro";
+import SeriesNav from "@components/SeriesNav.astro";
 import { readingTime, slugify, tagHref } from "@lib/utils";
 import type { CollectionEntry } from "astro:content";
 
@@ -69,6 +70,11 @@ const allwork = await getCollection("work");
         <article class="animate prose dark:prose-invert w-full max-w-none overflow-x-auto">
           <Content />
         </article>
+
+        <!-- Series Navigation -->
+        {post.data.series && (
+          <SeriesNav series={post.data.series} currentSlug={post.slug} />
+        )}
         
         <!-- Comments -->
         <Comments />

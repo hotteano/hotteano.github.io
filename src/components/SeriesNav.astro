@@ -1,0 +1,101 @@
+---
+import { getCollection } from "astro:content";
+import FormattedDate from "@components/FormattedDate.astro";
+
+interface Props {
+  series: string;
+  currentSlug: string;
+}
+
+const { series, currentSlug } = Astro.props;
+
+const seriesPosts = (await getCollection("blog"))
+  .filter(post => !post.data.draft && post.data.series === series)
+  .sort((a, b) => a.data.date.valueOf() - b.data.date.valueOf());
+
+const currentIndex = seriesPosts.findIndex(post => post.slug === currentSlug);
+const prevPost = currentIndex > 0 ? seriesPosts[currentIndex - 1] : null;
+const nextPost = currentIndex < seriesPosts.length - 1 ? seriesPosts[currentIndex + 1] : null;
+---
+
+{seriesPosts.length > 0 && (
+  <div class="mt-12 pt-8 border-t border-black/10 dark:border-white/10">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+      <div>
+        <div class="text-sm text-black/50 dark:text-white/50 mb-1">Series</div>
+        <h3 class="text-lg font-semibold text-black dark:text-white">{series}</h3>
+        <div class="text-sm text-black/50 dark:text-white/50">
+          Part {currentIndex + 1} of {seriesPosts.length}
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        {prevPost ? (
+          <a
+            href={`/blog/${prevPost.slug}`}
+            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-sm"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            <span class="hidden sm:inline">Previous</span>
+          </a>
+        ) : (
+          <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-black/5 dark:border-white/5 text-black/30 dark:text-white/30 text-sm cursor-not-allowed">
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Previous
+          </span>
+        )}
+
+        {nextPost ? (
+          <a
+            href={`/blog/${nextPost.slug}`}
+            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-black dark:bg-white text-white dark:text-black hover:opacity-80 transition-opacity text-sm"
+          >
+            <span class="hidden sm:inline">Next</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        ) : (
+          <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-black/10 dark:bg-white/10 text-black/30 dark:text-white/30 text-sm cursor-not-allowed">
+            Next
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        )}
+      </div>
+    </div>
+
+    <nav class="space-y-1">
+      {seriesPosts.map((post, index) => {
+        const isCurrent = post.slug === currentSlug;
+        return (
+          <a
+            href={`/blog/${post.slug}`}
+            class={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+              isCurrent
+                ? "bg-black/5 dark:bg-white/10 text-black dark:text-white font-medium"
+                : "text-black/60 dark:text-white/60 hover:bg-black/5 dark:hover:bg-white/5"
+            }`}
+          >
+            <span class={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs ${
+              isCurrent
+                ? "bg-black dark:bg-white text-white dark:text-black"
+                : "bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50"
+            }`}>
+              {index + 1}
+            </span>
+            <span class="flex-1 truncate">{post.data.title}</span>
+            <span class="hidden sm:block text-xs text-black/40 dark:text-white/40 shrink-0">
+              <FormattedDate date={post.data.date} />
+            </span>
+          </a>
+        );
+      })}
+    </nav>
+  </div>
+)}
