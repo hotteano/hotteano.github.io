@@ -101,8 +101,8 @@ const work = await Promise.all(
       <!-- Main Content -->
       <div class="space-y-16">
       <!-- Featured Section with Glass Cards -->
-      <section class="animate grid md:grid-cols-3 gap-6 items-start">
-        <GlassCard glow padding="p-4 sm:p-5">
+      <section class="animate grid md:grid-cols-2 gap-6 items-start">
+        <GlassCard glow padding="p-5 sm:p-6" class="md:col-span-2">
           <div class="flex items-start gap-3 sm:gap-4">
             <div class="text-4xl animate-float flex-shrink-0">🎯</div>
             <div class="min-w-0 w-full">
@@ -116,7 +116,7 @@ const work = await Promise.all(
           </div>
         </GlassCard>
 
-        <a href="/blog/column/期末复习" class="block group">
+        <a href="/blog/column/期末复习" class="block group h-full">
           <GlassCard class="h-full" glow>
             <div class="text-center">
               <div class="text-4xl mb-3 animate-pulse-glow group-hover:scale-110 transition-transform duration-300">🎓</div>
@@ -126,7 +126,7 @@ const work = await Promise.all(
           </GlassCard>
         </a>
         
-        <a href="/blog/columns" class="block group">
+        <a href="/blog/columns" class="block group h-full">
           <GlassCard class="h-full">
             <div class="text-center">
               <div class="text-4xl mb-3 animate-pulse-glow group-hover:scale-110 transition-transform duration-300">📂</div>
@@ -214,11 +214,21 @@ const work = await Promise.all(
         </div>
         <div class="grid gap-6">
           {work.map((entry, index) => (
-            <GlassCard glow class={`animate ${index % 2 === 0 ? 'animate-slide-left' : 'animate-slide-right'}`} style={`animation-delay: ${index * 100}ms`} padding="p-6 md:p-8">
+            <GlassCard glow class={`animate hover-lift ${index % 2 === 0 ? 'animate-slide-left' : 'animate-slide-right'}`} style={`animation-delay: ${index * 100}ms`} padding="p-6 md:p-8">
               <div class="flex flex-wrap gap-2 items-center text-sm mb-3">
                 <span class="badge-tech">
                   {dateRange(entry.data.dateStart, entry.data.dateEnd)}
                 </span>
+                {entry.data.venue && (
+                  <span class="badge-tech">
+                    {entry.data.venue}
+                  </span>
+                )}
+                {entry.data.status && (
+                  <span class="badge-tech">
+                    {entry.data.status}
+                  </span>
+                )}
               </div>
               <h3 class="text-lg font-bold text-black dark:text-white mb-1 text-gradient-subtle">
                 {entry.data.company}

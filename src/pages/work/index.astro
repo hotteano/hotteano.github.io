@@ -30,11 +30,21 @@ const work = await Promise.all(
 
       <div class="grid gap-6">
         {work.map((entry, index) => (
-          <GlassCard glow class="animate" padding="p-6 md:p-8">
-            <div class="flex flex-wrap gap-2 items-center text-sm mb-3">
+          <GlassCard glow class="animate hover-lift" padding="p-6 md:p-8">
+            <div class="flex flex-wrap gap-2 items-center text-sm mb-4">
               <span class="badge-tech">
                 {dateRange(entry.data.dateStart, entry.data.dateEnd)}
               </span>
+              {entry.data.venue && (
+                <span class="badge-tech">
+                  {entry.data.venue}
+                </span>
+              )}
+              {entry.data.status && (
+                <span class="badge-tech">
+                  {entry.data.status}
+                </span>
+              )}
             </div>
             <h3 class="text-xl font-bold text-black dark:text-white mb-1 text-gradient-subtle">
               {entry.data.company}
@@ -43,6 +53,14 @@ const work = await Promise.all(
             <article class="prose-sm">
               <entry.Content />
             </article>
+            <div class="mt-5 flex flex-wrap gap-2">
+              <button disabled class="btn-glass text-xs opacity-50 cursor-not-allowed">
+                Paper (coming soon)
+              </button>
+              <button disabled class="btn-glass text-xs opacity-50 cursor-not-allowed">
+                Code (coming soon)
+              </button>
+            </div>
           </GlassCard>
         ))}
       </div>

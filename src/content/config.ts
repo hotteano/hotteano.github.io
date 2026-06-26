@@ -23,6 +23,8 @@ const work = defineCollection({
     role: z.string(),
     dateStart: z.coerce.date(),
     dateEnd: z.union([z.coerce.date(), z.string()]),
+    status: z.enum(["Submitted", "Under Review", "Under Preparation", "In Progress"]).optional(),
+    venue: z.string().optional(),
   }),
 });
 
