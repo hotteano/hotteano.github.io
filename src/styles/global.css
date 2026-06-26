@@ -24,15 +24,14 @@ body {
 }
 
 header {
-  @apply fixed top-0 left-0 right-0 z-50 py-5;
-  @apply bg-stone-100/75 dark:bg-stone-900/25;
-  @apply backdrop-blur-sm saturate-200;
+  @apply fixed top-0 left-0 right-0 z-50;
+  @apply bg-stone-100/30 dark:bg-stone-900/30;
+  @apply backdrop-blur-md;
   @apply transition-all duration-300;
 }
 
 header.scrolled {
-  @apply py-3 shadow-sm;
-  @apply bg-stone-100/90 dark:bg-stone-900/80;
+  @apply bg-stone-100/50 dark:bg-stone-900/50;
 }
 
 main {
