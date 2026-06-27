@@ -2,7 +2,7 @@
 title: "黄金投资2026.2.25午盘总结"
 description: "2026.2.25 午盘总结：金价续涨至 1153.47 RMB，特朗普国情咨文释放的贸易不确定性分析。"
 date: "2026-02-25"
-draft: false
+draft: true
 tags: ["investment", "gold"]
 column: "投资"
 series: "黄金投资日报"

@@ -310,6 +310,11 @@ const work = await Promise.all(
         <div class="sticky top-24 space-y-10 pb-8">
           <ProfileCard postCount={allBlog.length} projectCount={allProjects.length} pubCount={allwork.length} />
           <Calendar importantDates={[
+            { date: "2026-07-21", title: "AAAI 2027 Abstract", type: "deadline" },
+            { date: "2026-07-28", title: "AAAI 2027 Full Paper", type: "deadline" },
+            { date: "2026-07-31", title: "AAAI 2027 Supplementary", type: "deadline" },
+            { date: "2026-09-19", title: "ICLR 2027 Abstract", type: "deadline" },
+            { date: "2026-09-24", title: "ICLR 2027 Full Paper", type: "deadline" },
             { date: "2026-12-02", title: "NeurIPS 2026", type: "event" }
           ]} />
           <TagCloud />

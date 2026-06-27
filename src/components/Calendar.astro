@@ -109,7 +109,8 @@ function isToday(day: number): boolean {
       <p class="text-xs text-black/50 dark:text-white/50 font-medium">Upcoming</p>
       {importantDates
         .filter(d => new Date(d.date) >= new Date(today.setHours(0,0,0,0)))
-        .slice(0, 3)
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .slice(0, 6)
         .map(date => (
           <div class="flex items-center gap-2 text-xs">
             <span class={`w-2 h-2 rounded-full ${typeColors[date.type || 'other']}`}></span>

@@ -2,7 +2,7 @@
 title: "黄金投资2026.3.25午盘总结"
 description: "2026.3.25 午盘总结：缓和情绪推动金价大幅反弹，14g 持仓观望中。"
 date: "2026-03-25"
-draft: false
+draft: true
 tags: ["investment", "gold"]
 column: "投资"
 series: "黄金投资日报"

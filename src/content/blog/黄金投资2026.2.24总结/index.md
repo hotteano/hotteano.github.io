@@ -2,7 +2,7 @@
 title: "黄金投资2026.2.24"
 description: "2026.2.24 黄金日报：如意金现价 1141 RMB，分析高开跳水后的底部支撑与上升通道。"
 date: "2026-02-24"
-draft: false
+draft: true
 tags: ["investment", "gold"]
 column: "投资"
 series: "黄金投资日报"
