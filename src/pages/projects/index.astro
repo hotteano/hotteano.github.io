@@ -6,14 +6,49 @@ import ArrowCard from "@components/ArrowCard.astro";
 import GlassCard from "@components/GlassCard.astro";
 import { PROJECTS } from "@consts";
 
-const projects = (await getCollection("projects"))
+const allProjects = (await getCollection("projects"))
   .filter(project => !project.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const categoryOrder = ["工程类", "学术类", "社团类"] as const;
+const engineeringSubOrder = ["系统软件", "硬件", "应用软件"] as const;
+
+type Project = typeof allProjects[number];
+
+const groupedByCategory: Record<string, Project[]> = {};
+for (const project of allProjects) {
+  const category = project.data.category;
+  if (!groupedByCategory[category]) {
+    groupedByCategory[category] = [];
+  }
+  groupedByCategory[category].push(project);
+}
+
+const engineeringBySubcategory: Record<string, Project[]> = {};
+for (const project of groupedByCategory["工程类"] || []) {
+  const sub = project.data.subcategory || "其他";
+  if (!engineeringBySubcategory[sub]) {
+    engineeringBySubcategory[sub] = [];
+  }
+  engineeringBySubcategory[sub].push(project);
+}
+
+const categoryDescriptions: Record<string, string> = {
+  "工程类": "覆盖系统、硬件与应用的实际构建项目。",
+  "学术类": "研究综述、课程论文与学术笔记。",
+  "社团类": "社团与学生小组协作的社区项目。",
+};
+
+const subcategoryDescriptions: Record<string, string> = {
+  "系统软件": "操作系统、内核与底层基础设施。",
+  "硬件": "FPGA、CPU 与数字逻辑设计。",
+  "应用软件": "桌面应用、CLI 工具与终端服务。",
+};
 ---
 
 <PageLayout title={PROJECTS.TITLE} description={PROJECTS.DESCRIPTION}>
   <Container>
-    <div class="space-y-10">
+    <div class="space-y-14">
       <div class="animate space-y-2">
         <div class="text-sm text-black/50 dark:text-white/50">Portfolio</div>
         <h1 class="section-title">Projects</h1>
@@ -22,17 +57,62 @@ const projects = (await getCollection("projects"))
         </p>
       </div>
 
-      <GlassCard glow padding="p-6 md:p-8" class="animate">
-        <ul class="flex flex-col gap-4">
-          {
-            projects.map((project) => (
-              <li>
-                <ArrowCard entry={project}/>
-              </li>
-            ))
-          }
-        </ul>
-      </GlassCard>
+      {
+        categoryOrder.map((category) => {
+          const projects = groupedByCategory[category];
+          if (!projects || projects.length === 0) return null;
+
+          return (
+            <section class="animate space-y-6">
+              <div class="space-y-1">
+                <h2 class="text-2xl font-bold text-gradient-subtle">{category}</h2>
+                <p class="text-sm text-black/50 dark:text-white/50">
+                  {categoryDescriptions[category]}
+                </p>
+              </div>
+
+              {category === "工程类" ? (
+                <div class="space-y-8">
+                  {engineeringSubOrder.map((sub) => {
+                    const subProjects = engineeringBySubcategory[sub];
+                    if (!subProjects || subProjects.length === 0) return null;
+
+                    return (
+                      <div class="space-y-3">
+                        <div class="space-y-0.5">
+                          <h3 class="text-lg font-semibold text-black dark:text-white">{sub}</h3>
+                          <p class="text-xs text-black/40 dark:text-white/50">
+                            {subcategoryDescriptions[sub]}
+                          </p>
+                        </div>
+                        <GlassCard glow padding="p-6 md:p-8" class="animate">
+                          <ul class="flex flex-col gap-4">
+                            {subProjects.map((project) => (
+                              <li>
+                                <ArrowCard entry={project} />
+                              </li>
+                            ))}
+                          </ul>
+                        </GlassCard>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <GlassCard glow padding="p-6 md:p-8" class="animate">
+                  <ul class="flex flex-col gap-4">
+                    {projects.map((project) => (
+                      <li>
+                        <ArrowCard entry={project} />
+                      </li>
+                    ))}
+                  </ul>
+                </GlassCard>
+              )}
+            </section>
+          );
+        })
+      }
     </div>
   </Container>
 </PageLayout>

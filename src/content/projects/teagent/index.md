@@ -3,6 +3,8 @@ title: "TEAgent"
 description: "A local-first desktop agent and CLI for personal development and research workflows, built with TypeScript and a monorepo architecture."
 date: "2026-05-26"
 repoURL: "https://github.com/hotteano/TEAgent"
+category: "工程类"
+subcategory: "应用软件"
 ---
 
 TEAgent is a local-first desktop agent and CLI that I built to automate personal development and research workflows. It keeps all runtime data locally under `.teagent/` and runs without relying on external cloud services.

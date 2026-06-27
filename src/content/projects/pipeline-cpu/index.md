@@ -2,6 +2,8 @@
 title: "Five-Stage Pipeline CPU"
 description: "SUSTech Computer Organization course design: a five-stage pipeline RISC CPU with caches, bus, DMA, and peripherals implemented in SystemVerilog on FPGA."
 date: "2026-05-31"
+category: "工程类"
+subcategory: "硬件"
 ---
 
 This is the course design project for SUSTech's Computer Organization course, completed in collaboration with Jiang Yihao and Hou Dongsheng. We implemented a complete five-stage pipeline RISC CPU in SystemVerilog and ran it on an FPGA board using Vivado.

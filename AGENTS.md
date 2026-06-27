@@ -109,6 +109,8 @@ date: "2026-01-15"
 draft: false
 demoURL: "https://demo.example.com"  # 可选
 repoURL: "https://github.com/user/repo"  # 可选
+category: "工程类"  # 必填，可选值: "工程类", "学术类", "社团类"
+subcategory: "应用软件"  # 仅工程类必填，可选值: "系统软件", "硬件", "应用软件"
 ---
 
 项目详情...

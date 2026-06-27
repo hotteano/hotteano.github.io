@@ -3,6 +3,8 @@ title: "WheelChair Editor"
 description: "A modern, extensible rich-text editor built on ProseMirror with full TypeScript support, Markdown support, and LaTeX math."
 date: "2026-03-25"
 repoURL: "https://github.com/hotteano/WheelChair"
+category: "工程类"
+subcategory: "应用软件"
 ---
 
 WheelChair is a modern, extensible rich-text editor that I built for developers who need full control over content editing. It is based on ProseMirror and written entirely in TypeScript.

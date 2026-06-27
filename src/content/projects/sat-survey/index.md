@@ -2,6 +2,7 @@
 title: "A Survey on the SAT Problem and Complexity Classes"
 description: "A written survey for SUSTech's Fall 2025 Discrete Mathematics course, covering SAT, NP-completeness, and frontiers of complexity theory including the KRW conjecture."
 date: "2025-12-15"
+category: "学术类"
 ---
 
 This survey was written for SUSTech's Fall 2025 Discrete Mathematics course, instructed by Dr. Qi Wang. It gives an overview of the Boolean satisfiability problem (SAT), its central role in complexity theory, and its connections to broader questions such as the KRW conjecture and circuit complexity.

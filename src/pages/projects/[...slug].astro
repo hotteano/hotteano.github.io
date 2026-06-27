@@ -33,10 +33,15 @@ const { Content } = await project.render();
     </div>
 
     <div class="space-y-4 mb-10">
-      <div class="animate flex items-center gap-3 text-sm">
+      <div class="animate flex flex-wrap items-center gap-3 text-sm">
         <span class="badge-tech">
           <FormattedDate date={project.data.date} />
         </span>
+        {project.data.category && (
+          <span class="badge-tech">
+            {project.data.subcategory ? `${project.data.category} · ${project.data.subcategory}` : project.data.category}
+          </span>
+        )}
         <span class="text-black/30 dark:text-white/30">•</span>
         <span class="text-black/50 dark:text-white/50">{readingTime(project.body)}</span>
       </div>

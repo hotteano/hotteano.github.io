@@ -3,6 +3,7 @@ title: "《理论计算机科学导论》中文翻译"
 description: "Chinese translation of Boaz Barak's Introduction to Theoretical Computer Science, organized by the SUSTech TCS student group."
 date: "2025-10-14"
 repoURL: "https://github.com/hotteano/intro-to-tcs-zh-cn"
+category: "社团类"
 ---
 
 This repository hosts the Chinese translation of Boaz Barak's *Introduction to Theoretical Computer Science*, a widely used textbook for theoretical computer science courses. The project is organized by the SUSTech TCS student group and built with mdBook.

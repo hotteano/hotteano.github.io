@@ -3,6 +3,8 @@ title: "TeaOS / TeaSystem"
 description: "An education-oriented x86_64 operating system with multicore support, virtual memory, and preemptive scheduling."
 date: "2026-03-22"
 repoURL: "https://github.com/hotteano/TeaOS"
+category: "工程类"
+subcategory: "系统软件"
 ---
 
 TeaOS is a teaching-oriented operating system designed for learning modern OS principles. It targets x86_64 architecture and includes multicore support, virtual memory management, and preemptive scheduling.

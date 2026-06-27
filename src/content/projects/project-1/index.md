@@ -3,6 +3,8 @@ title: "Assisting development in the Proficiency Assessment of CSE of SUSTech"
 description: "I am currently assisting in the development of the proficiency assessment system for the Computer Science and Engineering (CSE) department at Southern University of Science and Technology (SUSTech), directed by Associate Professor Dr. Shiqi Yu."
 date: "Feb 17 2026"
 repoURL: "https://github.com/hotteano/PPAS-Demo"
+category: "工程类"
+subcategory: "应用软件"
 ---
 
 I am currently assisting in the development of the proficiency assessment system for the Computer Science and Engineering (CSE) department at Southern University of Science and Technology (SUSTech), directed by Associate Professor Dr. Shiqi Yu.

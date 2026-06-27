@@ -38,7 +38,9 @@ const projects = defineCollection({
     date: z.coerce.date(),
     draft: z.boolean().optional(),
     demoURL: z.string().optional(),
-    repoURL: z.string().optional()
+    repoURL: z.string().optional(),
+    category: z.enum(["工程类", "学术类", "社团类"]),
+    subcategory: z.enum(["系统软件", "硬件", "应用软件"]).optional(),
   }),
 });
 

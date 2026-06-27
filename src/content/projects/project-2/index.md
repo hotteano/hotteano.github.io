@@ -3,6 +3,8 @@ title: "Digital Logic Course Design"
 description: "Designed and implemented a digital logic circuit using Verilog HDL."
 date: "Feb 17 2026"
 repoURL: "https://github.com/SUSTech-Digital-Logic-Project-Team/Digital-Logic-Fall-2025-Project-Matrix-Calculator"
+category: "工程类"
+subcategory: "硬件"
 ---
 
 In the Fall 2025 semester, I participated in a digital logic course design project where we designed and implemented a digital logic circuit using Verilog HDL. The project was part of the curriculum for the digital logic course at Southern University of Science and Technology (SUSTech).
