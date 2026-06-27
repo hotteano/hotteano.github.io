@@ -19,10 +19,11 @@
   let trailX = 0;
   let trailY = 0;
   
-  // Check if device has fine pointer (not touch)
+  // Check if device has fine pointer (not touch) and does not prefer reduced motion
   const hasPointer = window.matchMedia('(pointer: fine)').matches;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   
-  if (hasPointer && mouseGlow && mouseTrail) {
+  if (hasPointer && !prefersReducedMotion && mouseGlow && mouseTrail) {
     document.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;

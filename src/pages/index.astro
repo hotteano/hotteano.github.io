@@ -13,7 +13,7 @@ import GlassCard from "@components/GlassCard.astro";
 import { dateRange } from "@lib/utils";
 import { SITE, HOME, SOCIALS } from "@consts";
 import { Image } from "astro:assets";
-import heroImage from "../assets/4.jpg";
+import heroImage from "../assets/hero.webp";
 
 const allBlog = (await getCollection("blog"))
   .filter(post => !post.data.draft)
@@ -61,6 +61,9 @@ const work = await Promise.all(
               class="w-full h-auto object-cover"
               width={1200}
               height={600}
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
             />
           </div>
         </div>
