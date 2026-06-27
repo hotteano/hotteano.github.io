@@ -9,52 +9,556 @@ tags:
   - SUSTech
 column: "学习笔记"
 ---
+## 一、数字信号
 
-<h2>一、<span>数字信号</span></h2><p>数字信号是离散的，本文中我们只讨论<span>二进制</span>的数字信号。也就是说，只存在高电平（1）和低电平（0）两种情况。</p><p>数字逻辑（或者说，数字电路）的核心议题是编码（Coding）和逻辑架构（Logical Hierarchy）。</p><p>一个常见的数字逻辑系统通常是<span>冯-诺伊曼架构</span>的（这并不是本课程关注的重点，这一类问题通常在计算机组成原理课程中比较常见）。 </p><h2>二、数字系统</h2><h3>数字系统的分类--按照进制（Base X）</h3><p>常见的数字系统包括：二进制（Binary）、十进制（Decimal）、<span>十六进制</span>（Hexadecimal）。其中，十六进制数在表示的时候，通常使用"0x"作为前缀，表明这是一个十六进制数。</p><h3>进制转换</h3><ul><li>任意进制转换十进制：我们使用公式 <span class="ztext-math" data-tex="\sum_{i=-m}^n a_i d^{i}"><span><span class="tex2jax_ignore math-holder">\sum_{i=-m}^n a_i d^{i}</span></span></span> 就可以计算，其中 <span class="ztext-math" data-tex="d"><span><span class="tex2jax_ignore math-holder">d</span></span></span> 表示进制， <span class="ztext-math" data-tex="a_i"><span><span class="tex2jax_ignore math-holder">a_i</span></span></span> 表示某一位上的数。例如，base 5，那么d=5。这里的加法和乘法均是十进制意义下的。</li><li>任意十进制数转换其它进制：整数部分，我们使用短除法，<b>所有的余数从下到上对应位数从高到低</b>。记忆这一点的方法非常简单，设想我们无止尽地执行短除法，那么下面会有无数个零。若最上面的是最高位，那么这个数会越变越大；因此只有当最后一个非零余数为最高位的时候，这个数在短除法下不会发生改变。对于小数部分，我们每次将小数乘以当前进制，然后取走整数部分；反复执行直到循环或者为0。第一次取出的整数部分为最高位，第二个为次高位，以此类推。整数和小数部分中，最高位的出现顺序是相反的。</li><li>任意 <span class="ztext-math" data-tex="2^k"><span><span class="tex2jax_ignore math-holder">2^k</span></span></span> 进制数相互转换：一个普遍的方法是转换成二进制，然后根据 <span class="ztext-math" data-tex="k "><span><span class="tex2jax_ignore math-holder">k </span></span></span> ,从低位每 <span class="ztext-math" data-tex="k"><span><span class="tex2jax_ignore math-holder">k</span></span></span> 位划分二进制数（如果位数不足，补上零）。然后，将每一个二进制数转换为对应进制的数。例如，二进制数0110110101转换十六进制数。我们执行划分 <span class="ztext-math" data-tex="(00)01|1011|0101"><span><span class="tex2jax_ignore math-holder">(00)01|1011|0101</span></span></span> ,显然对应十六进制数 <span class="ztext-math" data-tex="0\text{x}1A5"><span><span class="tex2jax_ignore math-holder">0\text{x}1A5</span></span></span> 。最方便的实际上还是将任意该类型的数转化为二进制，然后再转换过去。这个方法对于小数同样奏效。不同的是，小数从最高位开始向下划分。</li></ul><h3>一些术语和约定（Terminology）</h3><ul><li>我们将一位二进制数称为Bits（位），8个Bits组合为一个Byte（字节）。</li><li>我们通常用十六进制数表示地址。</li></ul><h3>约定进制下的运算</h3><ul><li>加法：我们通常使用竖式加法，与十进制相同从最低位开始，但是此时逢二进一，进位参与高位加法。</li><li>减法：我们可以考虑从最高位开始借位进行减法；也可以考虑使用<span>补码</span>。</li></ul><h3>补码（Complements）和反码（Diminished Radix Complement）</h3><p>我们先介绍反码：反码就是对所有的位上按位取反的结果。例如10010的反码就是01101。显然，两个数加起来就是当前能够表达的最大数11111。</p><p>利用溢出特性，我们定义补码。补码的特点是，补码+原码=0。已知反码+原码=最大数，那么只需要将最大数加一就变成了最小数。所以我们有反码 + 1 = 补码。</p><p>对于无符号整数，我们可以将减法视为对其补码的加法。例如，要计算十进制减法987-120，我们首先计算120的补码。它的补码是1000 - 120 = 880。因此实际上是987 + 880 = (1)867（最高位超出范围，截断）。因此我们就得到了减法的结果。我们用直接计算验证，发现正好是对的。</p><p>这一点在有符号整数也是成立的，我们下一节介绍。</p><h3>有符号数</h3><p>为了表示负数，我们将数的第一位拿出来表示符号。0表示正数，1表示负数。如果我们已知一个数，我们要求它的负数表示，应该怎么做呢？我们想要的结果是：负数恰好是当前数的一个逆元，也就是说，x + (-x) = 0。直接对符号位取反显然不符合我们的要求，读者可以自行探索一下直接改变符号位可能造成的结果。我们还是采用“补码”的思路，我们知道，原码+补码=0，这恰好是我们需要的。因此，对于一个正数，我们只需要计算补码：例如，对于01101，它的补码就是10011，它的符号位是1，说明是一个负数，它与原码相加是0。因此它恰好是我们要求的相反数！</p><p>因此，在有符号数的算术中，我们同样可以使用补码的思想执行算术。任何的减法算术都可以转化为加法算术进行，这给我们的算术实现减少了很多负担。</p><h3>减法算术</h3><p>对于两个有符号数（不一定是二进制数，它的符号可能不直接写出来）的减法算术，若M - N是一个正数，我们只需要执行补码转换即可。如果运算结果是一个负数，那么我们要对结果取补然后加上负号。例如，123 - 987 = 123 + 13 = 136。显然，这应该是一个负数，而我们的结果是一个正数，因此我们将其取补为864，然后加上负号：-864。我们验证一下，恰好是对的。</p><p>但是对于二进制数，我们就没有必要这么麻烦了，例如有符号数10010 - 10001 = 10010 + 01111 = 00001。我们来检查一下这个结果：10010的补码是01110，也就是+14，10001的补码是01111，也就是+15，那么这就是-14 - (-15) = 1，恰好是我们的结果。</p><h2>三、编码系统</h2><p>我们介绍几种简单的编码系统：</p><h3>BCD码</h3><p>实际上就是将十进制数映射到二进制中。因此，我们会忽略10到16的二进制码（从1010到1111）。显然，若将十进制加法变为BCD码中的加法，我们只需要分别对每一位的BCD码进行计算，若大于9进位即可，这仅仅是将十进制运算用二进制来执行而已，并没有什么特殊的考量。</p><p>唯一的好处就是，我们可以实现BCD码来在硬件层面上实现十进制加法，这是硬件友好的设计。</p><h3><span>格雷码</span></h3><p>格雷码由弗兰克·格雷提出，特点是两个相邻的码之间只存在一位不同。例如，00 01 11 10就是一个典型的二位格雷码。一组n位格雷码由以下公式生成（第i个n位格雷码）：</p><p><span class="ztext-math" data-tex="i\oplus \lfloor \frac{i}{2}\rfloor\\"><span><span class="tex2jax_ignore math-holder">i\oplus \lfloor \frac{i}{2}\rfloor\\</span></span></span> 生成格雷码还有很多种方法，这个是最好记的。</p><h3><span>ASCII码</span>（美国信息交换标准代码）</h3><p>ASCII码是对于各种字符的一个编码方案，在编程中，该编码的一个重要作用是让人们能够直接对字符进行运算，从而实现使用偏移对字符进行查询。此处不再赘述。</p><h3>纠错码</h3><p>常见的纠错码有奇偶校验码和汉明码，有兴趣的读者可以自行了解。</p><h2>四、<span>布尔代数</span></h2><p>布尔代数是一种有补分配格，也就是说，这个代数系统存在补和分配性质。</p><h3>代数性质</h3><ul><li>对偶性质：如， <span class="ztext-math" data-tex="x+1 = (x\cdot 0)'"><span><span class="tex2jax_ignore math-holder">x+1 = (x\cdot 0)'</span></span></span> 。</li><li>运算优先级：在布尔代数中，括号 &gt; NOT &gt; AND &gt; OR。</li></ul><h3>关键公式</h3><ol><li>交换： <span class="ztext-math" data-tex="xy=yx"><span><span class="tex2jax_ignore math-holder">xy=yx</span></span></span> </li><li>结合： <span class="ztext-math" data-tex="(xy)z = x(yz)"><span><span class="tex2jax_ignore math-holder">(xy)z = x(yz)</span></span></span> </li><li>分配： <span class="ztext-math" data-tex="x+(yz) = (x+y)(x+z)"><span><span class="tex2jax_ignore math-holder">x+(yz) = (x+y)(x+z)</span></span></span> 。这里，我们需要注意，布尔代数是双分配的，注意不要和以往的乘法分配律搞混。</li><li>吸收： <span class="ztext-math" data-tex="x+yx = x"><span><span class="tex2jax_ignore math-holder">x+yx = x</span></span></span> </li><li>合成与简化：实际上都是分配律的应用。例如， <span class="ztext-math" data-tex="xy' + y = x+y"><span><span class="tex2jax_ignore math-holder">xy' + y = x+y</span></span></span> ，我们只需要使用分配律 <span class="ztext-math" data-tex="(x+y)(y + y') = x+ y "><span><span class="tex2jax_ignore math-holder">(x+y)(y + y') = x+ y </span></span></span> 。在实际化简的时候，要注意这一类形式，以免化简到这里就停止了。注意1和0的dominant性质。</li><li><b>共识定律</b>：这个定律是非常关键的化简手段。 <span class="ztext-math" data-tex="xy + x'z + yz = xy + x'z"><span><span class="tex2jax_ignore math-holder">xy + x'z + yz = xy + x'z</span></span></span> 。最重要的是，我们可以反过来运用，造出一个方便我们化简的项。当化简进行不下去的时候，可以考虑使用共识定律。这个定律的证明也很简单：我们只需要考虑 <span class="ztext-math" data-tex="yz(x + x') = xyz + x'yz"><span><span class="tex2jax_ignore math-holder">yz(x + x') = xyz + x'yz</span></span></span> ,然后利用1的或运算的吸收功能，就可以得到结果： <span class="ztext-math" data-tex="xy(1 + z) + x'z(1+y) = xy + x'z"><span><span class="tex2jax_ignore math-holder">xy(1 + z) + x'z(1+y) = xy + x'z</span></span></span> 。</li><li>德·摩根律。 <span class="ztext-math" data-tex="f(x,y,1,0,+,\cdot) = (f(x',y',0,1,\cdot, +))'"><span><span class="tex2jax_ignore math-holder">f(x,y,1,0,+,\cdot) = (f(x',y',0,1,\cdot, +))'</span></span></span> </li></ol><h3>布尔函数</h3><p>布尔函数是形如 <span class="ztext-math" data-tex="f:\{0,1\}^n\to \{0,1\}"><span><span class="tex2jax_ignore math-holder">f:\{0,1\}^n\to \{0,1\}</span></span></span> 的函数。布尔函数由布尔变量、布尔运算和括号构成。</p><p>我们约定一些术语：</p><ul><li>文字（Literal）：一个变量或者它的补</li><li>积项（Product Term）：用AND连接的一组文字</li><li>和项（Sum Term）：用OR连接的一组文字</li></ul><p><b>布尔函数唯一的真值表确定，但是真值表可以对应无限个布尔函数。</b></p><p><i>题外话：这是否表明，布尔函数本身的表达式并不重要？计算一个布尔函数的最小电路应该是其化简到最少文字的电路。但实际上，计算有限值函数本身等价于在结果里面进行查询，因此我们是否可以将计算等价于查询？Like Lifting Theorem？</i></p><p>布尔函数的补可以由德摩根律得到。</p><h3>范式（Canonical）和标准项（Standard Form）</h3><p>我们介绍一系列术语：</p><ul><li>最小项：每一个变量以其本身或者补的形式出现恰好一次，以AND连接</li><li>最大项：每一个变量以其本身或者补的形式出现恰好一次，以OR连接</li></ul><p>最大项和最小项都有 <span class="ztext-math" data-tex="2^n"><span><span class="tex2jax_ignore math-holder">2^n</span></span></span> 个。</p><p>我们记 <span class="ztext-math" data-tex="m_i"><span><span class="tex2jax_ignore math-holder">m_i</span></span></span> 为最小项， <span class="ztext-math" data-tex="i"><span><span class="tex2jax_ignore math-holder">i</span></span></span> 的二进制表示给出是否取补。例如， <span class="ztext-math" data-tex="2 = 010"><span><span class="tex2jax_ignore math-holder">2 = 010</span></span></span> , <span class="ztext-math" data-tex="m_2 = A'BC'"><span><span class="tex2jax_ignore math-holder">m_2 = A'BC'</span></span></span> 。</p><p>我们记 <span class="ztext-math" data-tex="M_i"><span><span class="tex2jax_ignore math-holder">M_i</span></span></span> 为最大项，文字取法与最小项恰好相反，如果是 <span class="ztext-math" data-tex="010"><span><span class="tex2jax_ignore math-holder">010</span></span></span> ，那么就是 <span class="ztext-math" data-tex="A+B'+C"><span><span class="tex2jax_ignore math-holder">A+B'+C</span></span></span> 。</p><p>布尔函数的范式有两种：</p><ul><li>SOM（Sum of Minterms）：将函数写为若干最小项的和，可以从真值表直接得出。</li><li>POM（Product of Maxterm）：将函数写为若干最大项的积，可以从SOM取反得到。</li></ul><p>我们使用如下符号表示两种范式：</p><p><span class="ztext-math" data-tex="F = \sum (1,3,6,7)"><span><span class="tex2jax_ignore math-holder">F = \sum (1,3,6,7)</span></span></span> </p><p><span class="ztext-math" data-tex="F = \prod (0,2,4,5)"><span><span class="tex2jax_ignore math-holder">F = \prod (0,2,4,5)</span></span></span> </p><p>上面两个范式表示的是一个布尔函数，显然， <span class="ztext-math" data-tex="M_i"><span><span class="tex2jax_ignore math-holder">M_i</span></span></span> 和 <span class="ztext-math" data-tex="m_i"><span><span class="tex2jax_ignore math-holder">m_i</span></span></span> 不会出现在同一个函数的两个范式里面。</p><p>如何将一个函数的表达式展开为范式？我们只需要使用 <span class="ztext-math" data-tex="1 = (x'+x)"><span><span class="tex2jax_ignore math-holder">1 = (x'+x)</span></span></span> 即可，将少的变量乘到里面去即可。范式和真值表一一对应，当我们得到范式以后，其真值表也确定了。</p><p>标准项（Standard Form）是没有那么苛刻要求的形式，分为：</p><ul><li>SOP（Sum of Product）</li><li>POS（Product of Sum）</li></ul><p><b>显然，标准项不唯一。</b></p><h3><b>其它逻辑操作</b></h3><p>其它逻辑操作还有：XNOR，XOR，NOR，NAND等等。需要指出的是，<b>NOR和NAND都是通用逻辑门</b>。也就是说，这两个逻辑门可以独立实现其它所有的逻辑门。事实上，几个比较常见的完备集包括 <span class="ztext-math" data-tex="\{\land, \lor, \lnot\},\{\uparrow\},\{\downarrow\}"><span><span class="tex2jax_ignore math-holder">\{\land, \lor, \lnot\},\{\uparrow\},\{\downarrow\}</span></span></span> 。后面两个分别就是NAND和NOR。但是XNOR和XOR不是通用逻辑门，因此不能用来实现所有的逻辑门。</p><p>由此，我们可以写出一个公式的纯NAND形式实现：</p><p><span class="ztext-math" data-tex="F(q_1, q_2, q_3) = q_1'q_2 + q_1q_3 + q_2q_3' = ((q_1'q_2)'(q_1q_3)'(q_2q_3')')’"><span><span class="tex2jax_ignore math-holder">F(q_1, q_2, q_3) = q_1'q_2 + q_1q_3 + q_2q_3' = ((q_1'q_2)'(q_1q_3)'(q_2q_3')')’</span></span></span> </p><p>如果需要更加严格的实现（不使用非门），我们可以采用 <span class="ztext-math" data-tex="q' = (qq)'"><span><span class="tex2jax_ignore math-holder">q' = (qq)'</span></span></span> 的形式。</p><p>我们此处介绍两个形式：OAI（OR-AND-INVERTOR）和AOI（AND-OR-INVERTOR）形式，它们分别对应POS和SOP。例如，</p><p><span class="ztext-math" data-tex=" q_1'q_2 + q_1q_3 + q_2q_3' = ((q_1 + q_2')(q_1'+q_3')(q_2'+q_3))’"><span><span class="tex2jax_ignore math-holder"> q_1'q_2 + q_1q_3 + q_2q_3' = ((q_1 + q_2')(q_1'+q_3')(q_2'+q_3))’</span></span></span> </p><p>我们就可以写出一个POS的OAI形式，对应地SOP就会有AOI形式。</p><h3>CMOS电路</h3><p>当然，学这门课你需要认清楚CMOS电路的各个部分到底是什么。注意，空心圆圈表示取反。</p><h2>五、门级电路化简</h2><h3><span>卡诺图</span>（K-map）化简</h3><p>我们将范式可以映射到一张图上面</p><table><tbody><tr><th>A/BC</th><th>00</th><th>01</th><th>11</th><th>10</th></tr><tr><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>X</td><td>0</td><td>0</td></tr></tbody></table><p>如上的图就是卡诺图，其两轴由格雷码组成（这是为了相邻的项可以化简）。我们可以选择圈选“1”或者“0”（你只能选择一个类型圈起来）。我们画出一个大小为 <span class="ztext-math" data-tex="2^k"><span><span class="tex2jax_ignore math-holder">2^k</span></span></span> 的矩形（注意，不能是奇形怪状的）。这个矩形可以从表的一头画到另一头，例如上面的000，100，010，110格子可以被圈进来，因为它们是“相邻的”。千万不要忘记了！你应该尽可能圈大一点的圈，因为圈越大，化掉的变量越多。一定要覆盖所有的0或者1！否则表达式是不正确的。</p><p>如果你选择圈选1，那么你将得到SOP。圈中的项必然可以化简，例如，我在上面的图选择了001和011，也就是A'B'C和A'BC，那么不同的那一位就可以消掉，例如，这里B显然可以消掉，因为001和011在第二位相反。因此我们就得到了项A'C。我们将所有圈中的项加起来就得到了结果。</p><p>如果选择圈0，那么我们得到POS。例如，我们圈选000，100，010，110；注意这里，000对应的是A+B+C而不是A'+B'+C'！因此我们注意到，最后留下的是第三位，也就是C（注意，不是C'！）。</p><p>上面，你可能注意到了，存在一个X：这表示不定态，也就是说，我们不关心这一位到底是什么值（例如在BCD码中，存在不符合要求的输入，我们自动忽略它们），我们可以根据化简的要求，自行确定到底是0还是1，方便我们化简。</p><p>卡诺图画圈的技巧很多，例如你可以先圈起那些犄角旮旯里面的东西，然后再考虑更大的圈应该怎么画。</p><h3>逻辑表达式化简</h3><p>当然，你也可以直接用逻辑表达式化简，如果你的注意力比较集中的话。但是，卡诺图化简出来以后的仅仅是标准项，你可以继续集中注意力来进一步化简。</p><h2>六、<span>组合逻辑电路</span></h2><p>组合逻辑是不具有记忆性，因此它只受当前的输入影响，不受状态或者过往输入影响。</p><h3>分析组合逻辑电路</h3><p>如果我们要分析一个组合逻辑，那么我们可以</p><ul><li>看图说话。把电路图看懂，可以写出每一个中间逻辑模块的表达式</li><li>综合上述的结果，写出函数的表达式，画出真值表</li><li>如果需要，可以使用Kmap化简函数</li><li>如果是直接通过开关电路描述，将它转换为逻辑电路</li></ul><h3>设计组合逻辑电路</h3><p>根据需求：</p><ul><li>比较简单的，可以直接写出表达式；比较复杂的，可以列出真值表和卡诺图化简，化简之后再使用电路实现。</li><li>存在多个输出的，分别处理化简；</li><li>如果要实现位从高到低比较的，可以使用迭代设计，让高位的结果影响低位；</li></ul><h3>标准块</h3><p>我们在设计电路的时候可以使用以下的标准块：</p><ul><li>译码器（Decoder）：将一个二进制数转化位独热码</li><li>多路选择器（MUX）：根据选择位（选择位是一个二进制数，描述选择的端口），选择对应端口的输入。例如，选择位s0,s1输入为0，1（也就是2），那么从输入i0, i1, i2, i3中选择i2。</li><li>（优先）编码器（（Priority）Encoder）：将一个独热码转换为二进制数。不过，在输入的时候，我们往往会得到一些不合法输入，此时我们想要仍然输出有意义的结果，怎么办呢？我们只需要考虑优先编码器：</li></ul><p>在设计习题当中，我们往往会被要求使用特定的模块来实现电路：例如，要求通过译码器或多路选择器来实现最小项。实际上，我们注意到，二进制-独热码译码器本身就是一个包含了多个最小项的模块，例如，当我们输入101的时候（假设输入为ABC），这实际上就对应了最小项AB'C；类似的，多路选择器中，我们也可以通过选择位来实现最小项。例如，我们需要实现最小项ABC，这就对应111接口接常数1，其余接0。如果是AB，那么就对应AB(C+C')，也就是111和110两个位接1。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-0.jpg"></div><figcaption>优先编码器</figcaption></figure><p>也就是说，我们从高到低扫描，直到第一个1，剩下的我们不考虑。</p><p>我们可以考虑如何用MUX实现其它逻辑门：例如，若对于一个两位MUX，我们可以将输入接入选择位，然后根据选择位确定上面的输入分别是多少。例如，对于AND，我们将i0, i1, i2置为0，将i3置为1，A连接s0， B连接s1，就可以实现AND了。</p><p>类似的问题还有很多，总而言之我们都可以使用标准块来实现更大的电路。</p><h2>七、<span>时序电路</span></h2><p>时序电路（Sequential Circuit）是存在状态（记忆单元）的电路。同步时序电路具有一个同步时钟，其所有信息由离散的时钟决定；异步时序电路不具有同步时钟，因此其任何时间都有可能存在信息，不能够通过粗略的定时采样确定。</p><h3>锁存器</h3><p>我们主要介绍SR锁存器和D锁存器。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-1.jpg"></div><figcaption>SR锁存器</figcaption></figure><p>如上是一个SR锁存器，当两个输入均为0的时候，Q输出上一个输入的时候的值；S为0，R为1的时候，Q置为0；S为1，R为0的时候，Q置为1。Q'总是和Q相反。</p><p>不能够同时输入1，这样会导致锁存器违背Q和Q'的意义。</p><p>我们可以如此记忆：R将Q置0，S将Q置1。Q'和Q永远相反，R和S不能同时为1。我们还可以使用S'R'锁存器，只需要将NAND换成NOR即可。与SR Latch相反，R和S同时为1的时候是保持状态，S为1和R为0的时候为重置状态，S为0和R为1的时候是设置状态（Q=1），而S=0和R=0为Forbidden状态。但是，这两个锁存器我们用的比较少，因为不够安全。</p><p>上面的锁存器并没有接入时钟，为了接入时钟，我们通常会使用一个时钟信号以及两个与门来实现时钟对锁存的控制。</p><p>在下面，我们为了防止S和R同时为1，我们可以使用D锁存器：</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-2.jpg"></div><figcaption>D锁存器</figcaption></figure><p>这使得输入总是有效的。此时，D是数据位，C是读写权限位，当仅当C=1，D = Q；若C = 0， Q与上一次输入的Q相同。</p><h3><span>Flip-Flop</span></h3><p>为了让我们设计的存储器具敏感时钟的上升沿而不是单纯高低电平，我们考虑使用Flip-Flop。一个D Flip-Flop通常使用两个D Latch实现。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-3.jpg"></div></figure><p>其工作原理是，时钟处于低电平的时候，前一个锁存器记录输入D，然后高电平的时候再通过P传输到锁存器S，这恰好是在时钟上升前后的瞬间实现的，因此D Flip-Flop是对上升沿敏感的。我们使用 <span class="ztext-math" data-tex="Q_{next}"><span><span class="tex2jax_ignore math-holder">Q_{next}</span></span></span> 表示Flip-Flop的下一上升沿将要变成的状态。我们可以轻易地写出D Flip-Flop的下一状态方程（或者叫次态方程，特征方程等等）：</p><p><span class="ztext-math" data-tex="Q_{next} = D\\"><span><span class="tex2jax_ignore math-holder">Q_{next} = D\\</span></span></span> 同时，我们还有几个变种：</p><p>JK Flip-Flop</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-4.jpg"></div></figure><p>其次态方程为</p><p><span class="ztext-math" data-tex="Q_{next} = JQ' + K'Q\\"><span><span class="tex2jax_ignore math-holder">Q_{next} = JQ' + K'Q\\</span></span></span> 还有T Flip-Flop，实际上就是令J = K = T，也就是把JK触发器的J和K接口连到同一个输入上。其次态方程为</p><h3><span class="ztext-math" data-tex="Q_{next} = T\oplus Q\\"><span><span class="tex2jax_ignore math-holder">Q_{next} = T\oplus Q\\</span></span></span>如何分析同步时序电路？</h3><p>给定一个时序逻辑电路电路图，我们首先需要找出组合逻辑部分的方程（也就是所谓的输入方程），确定了输入的方程以后，我们将其代入Flip-Flop的次态方程得到下一状态的解。之后，我们遍历所有的状态，得到其次态和输出方程（我们可以考虑使用卡诺图化简，这是可以选择的），然后可以选择画出状态转移表（状态、输入、次态、输出对应表），也可以画出有限状态机。</p><p>如果要求使用JK触发器设计电路，一个技巧是，我们不论如何先写出次态方程，然后直接通过 <span class="ztext-math" data-tex="Q_{next} = JQ' + K'Q"><span><span class="tex2jax_ignore math-holder">Q_{next} = JQ' + K'Q</span></span></span> 将次态方程中的项对应到J和K，这样我们就不用按照激励表来推算输入方程。</p><p>其中，输出与输入有关的被称为<span>Mealy自动机</span>，与输入无关的被称为<span>Moore自动机</span>。例如，一个电路在某个状态，输入1和输入0最终的输出如果不同，我们称之为Mealy自动机，反之位Moore。</p><p>（附：我们需要区分几个名词——状态表、特征表、激励表）状态表第一列为当前状态，第二列为输入，第三列为次态，最后一列为输出；特征表第一大列为输入，第二大列为次态，然后是操作名；激励表第一列为当前状态，第二列为输入，然后是操作名：</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-5.jpg"></div><figcaption>状态表</figcaption></figure><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-6.jpg"></div><figcaption>特征表和激励表</figcaption></figure><p>简而言之，特征表聚焦于每一个输入对于状态的影响，激励表则聚焦于状态转移本身，描述每一个转移对应怎样的输入。两者是对应的。</p><h3>如何设计同步时序电路？</h3><p>首先，我们设计出需要的状态转移表。例如，一个序列识别器，我们需要设定每一个状态代表识别了哪一段特征（例如特定的字串），然后根据下一个输入的位决定下一步转移到哪一个状态，然后最后在哪一个状态决定接受。我们有了状态转移表，接下来就是通过卡诺图化简得到次态方程（我们可以将次态方程视为一个布尔函数，其输入是状态和外部输入【对于Mealy模型而言】，于是我们可以通过卡诺图来化简得到其次态方程）。我们得到了次态方程以后，就可以根据Flip-Flop的性质来设计输入方程了，这之后就是组合电路的搭建。</p><h3>状态化简</h3><p>如果我们需要化简一个自动机，那么我们首要工作就是将状态机的状态转移表写出来。然后我们观察，如果存在两个状态不同，但是次态、输入、输出均相同的行，那么其中一行就可以被去掉，我们如此迭代到最后，必然会得到一个最小的自动机。</p><h3>序列生成</h3><p>例如，题目要求我们使用位移寄存器设计某个序列的循环生成器，那么我们需要的就是首先确定位移寄存器中要使用多少个FF，然后确定其中的数字是哪些。一般而言，我们会保证当前储存的数字至少是序列的一个字串，然后，我们的反馈输入Z的序列通常与序列保持一致。因此我们可以通过卡诺图推导来求出其反馈方程。</p><h3>状态编码</h3><p>我们有很多种编码方式，例如格雷码、二进制码、独热码等等，我们的核心目的是降低组合电路的时延问题，从而提高效率、避免时序错误。但是，目前为止，没有一个确切的方法告诉我们哪一种编码效率对于特定的问题是最高效的。</p><h3>状态死锁</h3><p>在我们设计电路的时候，有时候会因为状态数并不是2的幂而产生冗余状态，此时，如果我们进入了这个状态（例如，存在电磁干扰，数位发生跳转），并且转移方程无法将此时的状态转移回正确的状态（通常来说，此类问题都是卡诺图过度化简Don't Care状态导致的）。此时，我们需要设计自动纠错的机制。我们可以通过修改卡诺图中Don't Care的部分，来避免此类问题的发生。</p><h2>八、一些经典的时序电路模块</h2><h3>位移寄存器</h3><p>位移寄存器，顾名思义，就是每一个时钟周期将所记录的数字向右位移一位。例如，如下是一个SISO（顺序进入-顺序输出）位移寄存器。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-7.jpg"></div></figure><p>其工作原理非常简单，上一个周期存储在前一个Flip-Flop的数字将会被输入下一个Flip-Flop，如此产生一个相互传递的效果。所有FF的时钟都是同步的。</p><p>同样，我们可以设计一个SIPO的位移寄存器：</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-8.jpg"></div></figure><p>此时，我们可以同时读取每一位的情况。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-9.jpg"></div></figure><p>但是，PISO的寄存器就稍微复杂一些，此时，上方的shift位如果是1，那么Flip-Flop接收上一个FF的状态；如果是0，那么接收并行输入的数位（也就是B，C，D的输入）。后续还有PIPO的寄存器，也就类似了。</p><p>如果要通过位移寄存器来实现一个序列生成器，我们首先需要计算需要多少个Flip-Flop，显然，通常来说，我们需要的FF数量与序列长度为对数关系，因为n个FF足够表示 <span class="ztext-math" data-tex="2^n"><span><span class="tex2jax_ignore math-holder">2^n</span></span></span> 个状态。但是，由于我们使用的是位移寄存器，我们通常不会遍历所有的状态，因此我们需要慎重。我们的输入是最后一个FF的状态，因此我们需要根据序列的特点，设计对应的序列循环。此时，我们第一个FF的输入通常由各个FF的状态的组合电路组成，例如</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-10.jpg"></div></figure><p>这是一个生成序列10011的生成器，其中，Q2作为序列的输出，我们可以通过计算输入Z的卡诺图，得到其与后续状态的关联。但是，我们仅仅使用三个FF，并且使用位移寄存器时生成110101是不够的！此时，我们会存在状态重叠，这表明我们会陷入无限循环，不能够这样设计。（因为Z是组合逻辑，其值由状态决定，如果存在两个相同的状态，我们在进入这个状态之后必然循环，读者可以尝试证明）</p><p>因此我们需要多一个FF来设计。</p><h3>计数器</h3><p>接下来我们介绍计数器。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-11.jpg"></div></figure><p>如图是一个行波计数器，我们通过TFF设计出计数过程中进位的效果，读者可以自行尝试一下，若状态为1001，下一个状态应该是1010。这是通过TFF的性质得到的。</p><p>同样，我们可以设计同步计数器：</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-12.jpg"></div></figure><p>如上，我们通过JKFF来设计了一个同步的计数器。计数器的设计很简单，我们只需要解出每一个状态的次态方程，然后写出JKFF的输入方程，就可以轻易地设计出来了。（事实上，这个计数器等价于TFF设计的那个，它只不过将JK连接在了一个输出上，这就是一个TFF）</p><p>实际上，很多数字逻辑上的设计的核心就是状态转移，我们的关键在于推导出状态转移方程和其电路实现，之后的东西就很好理解了。</p><p>使用位移寄存器也可以实现counter，例如下面的经典Johnson Counter</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-13.jpg"></div></figure><p>它的特点是将一堆1进行位移，从而实现计数。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-14.jpg"></div></figure><p>也是一种很有意思的计数器。其设计思路也很明显，只不过将最后一个FF的状态的否定连接到了输入端，实现了若全0则1序列会生成，当1到达最后一位之后，第一个FF又会变成0，像是火车出隧道一样。</p><p>如果我们需要实现BCD计数器，我们只需要在1001的时候将下一个状态变为0000即可，同样，我们可以通过卡诺图化简出对应的电路。</p><h2>九、算术电路</h2><h3>加法器</h3><p>我们可以通过电路来实现加法。下面是一个半加器，其输出一个计算结果和一个进位：</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-15.jpg"></div></figure><p>我们可以通过半加器实现一个全加器：</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-16.jpg"></div></figure><p>也就是说，我们分别求出对应位的数值和向高一位的进位，然后就可以将这些东西组合起来即可，我们就实现了一个行波加法器。但是，我们希望能够直接求出所有的数值，而不是一位一位等待前面的进位。因此我们介绍超前进位加法器：</p><p>我们注意到</p><p><span class="ztext-math" data-tex="C_{i+1} = A_iB_i + A_iC_i + B_iC_i\\ S_i = A_i \oplus B_i \oplus C_i"><span><span class="tex2jax_ignore math-holder">C_{i+1} = A_iB_i + A_iC_i + B_iC_i\\ S_i = A_i \oplus B_i \oplus C_i</span></span></span> </p><p>我们记</p><p><span class="ztext-math" data-tex="G_i = A_i \cdot B_i, P_i = A_i + B_i = A_i \oplus B_i"><span><span class="tex2jax_ignore math-holder">G_i = A_i \cdot B_i, P_i = A_i + B_i = A_i \oplus B_i</span></span></span> </p><p>我们称G为进位生成项，P为进位传播项。当 <span class="ztext-math" data-tex="A_i=B_i=1"><span><span class="tex2jax_ignore math-holder">A_i=B_i=1</span></span></span> 的时候，我们无论如何都会生成进位，因此进位传播位是Don't Care，因此</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-17.jpg"></div></figure><p>其中，传播位的含义是：进入此位的进位将会被传播出去，如果进来是1，出去也是1，如果进来是0，出去也是0。当我们无论如何都要生成进位的时候，P是不重要的，因为C必然是1。因此，在此情况下，异或和或运算是相同的！</p><p>从而有</p><p><span class="ztext-math" data-tex="C_{i+1} = A_iB_i + A_iC_i + B_iC_i = G_i +P_i C_i\\ S_i = P_i \oplus C_i"><span><span class="tex2jax_ignore math-holder">C_{i+1} = A_iB_i + A_iC_i + B_iC_i = G_i +P_i C_i\\ S_i = P_i \oplus C_i</span></span></span> </p><p>显然，上面的进位构成线性递推，并且 <span class="ztext-math" data-tex="G_i,P_i"><span><span class="tex2jax_ignore math-holder">G_i,P_i</span></span></span> 同前面的进位无关，可以预先计算。这就让我们可以直接展开任意位的进位：</p><p><span class="ztext-math" data-tex="C_{i+1} = G_i + P_i C_i = G_i + P_i(G_{i-1} + P_{i-1}C_{i-1})=\ldots = "><span><span class="tex2jax_ignore math-holder">C_{i+1} = G_i + P_i C_i = G_i + P_i(G_{i-1} + P_{i-1}C_{i-1})=\ldots = </span></span></span> </p><p>最终我们就会导出一个与前一位进位无关的式子，因此我们就可以实现高度的并行计算。但是，如此的实现会导致电路复杂度的高速上升（每一位的进位都会导致进位的展开，因此需要更大规模的电路进行设计，可能造成功耗上升，但是会提高计算效率【并行性提高】）。</p><h3>减法</h3><p>在计算机中，我们实现减法一般通过改造加法器实现：</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-18.jpg"></div></figure><p>如下，是一个加减器。当M为0的时候，是加法，当M为1的时候，是减法。显然，M为1的时候，B自然变成了其补码（C0=1，B所有位取反以后+1）。其中C表示产生进位，V表示溢出</p><p><span class="ztext-math" data-tex="V = C_{n} \oplus C_{n-1}"><span><span class="tex2jax_ignore math-holder">V = C_{n} \oplus C_{n-1}</span></span></span> </p><p>对于有符号数，我们如果发生了溢出，只有正数和正数相加，负数与负数相加才会出现溢出。对于两个正数，符号位不会有进位，如果发生了最高位进位，那么发生了溢出；对于两个负数，符号位一定会发生进位，如果没有发生进位，表明结果是正数，显然发生了溢出。</p><h3>十进制加法器</h3><p>对于十进制加法，我们可以对于大于等于10的数作特殊处理。进位计算如下：</p><p><span class="ztext-math" data-tex="C_{out} = C + Z_{8}Z_4 + Z_8Z_2"><span><span class="tex2jax_ignore math-holder">C_{out} = C + Z_{8}Z_4 + Z_8Z_2</span></span></span> </p><p>其中 <span class="ztext-math" data-tex="Z_i"><span><span class="tex2jax_ignore math-holder">Z_i</span></span></span> 表示二进制位上的值，如 <span class="ztext-math" data-tex="Z_i"><span><span class="tex2jax_ignore math-holder">Z_i</span></span></span> 表示初次计算结果（二进制加法） <span class="ztext-math" data-tex="i = 2^j"><span><span class="tex2jax_ignore math-holder">i = 2^j</span></span></span> 时第j位上的数，此时如果第四位 <span class="ztext-math" data-tex="Z_8"><span><span class="tex2jax_ignore math-holder">Z_8</span></span></span> 为1并且第2或第3位为1，那么显然大于等于10，需要进位。</p><h3>乘法电路</h3><p>乘法电路的实现与竖式乘法类似，我们只需要通过加法器和AND分别计算出竖式乘法中每一项的大小，然后通过加法器计算即可。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/digital-logic-2025fall-review/img-19.jpg"></div></figure><p>如上，我们就模拟了一个四位乘法。</p><h2>十、Verilog语法简介</h2><p>Verilog是一种硬件描述语言，通常用于开发板的电路设计。在Vivado中，我们将Verilog文件分为Design（设计）和Simulation（模拟）两种文件。当我们需要生成Bitstream的时候，我们需要生成对应硬件的Constraint（限制文件），用来将电路模块和引脚对应，以及设置电平等操作。</p><p>在设计文件中，我们通常会写一个模块：</p><div><pre><code><span class="k">module</span> <span class="n">example</span><span class="p">(</span><span class="k">input</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="k">output</span><span class="p">,</span> <span class="n">c</span><span class="p">);</span>
-  <span class="kt">reg</span> <span class="n">c</span><span class="p">;</span>
-  <span class="k">always</span><span class="p">@(</span><span class="o">*</span><span class="p">)</span> <span class="k">begin</span>
-    <span class="k">if</span><span class="p">(</span><span class="n">a</span> <span class="o">&gt;=</span> <span class="n">b</span><span class="p">)</span>
-      <span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
-    <span class="k">else</span>
-      <span class="n">c</span> <span class="o">=</span> <span class="n">b</span><span class="p">;</span>
-  <span class="k">end</span>
-<span class="k">endmodule</span>
-</code></pre></div><p>我们来详细看上面的内容。首先，模块一般要有传入的参数端口和输出端口。接下来，若声明变量类型，那么默认为wire（线路，不能用于过程模块，例如always，initial）类型，如果需要，可以声明为reg。不同类型的端口是可以对接的，不一定需要相同的类型。若不在过程块中，则需要wire，例如过程块外的assign，必须要使用wire。</p><p>always是一个包含敏感列表的模块，当敏感列表中的变量发生改变，则重新执行整个模块内的语句。敏感列表(*)默认包含所有非输出变量，例如，这其中的a和b就是敏感列表中的变量。可以指定敏感变量。</p><p>对于多为输入的模块，需要声明：</p><div><pre><code><span class="k">module</span> <span class="n">example2</span><span class="p">(</span><span class="k">input</span> <span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span> <span class="n">a</span><span class="p">,</span> <span class="k">output</span> <span class="n">out</span><span class="p">);</span>
-  <span class="kt">reg</span> <span class="n">tin</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span> <span class="c1">//注意，输入不能声明input为reg类型，编译报错, 例如"reg a;"；tin的值从低到高截断
-</span>  <span class="k">assign</span> <span class="n">out</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span> <span class="c1">//连续赋值
-</span><span class="k">endmodule</span>
-</code></pre></div><p>接下来，我们来看一些常见的verilog关键字：</p><div><pre><code><span class="k">module</span> <span class="c1">//声明一个模块
-</span><span class="k">endmodule</span> <span class="c1">//结束一个模块，和module形成闭合
-</span><span class="kt">reg</span> <span class="c1">//register类型，用于过程块赋值
-</span><span class="kt">wire</span> <span class="c1">//wire类型，用于连续赋值，不得用于过程内部
-</span><span class="k">assign</span> <span class="c1">//连续赋值
-</span><span class="k">always</span> <span class="c1">//敏感过程块，敏感列表中内容变化则重新计算
-</span><span class="k">initial</span> <span class="c1">//过程块，用于模拟模块，不用于模块设计，因为只执行一次
-</span><span class="k">input</span> <span class="c1">//声明输入端口
-</span><span class="k">output</span> <span class="c1">//声明输出端口
-</span><span class="k">begin</span> <span class="c1">//一个过程开始，且需要多行构成；相当于大括号
-</span><span class="k">end</span> <span class="c1">//与begin搭配，结束过程
-</span><span class="k">case</span><span class="p">(</span><span class="n">en</span><span class="p">)</span> <span class="c1">//用于枚举条件判断，下面的条件用“值:语句”表示
-</span><span class="k">endcase</span> <span class="c1">//用于结束枚举条件判断
-</span><span class="k">if</span><span class="p">()</span> <span class="n">elseif</span><span class="p">()</span> <span class="k">else</span> <span class="c1">//条件判断
-</span><span class="n">cond</span> <span class="o">?</span> <span class="n">a</span> <span class="o">:</span> <span class="n">b</span> <span class="c1">//三目表达式
-</span><span class="k">repeat</span><span class="p">(</span><span class="mh">5</span><span class="p">)</span> <span class="c1">//重复五次；查错题注意后面有没有分号！！
-</span><span class="p">#</span><span class="mh">10</span> <span class="c1">//等待10个时间单位，时间由timescale指定
-</span><span class="k">and</span> <span class="n">and1</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">in1</span><span class="p">,</span> <span class="n">in2</span><span class="p">);</span> <span class="c1">//实例化and，以in1和in2为输入，将输出连接到out
-</span><span class="k">or</span> <span class="n">or1</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">in1</span><span class="p">,</span> <span class="n">in2</span><span class="p">);</span> <span class="c1">//以此类推还有很多这一类模块
-</span><span class="o">&amp;</span> <span class="o">|</span> <span class="o">^</span> <span class="o">~</span><span class="c1">//逻辑与运算，逻辑或运算，逻辑异或运算，逻辑非运算
-</span>
+数字信号是离散的，本文中我们只讨论二进制的数字信号。也就是说，只存在高电平（1）和低电平（0）两种情况。
 
-<span class="nb">$display</span> <span class="nb">$monitor</span> <span class="c1">//打印测试信息，monitor可以按照预定格式打印
-</span><span class="nb">$finish</span> <span class="c1">//停止仿真
-</span></code></pre></div><p>然后我们来看一些常见的错误：</p><div><pre><code>assign a = b;
-assign b = a;</code></pre></div><p>这是错误的，因为在verilog编译的时候，赋值并不是按照顺序进行的，而是并行的，这会导致变量相互驱动，产生错误。</p><div><pre><code>2'h11</code></pre></div><p>这并不是一个错误，而是一个常见的截断问题。图中的数字表示十六进制数17，也就是二进制10001；它会被截断到后两位，也就是01，因此它等于</p><div><pre><code>2'b01</code></pre></div><p>注意，过程块不能使用逻辑门（门级原语）！</p><div><pre><code>always@(*) begin
-  and and1(out, in1, in2);
-  //这是不被允许的，因为在Verilog中，过程块always和and是同级的，语法上不允许放入其中
-end</code></pre></div><p>同样，任何在过程块中的实例化都是不被允许的。例如，不可以在过程块中写module_name u1(port1, port2, ...)</p><div><pre><code><span class="k">fork</span> 
-<span class="p">...</span>
-<span class="k">join</span>
-</code></pre></div><p>作为并行化模块，不可以使用在电路设计中。</p><p>以下的写法是不合适的：</p><div><pre><code><span class="k">always</span><span class="p">@(</span><span class="k">posedge</span> <span class="n">clk</span><span class="p">,</span> <span class="k">negedge</span> <span class="n">rst_n</span><span class="p">)</span> <span class="k">begin</span>
-   <span class="p">....</span>
-<span class="k">end</span>
-</code></pre></div><p>如此，一个时序过程块对于多个信号敏感是不合适的。</p><hr><p>我们需要注意，Verilog是一个硬件描述语言，也就是说，语言描述的是“电路”而不是程序。我们的变量对应一个确切的物理对象，我们的赋值就是一种连线。我们不用一个模块的时候，它仍然存在那里，它不会因为你不使用它而消失。例如，阻塞赋值和非阻塞赋值对应的是电路上的级联连线和并行连线。我们在编写电路的时候，一定要注意这一点，不能用编写Java和C++时候的思维编写。</p>
+数字逻辑（或者说，数字电路）的核心议题是编码（Coding）和逻辑架构（Logical Hierarchy）。
+
+一个常见的数字逻辑系统通常是冯-诺伊曼架构的（这并不是本课程关注的重点，这一类问题通常在计算机组成原理课程中比较常见）。
+
+## 二、数字系统
+
+### 数字系统的分类--按照进制（Base X）
+
+常见的数字系统包括：二进制（Binary）、十进制（Decimal）、十六进制（Hexadecimal）。其中，十六进制数在表示的时候，通常使用"0x"作为前缀，表明这是一个十六进制数。
+
+### 进制转换
+
+-   任意进制转换十进制：我们使用公式 $\sum_{i=-m}^n a_i d^{i}$ 就可以计算，其中 $d$ 表示进制， $a_i$ 表示某一位上的数。例如，base 5，那么d=5。这里的加法和乘法均是十进制意义下的。
+-   任意十进制数转换其它进制：整数部分，我们使用短除法，**所有的余数从下到上对应位数从高到低**。记忆这一点的方法非常简单，设想我们无止尽地执行短除法，那么下面会有无数个零。若最上面的是最高位，那么这个数会越变越大；因此只有当最后一个非零余数为最高位的时候，这个数在短除法下不会发生改变。对于小数部分，我们每次将小数乘以当前进制，然后取走整数部分；反复执行直到循环或者为0。第一次取出的整数部分为最高位，第二个为次高位，以此类推。整数和小数部分中，最高位的出现顺序是相反的。
+-   任意 $2^k$ 进制数相互转换：一个普遍的方法是转换成二进制，然后根据 $k$ ,从低位每 $k$ 位划分二进制数（如果位数不足，补上零）。然后，将每一个二进制数转换为对应进制的数。例如，二进制数0110110101转换十六进制数。我们执行划分 $(00)01|1011|0101$ ,显然对应十六进制数 $0\text{x}1A5$ 。最方便的实际上还是将任意该类型的数转化为二进制，然后再转换过去。这个方法对于小数同样奏效。不同的是，小数从最高位开始向下划分。
+
+### 一些术语和约定（Terminology）
+
+-   我们将一位二进制数称为Bits（位），8个Bits组合为一个Byte（字节）。
+-   我们通常用十六进制数表示地址。
+
+### 约定进制下的运算
+
+-   加法：我们通常使用竖式加法，与十进制相同从最低位开始，但是此时逢二进一，进位参与高位加法。
+-   减法：我们可以考虑从最高位开始借位进行减法；也可以考虑使用补码。
+
+### 补码（Complements）和反码（Diminished Radix Complement）
+
+我们先介绍反码：反码就是对所有的位上按位取反的结果。例如10010的反码就是01101。显然，两个数加起来就是当前能够表达的最大数11111。
+
+利用溢出特性，我们定义补码。补码的特点是，补码+原码=0。已知反码+原码=最大数，那么只需要将最大数加一就变成了最小数。所以我们有反码 + 1 = 补码。
+
+对于无符号整数，我们可以将减法视为对其补码的加法。例如，要计算十进制减法987-120，我们首先计算120的补码。它的补码是1000 - 120 = 880。因此实际上是987 + 880 = (1)867（最高位超出范围，截断）。因此我们就得到了减法的结果。我们用直接计算验证，发现正好是对的。
+
+这一点在有符号整数也是成立的，我们下一节介绍。
+
+### 有符号数
+
+为了表示负数，我们将数的第一位拿出来表示符号。0表示正数，1表示负数。如果我们已知一个数，我们要求它的负数表示，应该怎么做呢？我们想要的结果是：负数恰好是当前数的一个逆元，也就是说，x + (-x) = 0。直接对符号位取反显然不符合我们的要求，读者可以自行探索一下直接改变符号位可能造成的结果。我们还是采用“补码”的思路，我们知道，原码+补码=0，这恰好是我们需要的。因此，对于一个正数，我们只需要计算补码：例如，对于01101，它的补码就是10011，它的符号位是1，说明是一个负数，它与原码相加是0。因此它恰好是我们要求的相反数！
+
+因此，在有符号数的算术中，我们同样可以使用补码的思想执行算术。任何的减法算术都可以转化为加法算术进行，这给我们的算术实现减少了很多负担。
+
+### 减法算术
+
+对于两个有符号数（不一定是二进制数，它的符号可能不直接写出来）的减法算术，若M - N是一个正数，我们只需要执行补码转换即可。如果运算结果是一个负数，那么我们要对结果取补然后加上负号。例如，123 - 987 = 123 + 13 = 136。显然，这应该是一个负数，而我们的结果是一个正数，因此我们将其取补为864，然后加上负号：-864。我们验证一下，恰好是对的。
+
+但是对于二进制数，我们就没有必要这么麻烦了，例如有符号数10010 - 10001 = 10010 + 01111 = 00001。我们来检查一下这个结果：10010的补码是01110，也就是+14，10001的补码是01111，也就是+15，那么这就是-14 - (-15) = 1，恰好是我们的结果。
+
+## 三、编码系统
+
+我们介绍几种简单的编码系统：
+
+### BCD码
+
+实际上就是将十进制数映射到二进制中。因此，我们会忽略10到16的二进制码（从1010到1111）。显然，若将十进制加法变为BCD码中的加法，我们只需要分别对每一位的BCD码进行计算，若大于9进位即可，这仅仅是将十进制运算用二进制来执行而已，并没有什么特殊的考量。
+
+唯一的好处就是，我们可以实现BCD码来在硬件层面上实现十进制加法，这是硬件友好的设计。
+
+### 格雷码
+
+格雷码由弗兰克·格雷提出，特点是两个相邻的码之间只存在一位不同。例如，00 01 11 10就是一个典型的二位格雷码。一组n位格雷码由以下公式生成（第i个n位格雷码）：
+
+$i\oplus \lfloor \frac{i}{2}\rfloor$ 生成格雷码还有很多种方法，这个是最好记的。
+
+### ASCII码（美国信息交换标准代码）
+
+ASCII码是对于各种字符的一个编码方案，在编程中，该编码的一个重要作用是让人们能够直接对字符进行运算，从而实现使用偏移对字符进行查询。此处不再赘述。
+
+### 纠错码
+
+常见的纠错码有奇偶校验码和汉明码，有兴趣的读者可以自行了解。
+
+## 四、布尔代数
+
+布尔代数是一种有补分配格，也就是说，这个代数系统存在补和分配性质。
+
+### 代数性质
+
+-   对偶性质：如， $x+1 = (x\cdot 0)'$ 。
+-   运算优先级：在布尔代数中，括号 > NOT > AND > OR。
+
+### 关键公式
+
+1.  交换： $xy=yx$
+2.  结合： $(xy)z = x(yz)$
+3.  分配： $x+(yz) = (x+y)(x+z)$ 。这里，我们需要注意，布尔代数是双分配的，注意不要和以往的乘法分配律搞混。
+4.  吸收： $x+yx = x$
+5.  合成与简化：实际上都是分配律的应用。例如， $xy' + y = x+y$ ，我们只需要使用分配律 $(x+y)(y + y') = x+ y$ 。在实际化简的时候，要注意这一类形式，以免化简到这里就停止了。注意1和0的dominant性质。
+6.  **共识定律**：这个定律是非常关键的化简手段。 $xy + x'z + yz = xy + x'z$ 。最重要的是，我们可以反过来运用，造出一个方便我们化简的项。当化简进行不下去的时候，可以考虑使用共识定律。这个定律的证明也很简单：我们只需要考虑 $yz(x + x') = xyz + x'yz$ ,然后利用1的或运算的吸收功能，就可以得到结果： $xy(1 + z) + x'z(1+y) = xy + x'z$ 。
+7.  德·摩根律。 $f(x,y,1,0,+,\cdot) = (f(x',y',0,1,\cdot, +))'$
+
+### 布尔函数
+
+布尔函数是形如 $f:\{0,1\}^n\to \{0,1\}$ 的函数。布尔函数由布尔变量、布尔运算和括号构成。
+
+我们约定一些术语：
+
+-   文字（Literal）：一个变量或者它的补
+-   积项（Product Term）：用AND连接的一组文字
+-   和项（Sum Term）：用OR连接的一组文字
+
+**布尔函数唯一的真值表确定，但是真值表可以对应无限个布尔函数。**
+
+_题外话：这是否表明，布尔函数本身的表达式并不重要？计算一个布尔函数的最小电路应该是其化简到最少文字的电路。但实际上，计算有限值函数本身等价于在结果里面进行查询，因此我们是否可以将计算等价于查询？Like Lifting Theorem？_
+
+布尔函数的补可以由德摩根律得到。
+
+### 范式（Canonical）和标准项（Standard Form）
+
+我们介绍一系列术语：
+
+-   最小项：每一个变量以其本身或者补的形式出现恰好一次，以AND连接
+-   最大项：每一个变量以其本身或者补的形式出现恰好一次，以OR连接
+
+最大项和最小项都有 $2^n$ 个。
+
+我们记 $m_i$ 为最小项， $i$ 的二进制表示给出是否取补。例如， $2 = 010$ , $m_2 = A'BC'$ 。
+
+我们记 $M_i$ 为最大项，文字取法与最小项恰好相反，如果是 $010$ ，那么就是 $A+B'+C$ 。
+
+布尔函数的范式有两种：
+
+-   SOM（Sum of Minterms）：将函数写为若干最小项的和，可以从真值表直接得出。
+-   POM（Product of Maxterm）：将函数写为若干最大项的积，可以从SOM取反得到。
+
+我们使用如下符号表示两种范式：
+
+$F = \sum (1,3,6,7)$
+
+$F = \prod (0,2,4,5)$
+
+上面两个范式表示的是一个布尔函数，显然， $M_i$ 和 $m_i$ 不会出现在同一个函数的两个范式里面。
+
+如何将一个函数的表达式展开为范式？我们只需要使用 $1 = (x'+x)$ 即可，将少的变量乘到里面去即可。范式和真值表一一对应，当我们得到范式以后，其真值表也确定了。
+
+标准项（Standard Form）是没有那么苛刻要求的形式，分为：
+
+-   SOP（Sum of Product）
+-   POS（Product of Sum）
+
+**显然，标准项不唯一。**
+
+### **其它逻辑操作**
+
+其它逻辑操作还有：XNOR，XOR，NOR，NAND等等。需要指出的是，**NOR和NAND都是通用逻辑门**。也就是说，这两个逻辑门可以独立实现其它所有的逻辑门。事实上，几个比较常见的完备集包括 $\{\land, \lor, \lnot\},\{\uparrow\},\{\downarrow\}$ 。后面两个分别就是NAND和NOR。但是XNOR和XOR不是通用逻辑门，因此不能用来实现所有的逻辑门。
+
+由此，我们可以写出一个公式的纯NAND形式实现：
+
+$F(q_1, q_2, q_3) = q_1'q_2 + q_1q_3 + q_2q_3' = ((q_1'q_2)'(q_1q_3)'(q_2q_3')')’$
+
+如果需要更加严格的实现（不使用非门），我们可以采用 $q' = (qq)'$ 的形式。
+
+我们此处介绍两个形式：OAI（OR-AND-INVERTOR）和AOI（AND-OR-INVERTOR）形式，它们分别对应POS和SOP。例如，
+
+$q_1'q_2 + q_1q_3 + q_2q_3' = ((q_1 + q_2')(q_1'+q_3')(q_2'+q_3))’$
+
+我们就可以写出一个POS的OAI形式，对应地SOP就会有AOI形式。
+
+### CMOS电路
+
+当然，学这门课你需要认清楚CMOS电路的各个部分到底是什么。注意，空心圆圈表示取反。
+
+## 五、门级电路化简
+
+### 卡诺图（K-map）化简
+
+我们将范式可以映射到一张图上面
+
+A/BC
+
+00
+
+01
+
+11
+
+10
+
+0
+
+0
+
+1
+
+1
+
+0
+
+1
+
+0
+
+X
+
+0
+
+0
+
+如上的图就是卡诺图，其两轴由格雷码组成（这是为了相邻的项可以化简）。我们可以选择圈选“1”或者“0”（你只能选择一个类型圈起来）。我们画出一个大小为 $2^k$ 的矩形（注意，不能是奇形怪状的）。这个矩形可以从表的一头画到另一头，例如上面的000，100，010，110格子可以被圈进来，因为它们是“相邻的”。千万不要忘记了！你应该尽可能圈大一点的圈，因为圈越大，化掉的变量越多。一定要覆盖所有的0或者1！否则表达式是不正确的。
+
+如果你选择圈选1，那么你将得到SOP。圈中的项必然可以化简，例如，我在上面的图选择了001和011，也就是A'B'C和A'BC，那么不同的那一位就可以消掉，例如，这里B显然可以消掉，因为001和011在第二位相反。因此我们就得到了项A'C。我们将所有圈中的项加起来就得到了结果。
+
+如果选择圈0，那么我们得到POS。例如，我们圈选000，100，010，110；注意这里，000对应的是A+B+C而不是A'+B'+C'！因此我们注意到，最后留下的是第三位，也就是C（注意，不是C'！）。
+
+上面，你可能注意到了，存在一个X：这表示不定态，也就是说，我们不关心这一位到底是什么值（例如在BCD码中，存在不符合要求的输入，我们自动忽略它们），我们可以根据化简的要求，自行确定到底是0还是1，方便我们化简。
+
+卡诺图画圈的技巧很多，例如你可以先圈起那些犄角旮旯里面的东西，然后再考虑更大的圈应该怎么画。
+
+### 逻辑表达式化简
+
+当然，你也可以直接用逻辑表达式化简，如果你的注意力比较集中的话。但是，卡诺图化简出来以后的仅仅是标准项，你可以继续集中注意力来进一步化简。
+
+## 六、组合逻辑电路
+
+组合逻辑是不具有记忆性，因此它只受当前的输入影响，不受状态或者过往输入影响。
+
+### 分析组合逻辑电路
+
+如果我们要分析一个组合逻辑，那么我们可以
+
+-   看图说话。把电路图看懂，可以写出每一个中间逻辑模块的表达式
+-   综合上述的结果，写出函数的表达式，画出真值表
+-   如果需要，可以使用Kmap化简函数
+-   如果是直接通过开关电路描述，将它转换为逻辑电路
+
+### 设计组合逻辑电路
+
+根据需求：
+
+-   比较简单的，可以直接写出表达式；比较复杂的，可以列出真值表和卡诺图化简，化简之后再使用电路实现。
+-   存在多个输出的，分别处理化简；
+-   如果要实现位从高到低比较的，可以使用迭代设计，让高位的结果影响低位；
+
+### 标准块
+
+我们在设计电路的时候可以使用以下的标准块：
+
+-   译码器（Decoder）：将一个二进制数转化位独热码
+-   多路选择器（MUX）：根据选择位（选择位是一个二进制数，描述选择的端口），选择对应端口的输入。例如，选择位s0,s1输入为0，1（也就是2），那么从输入i0, i1, i2, i3中选择i2。
+-   （优先）编码器（（Priority）Encoder）：将一个独热码转换为二进制数。不过，在输入的时候，我们往往会得到一些不合法输入，此时我们想要仍然输出有意义的结果，怎么办呢？我们只需要考虑优先编码器：
+
+在设计习题当中，我们往往会被要求使用特定的模块来实现电路：例如，要求通过译码器或多路选择器来实现最小项。实际上，我们注意到，二进制-独热码译码器本身就是一个包含了多个最小项的模块，例如，当我们输入101的时候（假设输入为ABC），这实际上就对应了最小项AB'C；类似的，多路选择器中，我们也可以通过选择位来实现最小项。例如，我们需要实现最小项ABC，这就对应111接口接常数1，其余接0。如果是AB，那么就对应AB(C+C')，也就是111和110两个位接1。
+
+![](/assets/blog/digital-logic-2025fall-review/img-0.jpg)
+
+也就是说，我们从高到低扫描，直到第一个1，剩下的我们不考虑。
+
+我们可以考虑如何用MUX实现其它逻辑门：例如，若对于一个两位MUX，我们可以将输入接入选择位，然后根据选择位确定上面的输入分别是多少。例如，对于AND，我们将i0, i1, i2置为0，将i3置为1，A连接s0， B连接s1，就可以实现AND了。
+
+类似的问题还有很多，总而言之我们都可以使用标准块来实现更大的电路。
+
+## 七、时序电路
+
+时序电路（Sequential Circuit）是存在状态（记忆单元）的电路。同步时序电路具有一个同步时钟，其所有信息由离散的时钟决定；异步时序电路不具有同步时钟，因此其任何时间都有可能存在信息，不能够通过粗略的定时采样确定。
+
+### 锁存器
+
+我们主要介绍SR锁存器和D锁存器。
+
+![](/assets/blog/digital-logic-2025fall-review/img-1.jpg)
+
+如上是一个SR锁存器，当两个输入均为0的时候，Q输出上一个输入的时候的值；S为0，R为1的时候，Q置为0；S为1，R为0的时候，Q置为1。Q'总是和Q相反。
+
+不能够同时输入1，这样会导致锁存器违背Q和Q'的意义。
+
+我们可以如此记忆：R将Q置0，S将Q置1。Q'和Q永远相反，R和S不能同时为1。我们还可以使用S'R'锁存器，只需要将NAND换成NOR即可。与SR Latch相反，R和S同时为1的时候是保持状态，S为1和R为0的时候为重置状态，S为0和R为1的时候是设置状态（Q=1），而S=0和R=0为Forbidden状态。但是，这两个锁存器我们用的比较少，因为不够安全。
+
+上面的锁存器并没有接入时钟，为了接入时钟，我们通常会使用一个时钟信号以及两个与门来实现时钟对锁存的控制。
+
+在下面，我们为了防止S和R同时为1，我们可以使用D锁存器：
+
+![](/assets/blog/digital-logic-2025fall-review/img-2.jpg)
+
+这使得输入总是有效的。此时，D是数据位，C是读写权限位，当仅当C=1，D = Q；若C = 0， Q与上一次输入的Q相同。
+
+### Flip-Flop
+
+为了让我们设计的存储器具敏感时钟的上升沿而不是单纯高低电平，我们考虑使用Flip-Flop。一个D Flip-Flop通常使用两个D Latch实现。
+
+![](/assets/blog/digital-logic-2025fall-review/img-3.jpg)
+
+其工作原理是，时钟处于低电平的时候，前一个锁存器记录输入D，然后高电平的时候再通过P传输到锁存器S，这恰好是在时钟上升前后的瞬间实现的，因此D Flip-Flop是对上升沿敏感的。我们使用 $Q_{next}$ 表示Flip-Flop的下一上升沿将要变成的状态。我们可以轻易地写出D Flip-Flop的下一状态方程（或者叫次态方程，特征方程等等）：
+
+$Q_{next} = D$ 同时，我们还有几个变种：
+
+JK Flip-Flop
+
+![](/assets/blog/digital-logic-2025fall-review/img-4.jpg)
+
+其次态方程为
+
+$Q_{next} = JQ' + K'Q$ 还有T Flip-Flop，实际上就是令J = K = T，也就是把JK触发器的J和K接口连到同一个输入上。其次态方程为
+
+### $Q_{next} = T\oplus Q$如何分析同步时序电路？
+
+给定一个时序逻辑电路电路图，我们首先需要找出组合逻辑部分的方程（也就是所谓的输入方程），确定了输入的方程以后，我们将其代入Flip-Flop的次态方程得到下一状态的解。之后，我们遍历所有的状态，得到其次态和输出方程（我们可以考虑使用卡诺图化简，这是可以选择的），然后可以选择画出状态转移表（状态、输入、次态、输出对应表），也可以画出有限状态机。
+
+如果要求使用JK触发器设计电路，一个技巧是，我们不论如何先写出次态方程，然后直接通过 $Q_{next} = JQ' + K'Q$ 将次态方程中的项对应到J和K，这样我们就不用按照激励表来推算输入方程。
+
+其中，输出与输入有关的被称为Mealy自动机，与输入无关的被称为Moore自动机。例如，一个电路在某个状态，输入1和输入0最终的输出如果不同，我们称之为Mealy自动机，反之位Moore。
+
+（附：我们需要区分几个名词——状态表、特征表、激励表）状态表第一列为当前状态，第二列为输入，第三列为次态，最后一列为输出；特征表第一大列为输入，第二大列为次态，然后是操作名；激励表第一列为当前状态，第二列为输入，然后是操作名：
+
+![](/assets/blog/digital-logic-2025fall-review/img-5.jpg)
+
+![](/assets/blog/digital-logic-2025fall-review/img-6.jpg)
+
+简而言之，特征表聚焦于每一个输入对于状态的影响，激励表则聚焦于状态转移本身，描述每一个转移对应怎样的输入。两者是对应的。
+
+### 如何设计同步时序电路？
+
+首先，我们设计出需要的状态转移表。例如，一个序列识别器，我们需要设定每一个状态代表识别了哪一段特征（例如特定的字串），然后根据下一个输入的位决定下一步转移到哪一个状态，然后最后在哪一个状态决定接受。我们有了状态转移表，接下来就是通过卡诺图化简得到次态方程（我们可以将次态方程视为一个布尔函数，其输入是状态和外部输入【对于Mealy模型而言】，于是我们可以通过卡诺图来化简得到其次态方程）。我们得到了次态方程以后，就可以根据Flip-Flop的性质来设计输入方程了，这之后就是组合电路的搭建。
+
+### 状态化简
+
+如果我们需要化简一个自动机，那么我们首要工作就是将状态机的状态转移表写出来。然后我们观察，如果存在两个状态不同，但是次态、输入、输出均相同的行，那么其中一行就可以被去掉，我们如此迭代到最后，必然会得到一个最小的自动机。
+
+### 序列生成
+
+例如，题目要求我们使用位移寄存器设计某个序列的循环生成器，那么我们需要的就是首先确定位移寄存器中要使用多少个FF，然后确定其中的数字是哪些。一般而言，我们会保证当前储存的数字至少是序列的一个字串，然后，我们的反馈输入Z的序列通常与序列保持一致。因此我们可以通过卡诺图推导来求出其反馈方程。
+
+### 状态编码
+
+我们有很多种编码方式，例如格雷码、二进制码、独热码等等，我们的核心目的是降低组合电路的时延问题，从而提高效率、避免时序错误。但是，目前为止，没有一个确切的方法告诉我们哪一种编码效率对于特定的问题是最高效的。
+
+### 状态死锁
+
+在我们设计电路的时候，有时候会因为状态数并不是2的幂而产生冗余状态，此时，如果我们进入了这个状态（例如，存在电磁干扰，数位发生跳转），并且转移方程无法将此时的状态转移回正确的状态（通常来说，此类问题都是卡诺图过度化简Don't Care状态导致的）。此时，我们需要设计自动纠错的机制。我们可以通过修改卡诺图中Don't Care的部分，来避免此类问题的发生。
+
+## 八、一些经典的时序电路模块
+
+### 位移寄存器
+
+位移寄存器，顾名思义，就是每一个时钟周期将所记录的数字向右位移一位。例如，如下是一个SISO（顺序进入-顺序输出）位移寄存器。
+
+![](/assets/blog/digital-logic-2025fall-review/img-7.jpg)
+
+其工作原理非常简单，上一个周期存储在前一个Flip-Flop的数字将会被输入下一个Flip-Flop，如此产生一个相互传递的效果。所有FF的时钟都是同步的。
+
+同样，我们可以设计一个SIPO的位移寄存器：
+
+![](/assets/blog/digital-logic-2025fall-review/img-8.jpg)
+
+此时，我们可以同时读取每一位的情况。
+
+![](/assets/blog/digital-logic-2025fall-review/img-9.jpg)
+
+但是，PISO的寄存器就稍微复杂一些，此时，上方的shift位如果是1，那么Flip-Flop接收上一个FF的状态；如果是0，那么接收并行输入的数位（也就是B，C，D的输入）。后续还有PIPO的寄存器，也就类似了。
+
+如果要通过位移寄存器来实现一个序列生成器，我们首先需要计算需要多少个Flip-Flop，显然，通常来说，我们需要的FF数量与序列长度为对数关系，因为n个FF足够表示 $2^n$ 个状态。但是，由于我们使用的是位移寄存器，我们通常不会遍历所有的状态，因此我们需要慎重。我们的输入是最后一个FF的状态，因此我们需要根据序列的特点，设计对应的序列循环。此时，我们第一个FF的输入通常由各个FF的状态的组合电路组成，例如
+
+![](/assets/blog/digital-logic-2025fall-review/img-10.jpg)
+
+这是一个生成序列10011的生成器，其中，Q2作为序列的输出，我们可以通过计算输入Z的卡诺图，得到其与后续状态的关联。但是，我们仅仅使用三个FF，并且使用位移寄存器时生成110101是不够的！此时，我们会存在状态重叠，这表明我们会陷入无限循环，不能够这样设计。（因为Z是组合逻辑，其值由状态决定，如果存在两个相同的状态，我们在进入这个状态之后必然循环，读者可以尝试证明）
+
+因此我们需要多一个FF来设计。
+
+### 计数器
+
+接下来我们介绍计数器。
+
+![](/assets/blog/digital-logic-2025fall-review/img-11.jpg)
+
+如图是一个行波计数器，我们通过TFF设计出计数过程中进位的效果，读者可以自行尝试一下，若状态为1001，下一个状态应该是1010。这是通过TFF的性质得到的。
+
+同样，我们可以设计同步计数器：
+
+![](/assets/blog/digital-logic-2025fall-review/img-12.jpg)
+
+如上，我们通过JKFF来设计了一个同步的计数器。计数器的设计很简单，我们只需要解出每一个状态的次态方程，然后写出JKFF的输入方程，就可以轻易地设计出来了。（事实上，这个计数器等价于TFF设计的那个，它只不过将JK连接在了一个输出上，这就是一个TFF）
+
+实际上，很多数字逻辑上的设计的核心就是状态转移，我们的关键在于推导出状态转移方程和其电路实现，之后的东西就很好理解了。
+
+使用位移寄存器也可以实现counter，例如下面的经典Johnson Counter
+
+![](/assets/blog/digital-logic-2025fall-review/img-13.jpg)
+
+它的特点是将一堆1进行位移，从而实现计数。
+
+![](/assets/blog/digital-logic-2025fall-review/img-14.jpg)
+
+也是一种很有意思的计数器。其设计思路也很明显，只不过将最后一个FF的状态的否定连接到了输入端，实现了若全0则1序列会生成，当1到达最后一位之后，第一个FF又会变成0，像是火车出隧道一样。
+
+如果我们需要实现BCD计数器，我们只需要在1001的时候将下一个状态变为0000即可，同样，我们可以通过卡诺图化简出对应的电路。
+
+## 九、算术电路
+
+### 加法器
+
+我们可以通过电路来实现加法。下面是一个半加器，其输出一个计算结果和一个进位：
+
+![](/assets/blog/digital-logic-2025fall-review/img-15.jpg)
+
+我们可以通过半加器实现一个全加器：
+
+![](/assets/blog/digital-logic-2025fall-review/img-16.jpg)
+
+也就是说，我们分别求出对应位的数值和向高一位的进位，然后就可以将这些东西组合起来即可，我们就实现了一个行波加法器。但是，我们希望能够直接求出所有的数值，而不是一位一位等待前面的进位。因此我们介绍超前进位加法器：
+
+我们注意到
+
+$C_{i+1} = A_iB_i + A_iC_i + B_iC_i\\ S_i = A_i \oplus B_i \oplus C_i$
+
+我们记
+
+$G_i = A_i \cdot B_i, P_i = A_i + B_i = A_i \oplus B_i$
+
+我们称G为进位生成项，P为进位传播项。当 $A_i=B_i=1$ 的时候，我们无论如何都会生成进位，因此进位传播位是Don't Care，因此
+
+![](/assets/blog/digital-logic-2025fall-review/img-17.jpg)
+
+其中，传播位的含义是：进入此位的进位将会被传播出去，如果进来是1，出去也是1，如果进来是0，出去也是0。当我们无论如何都要生成进位的时候，P是不重要的，因为C必然是1。因此，在此情况下，异或和或运算是相同的！
+
+从而有
+
+$C_{i+1} = A_iB_i + A_iC_i + B_iC_i = G_i +P_i C_i\\ S_i = P_i \oplus C_i$
+
+显然，上面的进位构成线性递推，并且 $G_i,P_i$ 同前面的进位无关，可以预先计算。这就让我们可以直接展开任意位的进位：
+
+$C_{i+1} = G_i + P_i C_i = G_i + P_i(G_{i-1} + P_{i-1}C_{i-1})=\ldots =$
+
+最终我们就会导出一个与前一位进位无关的式子，因此我们就可以实现高度的并行计算。但是，如此的实现会导致电路复杂度的高速上升（每一位的进位都会导致进位的展开，因此需要更大规模的电路进行设计，可能造成功耗上升，但是会提高计算效率【并行性提高】）。
+
+### 减法
+
+在计算机中，我们实现减法一般通过改造加法器实现：
+
+![](/assets/blog/digital-logic-2025fall-review/img-18.jpg)
+
+如下，是一个加减器。当M为0的时候，是加法，当M为1的时候，是减法。显然，M为1的时候，B自然变成了其补码（C0=1，B所有位取反以后+1）。其中C表示产生进位，V表示溢出
+
+$V = C_{n} \oplus C_{n-1}$
+
+对于有符号数，我们如果发生了溢出，只有正数和正数相加，负数与负数相加才会出现溢出。对于两个正数，符号位不会有进位，如果发生了最高位进位，那么发生了溢出；对于两个负数，符号位一定会发生进位，如果没有发生进位，表明结果是正数，显然发生了溢出。
+
+### 十进制加法器
+
+对于十进制加法，我们可以对于大于等于10的数作特殊处理。进位计算如下：
+
+$C_{out} = C + Z_{8}Z_4 + Z_8Z_2$
+
+其中 $Z_i$ 表示二进制位上的值，如 $Z_i$ 表示初次计算结果（二进制加法） $i = 2^j$ 时第j位上的数，此时如果第四位 $Z_8$ 为1并且第2或第3位为1，那么显然大于等于10，需要进位。
+
+### 乘法电路
+
+乘法电路的实现与竖式乘法类似，我们只需要通过加法器和AND分别计算出竖式乘法中每一项的大小，然后通过加法器计算即可。
+
+![](/assets/blog/digital-logic-2025fall-review/img-19.jpg)
+
+如上，我们就模拟了一个四位乘法。
+
+## 十、Verilog语法简介
+
+Verilog是一种硬件描述语言，通常用于开发板的电路设计。在Vivado中，我们将Verilog文件分为Design（设计）和Simulation（模拟）两种文件。当我们需要生成Bitstream的时候，我们需要生成对应硬件的Constraint（限制文件），用来将电路模块和引脚对应，以及设置电平等操作。
+
+在设计文件中，我们通常会写一个模块：
+
+    module example(input a, b, output, c);
+      reg c;
+      always@(*) begin
+        if(a >= b)
+          c = a;
+        else
+          c = b;
+      end
+    endmodule
+    
+
+我们来详细看上面的内容。首先，模块一般要有传入的参数端口和输出端口。接下来，若声明变量类型，那么默认为wire（线路，不能用于过程模块，例如always，initial）类型，如果需要，可以声明为reg。不同类型的端口是可以对接的，不一定需要相同的类型。若不在过程块中，则需要wire，例如过程块外的assign，必须要使用wire。
+
+always是一个包含敏感列表的模块，当敏感列表中的变量发生改变，则重新执行整个模块内的语句。敏感列表(\*)默认包含所有非输出变量，例如，这其中的a和b就是敏感列表中的变量。可以指定敏感变量。
+
+对于多为输入的模块，需要声明：
+
+    module example2(input [1:0] a, output out);
+      reg tin = a; //注意，输入不能声明input为reg类型，编译报错, 例如"reg a;"；tin的值从低到高截断
+      assign out = a; //连续赋值
+    endmodule
+    
+
+接下来，我们来看一些常见的verilog关键字：
+
+    module //声明一个模块
+    endmodule //结束一个模块，和module形成闭合
+    reg //register类型，用于过程块赋值
+    wire //wire类型，用于连续赋值，不得用于过程内部
+    assign //连续赋值
+    always //敏感过程块，敏感列表中内容变化则重新计算
+    initial //过程块，用于模拟模块，不用于模块设计，因为只执行一次
+    input //声明输入端口
+    output //声明输出端口
+    begin //一个过程开始，且需要多行构成；相当于大括号
+    end //与begin搭配，结束过程
+    case(en) //用于枚举条件判断，下面的条件用“值:语句”表示
+    endcase //用于结束枚举条件判断
+    if() elseif() else //条件判断
+    cond ? a : b //三目表达式
+    repeat(5) //重复五次；查错题注意后面有没有分号！！
+    #10 //等待10个时间单位，时间由timescale指定
+    and and1(out, in1, in2); //实例化and，以in1和in2为输入，将输出连接到out
+    or or1(out, in1, in2); //以此类推还有很多这一类模块
+    & | ^ ~//逻辑与运算，逻辑或运算，逻辑异或运算，逻辑非运算
+    
+    
+    $display $monitor //打印测试信息，monitor可以按照预定格式打印
+    $finish //停止仿真
+    
+
+然后我们来看一些常见的错误：
+
+    assign a = b;
+    assign b = a;
+
+这是错误的，因为在verilog编译的时候，赋值并不是按照顺序进行的，而是并行的，这会导致变量相互驱动，产生错误。
+
+    2'h11
+
+这并不是一个错误，而是一个常见的截断问题。图中的数字表示十六进制数17，也就是二进制10001；它会被截断到后两位，也就是01，因此它等于
+
+    2'b01
+
+注意，过程块不能使用逻辑门（门级原语）！
+
+    always@(*) begin
+      and and1(out, in1, in2);
+      //这是不被允许的，因为在Verilog中，过程块always和and是同级的，语法上不允许放入其中
+    end
+
+同样，任何在过程块中的实例化都是不被允许的。例如，不可以在过程块中写module\_name u1(port1, port2, ...)
+
+    fork 
+    ...
+    join
+    
+
+作为并行化模块，不可以使用在电路设计中。
+
+以下的写法是不合适的：
+
+    always@(posedge clk, negedge rst_n) begin
+       ....
+    end
+    
+
+如此，一个时序过程块对于多个信号敏感是不合适的。
+
+* * *
+
+我们需要注意，Verilog是一个硬件描述语言，也就是说，语言描述的是“电路”而不是程序。我们的变量对应一个确切的物理对象，我们的赋值就是一种连线。我们不用一个模块的时候，它仍然存在那里，它不会因为你不使用它而消失。例如，阻塞赋值和非阻塞赋值对应的是电路上的级联连线和并行连线。我们在编写电路的时候，一定要注意这一点，不能用编写Java和C++时候的思维编写。

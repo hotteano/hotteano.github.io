@@ -10,5 +10,326 @@ tags:
   - 理论计算机科学
 column: "学习笔记"
 ---
+本文主要介绍一些通信复杂度的基本概念（主要是因为最近对于KRW猜想比较感兴趣）。
 
-<p>本文主要介绍一些通信复杂度的基本概念（主要是因为最近对于<span>KRW猜想</span>比较感兴趣）。</p><p>参考书及一些文章：</p><p>Boaz Barak et al., 《Computational Complexity：A Modern Approach》</p><p>Tim Roughgarden, 《Communication Complexity (for Algorithm Designers)》</p><p>Ivan Mihajlin et al., 《Toward Better Depth Lower Bounds: The XOR-KRW Conjecture》</p><p>Or Meir et al., 《KRW Composition Theorems via Lifting》  </p><p>James Cook et al., 《Tree Evaluation is in <span class="ztext-math" data-tex="O(\log n\cdot\log \log n)"><span><span class="MathJax_SVG"><svg xmlns:xlink="http://www.w3.org/1999/xlink" width="18.128ex" height="2.789ex" viewBox="0 -849.8 7804.9 1200.9" role="img" focusable="false" aria-hidden="true" style="vertical-align: -0.815ex;"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="matrix(1 0 0 -1 0 0)"><use xlink:href="#MJMATHI-4F" x="0" y="0"></use><use xlink:href="#MJMAIN-28" x="763" y="0"></use><g transform="translate(1153,0)"><use xlink:href="#MJMAIN-6C"></use><use xlink:href="#MJMAIN-6F" x="278" y="0"></use><use xlink:href="#MJMAIN-67" x="779" y="0"></use></g><use xlink:href="#MJMATHI-6E" x="2599" y="0"></use><use xlink:href="#MJMAIN-22C5" x="3421" y="0"></use><g transform="translate(3922,0)"><use xlink:href="#MJMAIN-6C"></use><use xlink:href="#MJMAIN-6F" x="278" y="0"></use><use xlink:href="#MJMAIN-67" x="779" y="0"></use></g><g transform="translate(5368,0)"><use xlink:href="#MJMAIN-6C"></use><use xlink:href="#MJMAIN-6F" x="278" y="0"></use><use xlink:href="#MJMAIN-67" x="779" y="0"></use></g><use xlink:href="#MJMATHI-6E" x="6814" y="0"></use><use xlink:href="#MJMAIN-29" x="7415" y="0"></use></g></svg><span class="MJX_Assistive_MathML"><math><mi>O</mi><mo>(</mo><mi>log</mi><mo>⁡</mo><mi>n</mi><mo>⋅</mo><mi>log</mi><mo>⁡</mo><mi>log</mi><mo>⁡</mo><mi>n</mi><mo>)</mo></math></span></span><span class="tex2jax_ignore math-holder">O(\log n\cdot\log \log n)</span></span></span> space》</p><hr><blockquote>本文研究了两个处理器协同计算布尔值函数式需要交换的信息。——姚期智，1979</blockquote><p>至于为什么要引用Yao的话，主要是因为这玩意儿是他提出的。Yao的成就数不胜数，包含伪随机理论和密码学、算法和数据结构领域等等，我个人比较熟悉的是<span>Yao的XOR定理</span>和随机性与不可预测性定理，其余的，我看的Yao的论文不多，不太清楚。</p><h2>一、“通信” </h2><p>我们这里所称的“通信”与现实中所谓的通信虽然有相似之处，但是并不完全相同。我们现实中所称的“通信”，多指实际上的信息交换，例如网络、电话等等。这里，我们将“通信”视为一种交互（在交互式证明里，我们也看到过类似的模型），也就是如下的模型： </p><p><span class="ztext-math" data-tex="\bold{Definition.}假设存在两个对象Alice和Bob，它们分别持有总输入(x_1,x_2)的一部分，不妨令Alice持有x_1,Bob持有x_2。设双方共同知道需要计算的函数f。我们称，为了计算出f(x_1,x_2)双方需要交换的通信量为计算的通信复杂度。"><span><span class="tex2jax_ignore math-holder">\bold{Definition.}假设存在两个对象Alice和Bob，它们分别持有总输入(x_1,x_2)的一部分，不妨令Alice持有x_1,Bob持有x_2。设双方共同知道需要计算的函数f。我们称，为了计算出f(x_1,x_2)双方需要交换的通信量为计算的通信复杂度。</span></span></span> </p><p>这是一个不太规范的定义，但是足够我们了解我们到底要干什么：例如存在一个很难的任务，我们想要将它分成几部分做，我们将它交给了不同的人员完成。但当我们要将它们组合到一起的时候，我们发现两者并不能简单地组合，而是要进行一定的调整。类似地，此类情况在分布式计算、编程，乃至电路下界的分析中都是非常有效的工具。甚至，目前一个非常著名的猜想——Karchmer-Raz-Wigderson猜想——就与此相关。</p><p><span class="ztext-math" data-tex="\bold{Conjecture.}设D(f)表示计算f的电路深度，那么有D(f\circ g)\approx D(f) + D(g) -o(1)."><span><span class="tex2jax_ignore math-holder">\bold{Conjecture.}设D(f)表示计算f的电路深度，那么有D(f\circ g)\approx D(f) + D(g) -o(1).</span></span></span> </p><p>这个猜想表明，计算一个函数复合的电路下界，约等于将两个函数拆开以后分别的深度下界。若此定理成立，那么我们就可以清晰的区分可并行问题和多项式时间可解决的问题。</p><p>计算复杂度学家发现，通信复杂度和电路深度存在对应关系：</p><p><span class="ztext-math" data-tex="\bold{Theorem.} D(f) = CC(KW_f).其中CC表示通信复杂度，KW_f表示关于函数f的一个通信任务（此通信任务的详细定义不在此叙述）。"><span><span class="tex2jax_ignore math-holder">\bold{Theorem.} D(f) = CC(KW_f).其中CC表示通信复杂度，KW_f表示关于函数f的一个通信任务（此通信任务的详细定义不在此叙述）。</span></span></span> </p><p>如此的一个神奇对应让我们能够通过通信复杂度的手段来冲击一个重磅猜想：</p><p><span class="ztext-math" data-tex="\bold{Conjecture.}\bold{P}\nsubseteq \bold{NC}^1."><span><span class="tex2jax_ignore math-holder">\bold{Conjecture.}\bold{P}\nsubseteq \bold{NC}^1.</span></span></span> </p><p>不过，话虽如此，此时我们的知识储备并不足以支撑我们冲击这个困扰学界40年的宏大问题。因此，为了求解这一猜想，我们必须要更深层次地认识通信复杂度这一概念。接下来，我们形式化地定义上面我们所陈述的“通信复杂度”：</p><p><span class="ztext-math" data-tex="\bold{Definition}.(双方通信协议)设f:\{0,1\}^{2n}\to \{0,1\}是一个函数。我们定义计算f的t-回合双方通信协议\Pi：该协议由t个函数构成的序列P_1,\cdots,P_t:\{0,1\}^*\to \{0,1\}。协议在输入x,y上的一次执行指的是如下过程：参与方1计算p_1 = P_1(x)并将p_1发送给参与方2，然后参与方2计算p_2 = P_2(y, p_1)发送给参与方1，以此类推。一般地，在第i个回合中，如果i是奇数，则参与方1计算p_i = P_i(x, p_1,\cdots, p_{i-1})并将p_i发送给参与方2；如果i是偶数，则参与方2计算p_i = P_i(y,p_1,\cdots,p_{i-1})并将p_i发送给参与方1。"><span><span class="tex2jax_ignore math-holder">\bold{Definition}.(双方通信协议)设f:\{0,1\}^{2n}\to \{0,1\}是一个函数。我们定义计算f的t-回合双方通信协议\Pi：该协议由t个函数构成的序列P_1,\cdots,P_t:\{0,1\}^*\to \{0,1\}。协议在输入x,y上的一次执行指的是如下过程：参与方1计算p_1 = P_1(x)并将p_1发送给参与方2，然后参与方2计算p_2 = P_2(y, p_1)发送给参与方1，以此类推。一般地，在第i个回合中，如果i是奇数，则参与方1计算p_i = P_i(x, p_1,\cdots, p_{i-1})并将p_i发送给参与方2；如果i是偶数，则参与方2计算p_i = P_i(y,p_1,\cdots,p_{i-1})并将p_i发送给参与方1。</span></span></span> </p><p><span class="ztext-math" data-tex="\bold{Definition.}(协议的通信复杂性) 如果在任意输入x,y上通信协议\Pi发送的最后一个消息(也就是p_t)是f(x,y)，那么称通信协议\Pi是有效的。通信协议\Pi的通信复杂度指的是在任意x,y\in \{0,1\}^n上执行\Pi时需要通讯的二进制位的最大个数（也就是|p_1| + |p_2|+\cdots +|p_t|）。我们将函数f的通信复杂度记为C(f)(或者CC也可以，这里我偷懒了)，指的是所有计算f所有通信协议的最小通信复杂度。形式上，也就是\min_{\Pi}\max_{\{p_i\}, i=1,2,\cdots t}\sum_{i=1}^n |p_i|。"><span><span class="tex2jax_ignore math-holder">\bold{Definition.}(协议的通信复杂性) 如果在任意输入x,y上通信协议\Pi发送的最后一个消息(也就是p_t)是f(x,y)，那么称通信协议\Pi是有效的。通信协议\Pi的通信复杂度指的是在任意x,y\in \{0,1\}^n上执行\Pi时需要通讯的二进制位的最大个数（也就是|p_1| + |p_2|+\cdots +|p_t|）。我们将函数f的通信复杂度记为C(f)(或者CC也可以，这里我偷懒了)，指的是所有计算f所有通信协议的最小通信复杂度。形式上，也就是\min_{\Pi}\max_{\{p_i\}, i=1,2,\cdots t}\sum_{i=1}^n |p_i|。</span></span></span> </p><p>从协议的形式上来看，协议就好像一棵二叉树——每一次，某一方需要作出选择，输出0或者是1；但是，这样的建模是相当简陋的，因为我们完全忽略了0和1所表示的意思，它可能是对于某一个问题的“是”或“否”回答。例如，我们知道一个很出名的游戏——网络天才——，它通过一系列问题，你只需回答“是”或者“否”，它就可以确定你所说的人。另外，还有一些很有意思的推理游戏，主持人只能回答“是”或者“否”，观众就可以推理出一些事实。这实际上就是我们现在所叙述的通信过程。</p><p>通信复杂度具有朴素的上界： <span class="ztext-math" data-tex="C(f)\leq n + 1"><span><span class="tex2jax_ignore math-holder">C(f)\leq n + 1</span></span></span> ，这就是说，我们可以直接把自己的输入交出去，让对方计算就可以了。</p><p>接下来，来看一个例子：假设，函数f要求统计x，y所有位中1的数量的奇偶性。我们可以得到的是 <span class="ztext-math" data-tex="C(f) = 2."><span><span class="tex2jax_ignore math-holder">C(f) = 2.</span></span></span> 一方面，我们知道 <span class="ztext-math" data-tex="C(f)\geq 2"><span><span class="tex2jax_ignore math-holder">C(f)\geq 2</span></span></span> ，这是因为函数是非平凡的，双方至少要传送一个位。另一方面，我们只需要让参与方1计算出其奇偶性，并交给参与方2，然后参与方2将其输入奇偶性与参与方1发来的奇偶性作异或，发回结果即可得到答案。这表明 <span class="ztext-math" data-tex="C(f) \leq 2"><span><span class="tex2jax_ignore math-holder">C(f) \leq 2</span></span></span> 。这就证明了结论。</p><h2>二、下界方法</h2><p>接下来，我们将会使用以下函数作为示例，介绍一系列研究通信复杂度的经典方法： </p><p><span class="ztext-math" data-tex="EQ(x,y) =  \begin{cases} 1 &amp; x = y \\  0 &amp; x\ne y \end{cases}"><span><span class="tex2jax_ignore math-holder">EQ(x,y) =  \begin{cases} 1 &amp; x = y \\  0 &amp; x\ne y \end{cases}</span></span></span> </p><p>我们可以证明，上面的函数有性质： <span class="ztext-math" data-tex="C(EQ)\geq n"><span><span class="tex2jax_ignore math-holder">C(EQ)\geq n</span></span></span> </p><h3><span>诈集</span>（Fooling Set）</h3><p>为了证明上面的结论，我们断言：设 <span class="ztext-math" data-tex="x,x'"><span><span class="tex2jax_ignore math-holder">x,x'</span></span></span> 是长度位n的不同位串，若通信协议在输入 <span class="ztext-math" data-tex="(x,x),(x',x')"><span><span class="tex2jax_ignore math-holder">(x,x),(x',x')</span></span></span> 上有相同的通信模式（也就是通信过程传递相同的位序列，位序列也就是通信协议序列），通信双方在四对输入 <span class="ztext-math" data-tex="(x,x),(x,x'),(x',x),(x',x')"><span><span class="tex2jax_ignore math-holder">(x,x),(x,x'),(x',x),(x',x')</span></span></span> 上将得到相同答案。我们通过数学归纳法证明这一结论： </p><p><span class="ztext-math" data-tex="参与方1在第一个回合发送一个二进制位，根据归纳假设，无论输入是x还是x',它发送的二进制位相同；参与方2也是类似的。往复之后，我们有(x,x')和(x,x)作为输入时，函数输出相同。"><span><span class="tex2jax_ignore math-holder">参与方1在第一个回合发送一个二进制位，根据归纳假设，无论输入是x还是x',它发送的二进制位相同；参与方2也是类似的。往复之后，我们有(x,x')和(x,x)作为输入时，函数输出相同。</span></span></span> <span class="ztext-math" data-tex="为了证明C(EQ)\geq n，如果存在复杂度位至多n-1的通信协议，那么通信模式至少有2^{n-1}（这是显然的，不加任何限制的长度位n-1的二进制序列显然有这么多种），但是形如(x,x)的输入有2^n种；由鸽巢原理，存在(x,x)和(x',x')具有相同的通信模式。然而EQ(x,x') = 0 \ne EQ(x,x')表明，复杂度至多位n-1的通信协议在某些情况下会导致在某些输入上计算错误，因此通信协议是无效的。因此我们就证明了结论。"><span><span class="tex2jax_ignore math-holder">为了证明C(EQ)\geq n，如果存在复杂度位至多n-1的通信协议，那么通信模式至少有2^{n-1}（这是显然的，不加任何限制的长度位n-1的二进制序列显然有这么多种），但是形如(x,x)的输入有2^n种；由鸽巢原理，存在(x,x)和(x',x')具有相同的通信模式。然而EQ(x,x') = 0 \ne EQ(x,x')表明，复杂度至多位n-1的通信协议在某些情况下会导致在某些输入上计算错误，因此通信协议是无效的。因此我们就证明了结论。</span></span></span> </p><h3><span>铺砌方法</span></h3><p>我们考虑一个 <span class="ztext-math" data-tex="2^n\times 2^n"><span><span class="tex2jax_ignore math-holder">2^n\times 2^n</span></span></span> 矩阵，每个坐标上的二进制位对应两个输入：</p><table><tbody><tr><th></th><th>00</th><th>01</th><th>10</th><th>11</th></tr><tr><td>00</td><td>1</td><td>0</td><td>0</td><td>0</td></tr><tr><td>01</td><td>0</td><td>1</td><td>0</td><td>0</td></tr><tr><td>10</td><td>0</td><td>0</td><td>1</td><td>0</td></tr><tr><td>11</td><td>0</td><td>0</td><td>0</td><td>1</td></tr></tbody></table><p>如上的矩阵表示函数 <span class="ztext-math" data-tex="EQ"><span><span class="tex2jax_ignore math-holder">EQ</span></span></span> 的（n=2）矩阵。我们可以将上述矩阵中具有相同通信过程的部分染为同色。</p><p>我们不妨设置如下的通信协议：参与者1发出自己的一位二进制位，参与者2检查,然后参与者1发出自己的第二位，参与者2检查，然后参与者2发出计算结果，通信结束。因此有</p><table><tbody><tr><th>纵为参与者1，横向为参与者2</th><th>00</th><th>01</th><th>10</th><th>11</th></tr><tr><td>00</td><td>001</td><td>000</td><td>000</td><td>000</td></tr><tr><td>01</td><td>010</td><td>011</td><td>010</td><td>010</td></tr><tr><td>10</td><td>100</td><td>100</td><td>101</td><td>100</td></tr><tr><td>11</td><td>110</td><td>110</td><td>110</td><td>111</td></tr></tbody></table><p>显然我们上面写出了10个矩形，接下来我们介绍同色矩形的定理： </p><p><span class="ztext-math" data-tex="\bold{Theorem.}记同色矩形数量为\chi(f),那么有\log\chi(f)\leq C(f)\leq 16(\log \chi(f))^2. "><span><span class="tex2jax_ignore math-holder">\bold{Theorem.}记同色矩形数量为\chi(f),那么有\log\chi(f)\leq C(f)\leq 16(\log \chi(f))^2. </span></span></span> </p><p>由此我们可以通过上面的涂色估算通信复杂度： <span class="ztext-math" data-tex="\lfloor\log 10\rfloor = 3 \leq C(f)"><span><span class="tex2jax_ignore math-holder">\lfloor\log 10\rfloor = 3 \leq C(f)</span></span></span> ，这是符合我们的证明的。</p><h3><span>秩方法</span></h3><p>接下来，为了更好研究铺砌法，我们引入代数方法来研究 <span class="ztext-math" data-tex="\chi(f)"><span><span class="tex2jax_ignore math-holder">\chi(f)</span></span></span> 的下界： </p><p><span class="ztext-math" data-tex="\bold{Theorem.}对于域\mathbb{F}上的n\times n矩阵M和任意函数f，\chi(f)\geq \mathrm{rank}(M(f))."><span><span class="tex2jax_ignore math-holder">\bold{Theorem.}对于域\mathbb{F}上的n\times n矩阵M和任意函数f，\chi(f)\geq \mathrm{rank}(M(f)).</span></span></span> </p><p>我们代入 <span class="ztext-math" data-tex="f=EQ"><span><span class="tex2jax_ignore math-holder">f=EQ</span></span></span> 发现， <span class="ztext-math" data-tex="M = I，\mathrm{rank}(M) = 2^n"><span><span class="tex2jax_ignore math-holder">M = I，\mathrm{rank}(M) = 2^n</span></span></span> ，于是 <span class="ztext-math" data-tex="C(EQ)\geq \log \chi(EQ)\geq n"><span><span class="tex2jax_ignore math-holder">C(EQ)\geq \log \chi(EQ)\geq n</span></span></span> ,这便是之前结论的另一个证明。</p><h3><span>差异方法</span></h3><p>这里，我们考虑将函数值0和1变为-1和+1方便研究，实际上是没有区别的。</p><p>如上，我们将之前的矩阵写为只包含-1和+1的矩阵，于是矩阵 <span class="ztext-math" data-tex="A\times B"><span><span class="tex2jax_ignore math-holder">A\times B</span></span></span> (这里，矩阵就是我们之前定义的矩阵)的差异定义为：</p><p><span class="ztext-math" data-tex="\text{Disc}(f) = \frac{1}{2^{2n}}\big|\sum_{x\in A,y\in B}M_{x,y}(f)\big|\\"><span><span class="tex2jax_ignore math-holder">\text{Disc}(f) = \frac{1}{2^{2n}}\big|\sum_{x\in A,y\in B}M_{x,y}(f)\big|\\</span></span></span> 差异就是+1或者-1的“占优密度”，也就是+1和-1相互抵消以后除以整个矩阵面积的指标。我们有以下引理：</p><p><span class="ztext-math" data-tex="\bold{Lemma.}\chi(f)\geq\frac{1}{\text{Disc}(f)}."><span><span class="tex2jax_ignore math-holder">\bold{Lemma.}\chi(f)\geq\frac{1}{\text{Disc}(f)}.</span></span></span> </p><p>这个下界相当宽松，我们通过特征值给出其上界：</p><p><span class="ztext-math" data-tex="\bold{Theorem.}(特征值界)任意对称实矩阵M，矩阵A\times B的差异至多为\frac{\lambda_{max}(M)}{2^{2n}}\sqrt{|A||B|}."><span><span class="tex2jax_ignore math-holder">\bold{Theorem.}(特征值界)任意对称实矩阵M，矩阵A\times B的差异至多为\frac{\lambda_{max}(M)}{2^{2n}}\sqrt{|A||B|}.</span></span></span> </p><p>我们注意到M显然是对称的：交换输入，通信协议不变，那么结果不会改变。注意到 <span class="ztext-math" data-tex="\sum_{x\in A, y\in B}M_{x,y} = 1_A^\top M 1_B"><span><span class="tex2jax_ignore math-holder">\sum_{x\in A, y\in B}M_{x,y} = 1_A^\top M 1_B</span></span></span> ,则</p><p><span class="ztext-math" data-tex="\text{Disc}(f) = \frac{1}{2^{2n}}1_A^\top M 1_B \leq \frac{1}{2^{2n}}\lambda_{max}(M)|1_A^\top M 1_B|\leq \frac{1}{2^{2n}}\lambda_{max}(M)\sqrt{|A||B|}\\"><span><span class="tex2jax_ignore math-holder">\text{Disc}(f) = \frac{1}{2^{2n}}1_A^\top M 1_B \leq \frac{1}{2^{2n}}\lambda_{max}(M)|1_A^\top M 1_B|\leq \frac{1}{2^{2n}}\lambda_{max}(M)\sqrt{|A||B|}\\</span></span></span> 前一步使用瑞利商的性质，最后一步使用矩阵的柯西不等式。这一定理给出了矩阵数的下界：</p><p><span class="ztext-math" data-tex="\chi(f)\geq\frac{1}{\text{Disc}(f)}\geq\frac{1}{\frac{1}{2^{2n}}\lambda_{max}(M)\sqrt{|A||B|}} = \frac{2^{2n}}{\lambda_{max}(M)\sqrt{|A||B|}}\\"><span><span class="tex2jax_ignore math-holder">\chi(f)\geq\frac{1}{\text{Disc}(f)}\geq\frac{1}{\frac{1}{2^{2n}}\lambda_{max}(M)\sqrt{|A||B|}} = \frac{2^{2n}}{\lambda_{max}(M)\sqrt{|A||B|}}\\</span></span></span> 从而给出通信复杂度下界</p><p><span class="ztext-math" data-tex="C(f)\geq \log \frac{2^{2n}}{\lambda_{max}(M)\sqrt{|A||B|}} = 2n - \log \lambda_{max}(M)\sqrt{|A||B|}\\"><span><span class="tex2jax_ignore math-holder">C(f)\geq \log \frac{2^{2n}}{\lambda_{max}(M)\sqrt{|A||B|}} = 2n - \log \lambda_{max}(M)\sqrt{|A||B|}\\</span></span></span> 下面我们介绍证明差异上界的另一种技术：</p><p><span class="ztext-math" data-tex="\bold{Definition.}\mathcal{E}(f) = \text{E}_{a_1,a_2,b_1,b_2}[\prod_{i = 1, 2}\prod_{j= 1,2}f(a_i,b_j)]。"><span><span class="tex2jax_ignore math-holder">\bold{Definition.}\mathcal{E}(f) = \text{E}_{a_1,a_2,b_1,b_2}[\prod_{i = 1, 2}\prod_{j= 1,2}f(a_i,b_j)]。</span></span></span> </p><p>这里我们使用期望技术来估计差异： </p><p><span class="ztext-math" data-tex="\bold{Theorem.} \text{Disc}(f)\leq \mathcal{E}(f)^{\frac{1}{4}}"><span><span class="tex2jax_ignore math-holder">\bold{Theorem.} \text{Disc}(f)\leq \mathcal{E}(f)^{\frac{1}{4}}</span></span></span> </p><p>证明留作读者练习。提示：你可以考虑把a和b分开来处理。另外，可以考虑 <span class="ztext-math" data-tex="\text{E}(X^2)\geq \text{E}(X)^2"><span><span class="tex2jax_ignore math-holder">\text{E}(X^2)\geq \text{E}(X)^2</span></span></span> 。</p><h3>诸证明方法的比较</h3><p>铺砌论证法是证明所有下界中最强的方法，因为秩的下界、差异的下界和诈集都蕴含 <span class="ztext-math" data-tex="\chi(f)"><span><span class="tex2jax_ignore math-holder">\chi(f)</span></span></span> 的下界；因此，同铺砌方法得到的下界相比，这些方法的下界不会优于铺砌方法得出的结果。秩方法和诈集方法不具有可比性，因为它们的性能在不同的函数上可能各有千秋。但如果忽略常数因子，则秩方法几乎和诈集方法一样强。我们后面将会看到一个猜想——对数秩猜想——它断言，在忽略多项式因子的前提下，秩方法给出的下界是最优的。</p><h2>三、多方通信复杂度</h2><h3>组合柱体</h3><h3>额头写数</h3><h2>四、理论前沿（About KRW Conjecture）</h2><h3>KW Relation</h3><p>KW关系指的是如下的通信问题： </p><p><span class="ztext-math" data-tex="\bold{Definition.}定义需要计算的函数f:\{0,1\}^n \to \{0,1\}，令Alice和Bob拿到的x和y满足f(x) = 0, f(y) = 1.我们的通信任务是确认某一个下标满足x_i \ne y_i.我们记此任务的通信复杂度C(KW_f)。"><span><span class="tex2jax_ignore math-holder">\bold{Definition.}定义需要计算的函数f:\{0,1\}^n \to \{0,1\}，令Alice和Bob拿到的x和y满足f(x) = 0, f(y) = 1.我们的通信任务是确认某一个下标满足x_i \ne y_i.我们记此任务的通信复杂度C(KW_f)。</span></span></span> </p><p>Karchmer和Wigderson观察到如下的事实：</p><p><span class="ztext-math" data-tex="\bold{Theorem.}D(f) = C(R)"><span><span class="tex2jax_ignore math-holder">\bold{Theorem.}D(f) = C(R)</span></span></span> </p><h3>Lifting Theorem（提升定理）</h3><p>解决KRW猜想非常困难，因此我们转而讨论一些比较“简单”的情况。这里，我们将会介绍通信复杂度中的一个关键定理：提升定理。</p><p>Or Meir et al. 在2020年十一月FOCS的论文中提到了提升定理：也就是将一个简单问题的下界提升到一个较难问题的下界的方法。本文中，作者研究了一个弱于KRW猜想的猜想：单调KRW猜想。也就是说，假设函数都是单调函数，然后再此情况下进行研究。</p><p>单调KRW猜想断言： <span class="ztext-math" data-tex="CC(mKW_f\circ mKW_g)\approx CC(mKW_f) + CC(mKW_g)"><span><span class="tex2jax_ignore math-holder">CC(mKW_f\circ mKW_g)\approx CC(mKW_f) + CC(mKW_g)</span></span></span> </p><p>此处，我们记以下论文为[CFK 19]: Arkadev Chattopadhyay, Yuval Filmus, Sajin Koroth, Or Meir, and Toniann Pitassi. Query-to-communication lifting using low-discrepancy gadgets. <i>Electronic Colloquium on Computational Complexity (ECCC)</i>, 26:103, 2019.</p><p>接下来，考察某一个查询问题的查询复杂度： <span class="ztext-math" data-tex="Q(S)"><span><span class="tex2jax_ignore math-holder">Q(S)</span></span></span> ,其中S为某一个搜索问题。设一个“迷你”函数（gadget function）： <span class="ztext-math" data-tex="gd:\{0,1\}^t \times \{0,1\}^t \to \{0,1\}"><span><span class="tex2jax_ignore math-holder">gd:\{0,1\}^t \times \{0,1\}^t \to \{0,1\}</span></span></span> , 若干研究提升定理的论文指出，若这个函数满足一些条件，那么有 <span class="ztext-math" data-tex="CC(S\circ gd) = \Omega(Q(S)\cdot t)"><span><span class="tex2jax_ignore math-holder">CC(S\circ gd) = \Omega(Q(S)\cdot t)</span></span></span> ,其中t是输入的长度。</p><p>作者在本文中提出了单调函数复杂度分解定理：</p><p><span class="ztext-math" data-tex="\bold{Theorem.}令f:\{0,1\}^m \to \{0,1\},g:\{0,1\}^n \to \{0,1\}为非常数单调函数，若存在一个提升查询问题S\circ gd能够被归约到mKW_g且满足[CFK 19]中的条件，那么"><span><span class="tex2jax_ignore math-holder">\bold{Theorem.}令f:\{0,1\}^m \to \{0,1\},g:\{0,1\}^n \to \{0,1\}为非常数单调函数，若存在一个提升查询问题S\circ gd能够被归约到mKW_g且满足[CFK 19]中的条件，那么</span></span></span> </p><p><span class="ztext-math" data-tex="CC(mKW_f \circ mKW_g )\geq CC(mKW_f) + \Omega(Q(S)\cdot t)\\"><span><span class="tex2jax_ignore math-holder">CC(mKW_f \circ mKW_g )\geq CC(mKW_f) + \Omega(Q(S)\cdot t)\\</span></span></span> <span class="ztext-math" data-tex="特别地，若CC(mKW_g) = \tilde{O}(NS_{\mathbb F_2}(\phi)\cdot t),那么"><span><span class="tex2jax_ignore math-holder">特别地，若CC(mKW_g) = \tilde{O}(NS_{\mathbb F_2}(\phi)\cdot t),那么</span></span></span> </p><p><span class="ztext-math" data-tex="CC(mKW_f \circ mKW_g)\geq CC(mKW_f) + \tilde{\Omega}(CC(mKW_g))\\"><span><span class="tex2jax_ignore math-holder">CC(mKW_f \circ mKW_g)\geq CC(mKW_f) + \tilde{\Omega}(CC(mKW_g))\\</span></span></span></p><p>紧接着这一条定理，作者进一步提出了半单调分解定理，这一部分类似，可在论文中详细查看。后续的内容，我们仅仅介绍提升定理，而不去介绍其它更加晦涩和繁杂的证明细节。 </p><p><span class="ztext-math" data-tex="\bold{Theorem.}(更加一般化的提升定理)对于任何\eta >0且d\in \mathbb N, 存在c\in \mathbb N和\kappa >0使得以下性质成立：令S是一个查询问题，其输入为\{0,1\}^l(长度为l的二进制串)，令gd:\{0,1\}^t\times \{0,1\}^t \to \{0,1\}是某一个\mathrm{disc}(gd)\leq 2^{-\eta \cdot t}的函数，其中t\geq c\log l.令\mathcal{X,Y}\subseteq (\{0,1\}^t)^l，I为[1,l]的任意子区间，\mathcal{X,Y}在其上的相对平均度\text{rAvgDeg}_I(\mathcal{X})和\text{rAvgDeg}_I(\mathcal{Y})至少为\frac{1}{(d\cdot l^d)^{|I|}}. 那么，S\diamond gd在输入\mathcal{X\times Y}上的通信复杂度至少为\kappa\cdot Q(S)\cdot t."><span><span class="tex2jax_ignore math-holder">\bold{Theorem.}(更加一般化的提升定理)对于任何\eta &gt;0且d\in \mathbb N, 存在c\in \mathbb N和\kappa &gt;0使得以下性质成立：令S是一个查询问题，其输入为\{0,1\}^l(长度为l的二进制串)，令gd:\{0,1\}^t\times \{0,1\}^t \to \{0,1\}是某一个\mathrm{disc}(gd)\leq 2^{-\eta \cdot t}的函数，其中t\geq c\log l.令\mathcal{X,Y}\subseteq (\{0,1\}^t)^l，I为[1,l]的任意子区间，\mathcal{X,Y}在其上的相对平均度\text{rAvgDeg}_I(\mathcal{X})和\text{rAvgDeg}_I(\mathcal{Y})至少为\frac{1}{(d\cdot l^d)^{|I|}}. 那么，S\diamond gd在输入\mathcal{X\times Y}上的通信复杂度至少为\kappa\cdot Q(S)\cdot t.</span></span></span> </p><p>其中，我们补充定义串的平均度： <span class="ztext-math" data-tex="字符串的度是相对于目标集合W\subseteq \Lambda ^N的，令I\subseteq [1,N]，记\text{deg}(w',W)为字符串w'\in \Lambda^{[N] - I}(此处的意思是将若干个位置上的字符挖掉)拓展为W中字符串的数量。这就是说，w’是多少W中字符串的子序列。定义\text{AvgDeg}_I(W)为所有w\in W_{[N] - I}的平均度数，形式化来说就是\frac{\sum \text{deg}(w', W)}{|W_{[N] - I}|}.进一步，我们定义\text{rAvgDeg} = \frac{\text{AvgDeg}_I(W)}{|\Lambda|^{|I|}}.“r”表示“相对”，即相对平均度，也就是平均度除以长度为|I|的所有字符串的长度，相当于进行了一次归一化，作为一个指标衡量二者的相对属性。"><span><span class="tex2jax_ignore math-holder">字符串的度是相对于目标集合W\subseteq \Lambda ^N的，令I\subseteq [1,N]，记\text{deg}(w',W)为字符串w'\in \Lambda^{[N] - I}(此处的意思是将若干个位置上的字符挖掉)拓展为W中字符串的数量。这就是说，w’是多少W中字符串的子序列。定义\text{AvgDeg}_I(W)为所有w\in W_{[N] - I}的平均度数，形式化来说就是\frac{\sum \text{deg}(w', W)}{|W_{[N] - I}|}.进一步，我们定义\text{rAvgDeg} = \frac{\text{AvgDeg}_I(W)}{|\Lambda|^{|I|}}.“r”表示“相对”，即相对平均度，也就是平均度除以长度为|I|的所有字符串的长度，相当于进行了一次归一化，作为一个指标衡量二者的相对属性。</span></span></span> </p><p>提升定理在证明对于单调函数的领域已经取得了很好的结果，但是很难突破对于一般函数的证明。</p><h3><span>多路复用器</span>（MUX）相关研究</h3><p>上面我们提到，若内函数为多路复用器的KRW猜想成立，那么 <span class="ztext-math" data-tex="\textbf{P}\nsubseteq \textbf{NC}^1"><span><span class="tex2jax_ignore math-holder">\textbf{P}\nsubseteq \textbf{NC}^1</span></span></span> </p><h3>Dinur： XOR for inner function</h3><h3>姚氏最大最小原理（Yao's Min-Max Principle）</h3><p><span class="ztext-math" data-tex="\bold{Theorem.}R_\rho = \max_\mu D_\rho^\mu (f)"><span><span class="tex2jax_ignore math-holder">\bold{Theorem.}R_\rho = \max_\mu D_\rho^\mu (f)</span></span></span> </p><p>或者，我们使用通信复杂度的语言来书写：</p><p><span class="ztext-math" data-tex="CC(R) = \max_{\mu} CC_\mu(R)\\"><span><span class="tex2jax_ignore math-holder">CC(R) = \max_{\mu} CC_\mu(R)\\</span></span></span> 这个核心定理表明，我们只需要构造一个“困难的分布”，就能够估计通信复杂度的下界。这一点在研究“Universal Relation”的时候非常有效：我们可以只研究矩阵 <span class="ztext-math" data-tex="X = Y"><span><span class="tex2jax_ignore math-holder">X = Y</span></span></span> ，从而可以使用<span>信息复杂度</span>达到一个非常好的下界，从而得到 <span class="ztext-math" data-tex="CC(KW_{f\circ U_n})\geq \log \textbf{L}(f) + n - O(1+\frac{m}{n}) \log m\approx CC(KW_f) + CC(KW_{U_n})\\"><span><span class="tex2jax_ignore math-holder">CC(KW_{f\circ U_n})\geq \log \textbf{L}(f) + n - O(1+\frac{m}{n}) \log m\approx CC(KW_f) + CC(KW_{U_n})\\</span></span></span> 这就证明了KRW猜想的一个初步情况。</p><h3>信息复杂度</h3><p>信息复杂度是到目前为止，在特定函数（非单调）上取得最好下界的一种方法。信息复杂度指的是</p><p><span class="ztext-math" data-tex="IC_\mu(\Pi) = I(\Pi:\textbf{Input})\\"><span><span class="tex2jax_ignore math-holder">IC_\mu(\Pi) = I(\Pi:\textbf{Input})\\</span></span></span> 也就是协议和输入集的互信息。信息复杂度揭示的就是，当前的协议揭示了输入分布怎样的信息。尽管如此，这样说还是非常的抽象，但是如此定义的一个好处是，我们可以利用互信息的链式法则：</p><p><span class="ztext-math" data-tex="IC_\mu(\Pi) = I(\Pi:\textbf{X, a, b}) = I(\Pi:\textbf{X}) + I(\Pi:\textbf{a, b}|\textbf{X})\\"><span><span class="tex2jax_ignore math-holder">IC_\mu(\Pi) = I(\Pi:\textbf{X, a, b}) = I(\Pi:\textbf{X}) + I(\Pi:\textbf{a, b}|\textbf{X})\\</span></span></span> 如此，我们就可以分别利用已知的通信复杂度下界先得到前一项，然后通过其它的分析方法分析后一项的下界，从而得到一些很好的结果。这让我们能够在一些限制下面更好的研究信息复杂度的性质。我们分析信息复杂度的理由是，它严格地小于通信复杂度：</p><p> 对于任意的协议和分布，<span class="ztext-math" data-tex="C(\Pi)\geq IC_\mu(\Pi)\\"><span><span class="tex2jax_ignore math-holder">C(\Pi)\geq IC_\mu(\Pi)\\</span></span></span>这表明，信息复杂度天然是通信复杂度的一个下界。我们只需要证明，充分紧的（误差不能太大），那么我们就可以通过信息复杂度的分析来得到通信复杂度的下界。</p><p>在这里，我们就可以使用大量概率论和信息论的工具来分析这个对象。我们可以通过对于输入的一些分析，尤其是对于输入分布的构造和分析来证明信息复杂度的下界。尤其是我们这里使用的是互信息，这也就是说，我们可以使用</p><p><span class="ztext-math" data-tex="I(y:x) = H(y) - H(y|x)\\"><span><span class="tex2jax_ignore math-holder">I(y:x) = H(y) - H(y|x)\\</span></span></span>来计算互信息，其中 <span class="ztext-math" data-tex="H(x)"><span><span class="tex2jax_ignore math-holder">H(x)</span></span></span> 表示信息熵。如果我们给定了分布，那么我们就可以对分布进行分析，从而得到信息复杂度的一个下界。所以说，一个输入分布的构造是至关重要的。信息复杂度的好处在于，我们无需对协议本身执行大量的分析，而是直接通过分析输入来证明一个下界，这无疑让我们的分析简单了很多。</p><h3>About Composition (题外话): Tree Evaluation and Finite Field</h3><h2>五、Open Question</h2><h3>对数秩猜想</h3><p><span class="ztext-math" data-tex="\bold{Conjecture.}存在常数c>1使得C(f)=O(\log(\text{rank}(M(f)))^c)对于任意函数f和所有输入规模n成立，其中秩在实数域上求得。"><span><span class="tex2jax_ignore math-holder">\bold{Conjecture.}存在常数c&gt;1使得C(f)=O(\log(\text{rank}(M(f)))^c)对于任意函数f和所有输入规模n成立，其中秩在实数域上求得。</span></span></span> </p><p>近期的一篇论文举出了对数秩猜想的一个进阶版本的反例，这使得学界开始审视对数秩猜想本身的正确性。</p><h3>KRW猜想</h3><p><span class="ztext-math" data-tex="\bold{Conjecture.}(KRW)设D(f)表示计算f的电路深度，那么有D(f\circ g)\approx D(f) + D(g)."><span><span class="tex2jax_ignore math-holder">\bold{Conjecture.}(KRW)设D(f)表示计算f的电路深度，那么有D(f\circ g)\approx D(f) + D(g).</span></span></span> </p><p> 这个猜想过于强，以至于不好证。因此我们考虑弱一些的猜想，但也足够暗示 <span class="ztext-math" data-tex="\mathbf{P}\nsubseteq \mathbf{NC}^1"><span><span class="tex2jax_ignore math-holder">\mathbf{P}\nsubseteq \mathbf{NC}^1</span></span></span> </p><p><span class="ztext-math" data-tex="\bold{Conjecture.}(XOR-KRW)设D(f)表示计算f的电路深度，那么有D(f\boxplus g)\approx D(f) + D(g) -o(1).其中\boxplus 表示异或复合，也就是将内层函数的结果异或然后输入外层函数。"><span><span class="tex2jax_ignore math-holder">\bold{Conjecture.}(XOR-KRW)设D(f)表示计算f的电路深度，那么有D(f\boxplus g)\approx D(f) + D(g) -o(1).其中\boxplus 表示异或复合，也就是将内层函数的结果异或然后输入外层函数。</span></span></span> </p><p>以上的一切都是为了计算复杂度理论中的一座圣杯—— <span class="ztext-math" data-tex="\mathbf{P}\ne \mathbf{NC}^1"><span><span class="tex2jax_ignore math-holder">\mathbf{P}\ne \mathbf{NC}^1</span></span></span> ——发起冲击，乃至于尝试冲击 <span class="ztext-math" data-tex="\mathbf{P}\ne \mathbf{NP}"><span><span class="tex2jax_ignore math-holder">\mathbf{P}\ne \mathbf{NP}</span></span></span> 这个庞然大物。（注， <span class="ztext-math" data-tex="\mathbf{NC}^1"><span><span class="tex2jax_ignore math-holder">\mathbf{NC}^1</span></span></span> 即拥有高效并行算法且布尔电路深度为 <span class="ztext-math" data-tex="O(\log n)"><span><span class="tex2jax_ignore math-holder">O(\log n)</span></span></span> 的问题类，若证明 <span class="ztext-math" data-tex="\mathbf{P}=\mathbf{NC}^1"><span><span class="tex2jax_ignore math-holder">\mathbf{P}=\mathbf{NC}^1</span></span></span> ，则表明任何多项式算法都有高效并行算法，这是极其颠覆性的结论）</p><h2>六、随机通信协议</h2><hr><p>知乎上似乎没有相关领域的内容，许多内容需要依靠论文和课本进行学习，因此写一篇类似的综述似乎是一种很好的想法。</p><p>实际工程中，人与人的沟通成本也可以视为通信复杂度的一种实例，例如，我们在完成一个项目的时候，需要进行通信。如何才能够降低沟通成本（优化）？为了完成项目，我们的最低沟通成本是什么（通信复杂度）？我们是否可以不事无巨细地描述，但是我们完成项目的概率却很高（随机通信协议）？我们如何使用公共冗余来降低理解误差（纠错码）？这都可以成为我们研究的项目。</p><p>但是，更重要的是，通信复杂度给予了我们对于计算的一种新看法：若某一个计算步骤绝不可能在计算另一个东西的同时一起计算（即便我们通过非常巧妙的编码隐式计算了这一结果，我们将这个计算结果告诉主进程的代价也是高昂的，这表明我们的所谓的“巧妙思维”是徒劳的），那么我们无论如何都不可能用更大的空间来换取时间上的效率。通信复杂度正是突破计算复杂度理论的一个突破口：若计算过程不可并行，则问题绝不可能用非常“聪明和高效”的方式进行解决，那么这个计算过程必然是串行的。我们通过研究通信复杂度，尤其是KW Game，通过电路深度和通信复杂度的直接联系，我们能够实现对于复合函数电路的直和分解，从而进一步挑战若干重大的理论开放问题。</p>
+参考书及一些文章：
+
+Boaz Barak et al., 《Computational Complexity：A Modern Approach》
+
+Tim Roughgarden, 《Communication Complexity (for Algorithm Designers)》
+
+Ivan Mihajlin et al., 《Toward Better Depth Lower Bounds: The XOR-KRW Conjecture》
+
+Or Meir et al., 《KRW Composition Theorems via Lifting》
+
+James Cook et al., 《Tree Evaluation is in $O(\log n\cdot\log \log n)$ space》
+
+* * *
+
+> 本文研究了两个处理器协同计算布尔值函数式需要交换的信息。——姚期智，1979
+
+至于为什么要引用Yao的话，主要是因为这玩意儿是他提出的。Yao的成就数不胜数，包含伪随机理论和密码学、算法和数据结构领域等等，我个人比较熟悉的是Yao的XOR定理和随机性与不可预测性定理，其余的，我看的Yao的论文不多，不太清楚。
+
+## 一、“通信”
+
+我们这里所称的“通信”与现实中所谓的通信虽然有相似之处，但是并不完全相同。我们现实中所称的“通信”，多指实际上的信息交换，例如网络、电话等等。这里，我们将“通信”视为一种交互（在交互式证明里，我们也看到过类似的模型），也就是如下的模型：
+
+$\textbf{Definition.}假设存在两个对象Alice和Bob，它们分别持有总输入(x_1,x_2)的一部分，不妨令Alice持有x_1,Bob持有x_2。设双方共同知道需要计算的函数f。我们称，为了计算出f(x_1,x_2)双方需要交换的通信量为计算的通信复杂度。$
+
+这是一个不太规范的定义，但是足够我们了解我们到底要干什么：例如存在一个很难的任务，我们想要将它分成几部分做，我们将它交给了不同的人员完成。但当我们要将它们组合到一起的时候，我们发现两者并不能简单地组合，而是要进行一定的调整。类似地，此类情况在分布式计算、编程，乃至电路下界的分析中都是非常有效的工具。甚至，目前一个非常著名的猜想——Karchmer-Raz-Wigderson猜想——就与此相关。
+
+$\textbf{Conjecture.}设D(f)表示计算f的电路深度，那么有D(f\circ g)\approx D(f) + D(g) -o(1).$
+
+这个猜想表明，计算一个函数复合的电路下界，约等于将两个函数拆开以后分别的深度下界。若此定理成立，那么我们就可以清晰的区分可并行问题和多项式时间可解决的问题。
+
+计算复杂度学家发现，通信复杂度和电路深度存在对应关系：
+
+$\textbf{Theorem.} D(f) = CC(KW_f).其中CC表示通信复杂度，KW_f表示关于函数f的一个通信任务（此通信任务的详细定义不在此叙述）。$
+
+如此的一个神奇对应让我们能够通过通信复杂度的手段来冲击一个重磅猜想：
+
+$\textbf{Conjecture.}\textbf{P}\nsubseteq \textbf{NC}^1.$
+
+不过，话虽如此，此时我们的知识储备并不足以支撑我们冲击这个困扰学界40年的宏大问题。因此，为了求解这一猜想，我们必须要更深层次地认识通信复杂度这一概念。接下来，我们形式化地定义上面我们所陈述的“通信复杂度”：
+
+$\textbf{Definition}.(双方通信协议)设f:\{0,1\}^{2n}\to \{0,1\}是一个函数。我们定义计算f的t-回合双方通信协议\Pi：该协议由t个函数构成的序列P_1,\cdots,P_t:\{0,1\}^*\to \{0,1\}。协议在输入x,y上的一次执行指的是如下过程：参与方1计算p_1 = P_1(x)并将p_1发送给参与方2，然后参与方2计算p_2 = P_2(y, p_1)发送给参与方1，以此类推。一般地，在第i个回合中，如果i是奇数，则参与方1计算p_i = P_i(x, p_1,\cdots, p_{i-1})并将p_i发送给参与方2；如果i是偶数，则参与方2计算p_i = P_i(y,p_1,\cdots,p_{i-1})并将p_i发送给参与方1。$
+
+$\textbf{Definition.}(协议的通信复杂性) 如果在任意输入x,y上通信协议\Pi发送的最后一个消息(也就是p_t)是f(x,y)，那么称通信协议\Pi是有效的。通信协议\Pi的通信复杂度指的是在任意x,y\in \{0,1\}^n上执行\Pi时需要通讯的二进制位的最大个数（也就是|p_1| + |p_2|+\cdots +|p_t|）。我们将函数f的通信复杂度记为C(f)(或者CC也可以，这里我偷懒了)，指的是所有计算f所有通信协议的最小通信复杂度。形式上，也就是\min_{\Pi}\max_{\{p_i\}, i=1,2,\cdots t}\sum_{i=1}^n |p_i|。$
+
+从协议的形式上来看，协议就好像一棵二叉树——每一次，某一方需要作出选择，输出0或者是1；但是，这样的建模是相当简陋的，因为我们完全忽略了0和1所表示的意思，它可能是对于某一个问题的“是”或“否”回答。例如，我们知道一个很出名的游戏——网络天才——，它通过一系列问题，你只需回答“是”或者“否”，它就可以确定你所说的人。另外，还有一些很有意思的推理游戏，主持人只能回答“是”或者“否”，观众就可以推理出一些事实。这实际上就是我们现在所叙述的通信过程。
+
+通信复杂度具有朴素的上界： $C(f)\leq n + 1$ ，这就是说，我们可以直接把自己的输入交出去，让对方计算就可以了。
+
+接下来，来看一个例子：假设，函数f要求统计x，y所有位中1的数量的奇偶性。我们可以得到的是 $C(f) = 2.$ 一方面，我们知道 $C(f)\geq 2$ ，这是因为函数是非平凡的，双方至少要传送一个位。另一方面，我们只需要让参与方1计算出其奇偶性，并交给参与方2，然后参与方2将其输入奇偶性与参与方1发来的奇偶性作异或，发回结果即可得到答案。这表明 $C(f) \leq 2$ 。这就证明了结论。
+
+## 二、下界方法
+
+接下来，我们将会使用以下函数作为示例，介绍一系列研究通信复杂度的经典方法：
+
+$EQ(x,y) =  \begin{cases} 1 & x = y \\  0 & x\ne y \end{cases}$
+
+我们可以证明，上面的函数有性质： $C(EQ)\geq n$
+
+### 诈集（Fooling Set）
+
+为了证明上面的结论，我们断言：设 $x,x'$ 是长度位n的不同位串，若通信协议在输入 $(x,x),(x',x')$ 上有相同的通信模式（也就是通信过程传递相同的位序列，位序列也就是通信协议序列），通信双方在四对输入 $(x,x),(x,x'),(x',x),(x',x')$ 上将得到相同答案。我们通过数学归纳法证明这一结论：
+
+$参与方1在第一个回合发送一个二进制位，根据归纳假设，无论输入是x还是x',它发送的二进制位相同；参与方2也是类似的。往复之后，我们有(x,x')和(x,x)作为输入时，函数输出相同。$ $为了证明C(EQ)\geq n，如果存在复杂度位至多n-1的通信协议，那么通信模式至少有2^{n-1}（这是显然的，不加任何限制的长度位n-1的二进制序列显然有这么多种），但是形如(x,x)的输入有2^n种；由鸽巢原理，存在(x,x)和(x',x')具有相同的通信模式。然而EQ(x,x') = 0 \ne EQ(x,x')表明，复杂度至多位n-1的通信协议在某些情况下会导致在某些输入上计算错误，因此通信协议是无效的。因此我们就证明了结论。$
+
+### 铺砌方法
+
+我们考虑一个 $2^n\times 2^n$ 矩阵，每个坐标上的二进制位对应两个输入：
+
+00
+
+01
+
+10
+
+11
+
+00
+
+1
+
+0
+
+0
+
+0
+
+01
+
+0
+
+1
+
+0
+
+0
+
+10
+
+0
+
+0
+
+1
+
+0
+
+11
+
+0
+
+0
+
+0
+
+1
+
+如上的矩阵表示函数 $EQ$ 的（n=2）矩阵。我们可以将上述矩阵中具有相同通信过程的部分染为同色。
+
+我们不妨设置如下的通信协议：参与者1发出自己的一位二进制位，参与者2检查,然后参与者1发出自己的第二位，参与者2检查，然后参与者2发出计算结果，通信结束。因此有
+
+纵为参与者1，横向为参与者2
+
+00
+
+01
+
+10
+
+11
+
+00
+
+001
+
+000
+
+000
+
+000
+
+01
+
+010
+
+011
+
+010
+
+010
+
+10
+
+100
+
+100
+
+101
+
+100
+
+11
+
+110
+
+110
+
+110
+
+111
+
+显然我们上面写出了10个矩形，接下来我们介绍同色矩形的定理：
+
+$\textbf{Theorem.}记同色矩形数量为\chi(f),那么有\log\chi(f)\leq C(f)\leq 16(\log \chi(f))^2.$
+
+由此我们可以通过上面的涂色估算通信复杂度： $\lfloor\log 10\rfloor = 3 \leq C(f)$ ，这是符合我们的证明的。
+
+### 秩方法
+
+接下来，为了更好研究铺砌法，我们引入代数方法来研究 $\chi(f)$ 的下界：
+
+$\textbf{Theorem.}对于域\mathbb{F}上的n\times n矩阵M和任意函数f，\chi(f)\geq \mathrm{rank}(M(f)).$
+
+我们代入 $f=EQ$ 发现， $M = I，\mathrm{rank}(M) = 2^n$ ，于是 $C(EQ)\geq \log \chi(EQ)\geq n$ ,这便是之前结论的另一个证明。
+
+### 差异方法
+
+这里，我们考虑将函数值0和1变为-1和+1方便研究，实际上是没有区别的。
+
+如上，我们将之前的矩阵写为只包含-1和+1的矩阵，于是矩阵 $A\times B$ (这里，矩阵就是我们之前定义的矩阵)的差异定义为：
+
+$\text{Disc}(f) = \frac{1}{2^{2n}}\big|\sum_{x\in A,y\in B}M_{x,y}(f)\big|$ 差异就是+1或者-1的“占优密度”，也就是+1和-1相互抵消以后除以整个矩阵面积的指标。我们有以下引理：
+
+$\textbf{Lemma.}\chi(f)\geq\frac{1}{\text{Disc}(f)}.$
+
+这个下界相当宽松，我们通过特征值给出其上界：
+
+$\textbf{Theorem.}(特征值界)任意对称实矩阵M，矩阵A\times B的差异至多为\frac{\lambda_{max}(M)}{2^{2n}}\sqrt{|A||B|}.$
+
+我们注意到M显然是对称的：交换输入，通信协议不变，那么结果不会改变。注意到 $\sum_{x\in A, y\in B}M_{x,y} = 1_A^\top M 1_B$ ,则
+
+$\text{Disc}(f) = \frac{1}{2^{2n}}1_A^\top M 1_B \leq \frac{1}{2^{2n}}\lambda_{max}(M)|1_A^\top M 1_B|\leq \frac{1}{2^{2n}}\lambda_{max}(M)\sqrt{|A||B|}$ 前一步使用瑞利商的性质，最后一步使用矩阵的柯西不等式。这一定理给出了矩阵数的下界：
+
+$\chi(f)\geq\frac{1}{\text{Disc}(f)}\geq\frac{1}{\frac{1}{2^{2n}}\lambda_{max}(M)\sqrt{|A||B|}} = \frac{2^{2n}}{\lambda_{max}(M)\sqrt{|A||B|}}$ 从而给出通信复杂度下界
+
+$C(f)\geq \log \frac{2^{2n}}{\lambda_{max}(M)\sqrt{|A||B|}} = 2n - \log \lambda_{max}(M)\sqrt{|A||B|}$ 下面我们介绍证明差异上界的另一种技术：
+
+$\textbf{Definition.}\mathcal{E}(f) = \text{E}_{a_1,a_2,b_1,b_2}[\prod_{i = 1, 2}\prod_{j= 1,2}f(a_i,b_j)]。$
+
+这里我们使用期望技术来估计差异：
+
+$\textbf{Theorem.} \text{Disc}(f)\leq \mathcal{E}(f)^{\frac{1}{4}}$
+
+证明留作读者练习。提示：你可以考虑把a和b分开来处理。另外，可以考虑 $\text{E}(X^2)\geq \text{E}(X)^2$ 。
+
+### 诸证明方法的比较
+
+铺砌论证法是证明所有下界中最强的方法，因为秩的下界、差异的下界和诈集都蕴含 $\chi(f)$ 的下界；因此，同铺砌方法得到的下界相比，这些方法的下界不会优于铺砌方法得出的结果。秩方法和诈集方法不具有可比性，因为它们的性能在不同的函数上可能各有千秋。但如果忽略常数因子，则秩方法几乎和诈集方法一样强。我们后面将会看到一个猜想——对数秩猜想——它断言，在忽略多项式因子的前提下，秩方法给出的下界是最优的。
+
+## 三、多方通信复杂度
+
+### 组合柱体
+
+### 额头写数
+
+## 四、理论前沿（About KRW Conjecture）
+
+### KW Relation
+
+KW关系指的是如下的通信问题：
+
+$\textbf{Definition.}定义需要计算的函数f:\{0,1\}^n \to \{0,1\}，令Alice和Bob拿到的x和y满足f(x) = 0, f(y) = 1.我们的通信任务是确认某一个下标满足x_i \ne y_i.我们记此任务的通信复杂度C(KW_f)。$
+
+Karchmer和Wigderson观察到如下的事实：
+
+$\textbf{Theorem.}D(f) = C(R)$
+
+### Lifting Theorem（提升定理）
+
+解决KRW猜想非常困难，因此我们转而讨论一些比较“简单”的情况。这里，我们将会介绍通信复杂度中的一个关键定理：提升定理。
+
+Or Meir et al. 在2020年十一月FOCS的论文中提到了提升定理：也就是将一个简单问题的下界提升到一个较难问题的下界的方法。本文中，作者研究了一个弱于KRW猜想的猜想：单调KRW猜想。也就是说，假设函数都是单调函数，然后再此情况下进行研究。
+
+单调KRW猜想断言： $CC(mKW_f\circ mKW_g)\approx CC(mKW_f) + CC(mKW_g)$
+
+此处，我们记以下论文为\[CFK 19\]: Arkadev Chattopadhyay, Yuval Filmus, Sajin Koroth, Or Meir, and Toniann Pitassi. Query-to-communication lifting using low-discrepancy gadgets. _Electronic Colloquium on Computational Complexity (ECCC)_, 26:103, 2019.
+
+接下来，考察某一个查询问题的查询复杂度： $Q(S)$ ,其中S为某一个搜索问题。设一个“迷你”函数（gadget function）： $gd:\{0,1\}^t \times \{0,1\}^t \to \{0,1\}$ , 若干研究提升定理的论文指出，若这个函数满足一些条件，那么有 $CC(S\circ gd) = \Omega(Q(S)\cdot t)$ ,其中t是输入的长度。
+
+作者在本文中提出了单调函数复杂度分解定理：
+
+$\textbf{Theorem.}令f:\{0,1\}^m \to \{0,1\},g:\{0,1\}^n \to \{0,1\}为非常数单调函数，若存在一个提升查询问题S\circ gd能够被归约到mKW_g且满足[CFK 19]中的条件，那么$
+
+$CC(mKW_f \circ mKW_g )\geq CC(mKW_f) + \Omega(Q(S)\cdot t)$ $特别地，若CC(mKW_g) = \tilde{O}(NS_{\mathbb F_2}(\phi)\cdot t),那么$
+
+$CC(mKW_f \circ mKW_g)\geq CC(mKW_f) + \tilde{\Omega}(CC(mKW_g))$
+
+紧接着这一条定理，作者进一步提出了半单调分解定理，这一部分类似，可在论文中详细查看。后续的内容，我们仅仅介绍提升定理，而不去介绍其它更加晦涩和繁杂的证明细节。
+
+$\textbf{Theorem.}(更加一般化的提升定理)对于任何\eta >0且d\in \mathbb N, 存在c\in \mathbb N和\kappa >0使得以下性质成立：令S是一个查询问题，其输入为\{0,1\}^l(长度为l的二进制串)，令gd:\{0,1\}^t\times \{0,1\}^t \to \{0,1\}是某一个\mathrm{disc}(gd)\leq 2^{-\eta \cdot t}的函数，其中t\geq c\log l.令\mathcal{X,Y}\subseteq (\{0,1\}^t)^l，I为[1,l]的任意子区间，\mathcal{X,Y}在其上的相对平均度\text{rAvgDeg}_I(\mathcal{X})和\text{rAvgDeg}_I(\mathcal{Y})至少为\frac{1}{(d\cdot l^d)^{|I|}}. 那么，S\diamond gd在输入\mathcal{X\times Y}上的通信复杂度至少为\kappa\cdot Q(S)\cdot t.$
+
+其中，我们补充定义串的平均度： $字符串的度是相对于目标集合W\subseteq \Lambda ^N的，令I\subseteq [1,N]，记\text{deg}(w',W)为字符串w'\in \Lambda^{[N] - I}(此处的意思是将若干个位置上的字符挖掉)拓展为W中字符串的数量。这就是说，w’是多少W中字符串的子序列。定义\text{AvgDeg}_I(W)为所有w\in W_{[N] - I}的平均度数，形式化来说就是\frac{\sum \text{deg}(w', W)}{|W_{[N] - I}|}.进一步，我们定义\text{rAvgDeg} = \frac{\text{AvgDeg}_I(W)}{|\Lambda|^{|I|}}.“r”表示“相对”，即相对平均度，也就是平均度除以长度为|I|的所有字符串的长度，相当于进行了一次归一化，作为一个指标衡量二者的相对属性。$
+
+提升定理在证明对于单调函数的领域已经取得了很好的结果，但是很难突破对于一般函数的证明。
+
+### 多路复用器（MUX）相关研究
+
+上面我们提到，若内函数为多路复用器的KRW猜想成立，那么 $\textbf{P}\nsubseteq \textbf{NC}^1$
+
+### Dinur： XOR for inner function
+
+### 姚氏最大最小原理（Yao's Min-Max Principle）
+
+$\textbf{Theorem.}R_\rho = \max_\mu D_\rho^\mu (f)$
+
+或者，我们使用通信复杂度的语言来书写：
+
+$CC(R) = \max_{\mu} CC_\mu(R)$ 这个核心定理表明，我们只需要构造一个“困难的分布”，就能够估计通信复杂度的下界。这一点在研究“Universal Relation”的时候非常有效：我们可以只研究矩阵 $X = Y$ ，从而可以使用信息复杂度达到一个非常好的下界，从而得到 $CC(KW_{f\circ U_n})\geq \log \textbf{L}(f) + n - O(1+\frac{m}{n}) \log m\approx CC(KW_f) + CC(KW_{U_n})$ 这就证明了KRW猜想的一个初步情况。
+
+### 信息复杂度
+
+信息复杂度是到目前为止，在特定函数（非单调）上取得最好下界的一种方法。信息复杂度指的是
+
+$IC_\mu(\Pi) = I(\Pi:\textbf{Input})$ 也就是协议和输入集的互信息。信息复杂度揭示的就是，当前的协议揭示了输入分布怎样的信息。尽管如此，这样说还是非常的抽象，但是如此定义的一个好处是，我们可以利用互信息的链式法则：
+
+$IC_\mu(\Pi) = I(\Pi:\textbf{X, a, b}) = I(\Pi:\textbf{X}) + I(\Pi:\textbf{a, b}|\textbf{X})$ 如此，我们就可以分别利用已知的通信复杂度下界先得到前一项，然后通过其它的分析方法分析后一项的下界，从而得到一些很好的结果。这让我们能够在一些限制下面更好的研究信息复杂度的性质。我们分析信息复杂度的理由是，它严格地小于通信复杂度：
+
+对于任意的协议和分布，$C(\Pi)\geq IC_\mu(\Pi)$这表明，信息复杂度天然是通信复杂度的一个下界。我们只需要证明，充分紧的（误差不能太大），那么我们就可以通过信息复杂度的分析来得到通信复杂度的下界。
+
+在这里，我们就可以使用大量概率论和信息论的工具来分析这个对象。我们可以通过对于输入的一些分析，尤其是对于输入分布的构造和分析来证明信息复杂度的下界。尤其是我们这里使用的是互信息，这也就是说，我们可以使用
+
+$I(y:x) = H(y) - H(y|x)$来计算互信息，其中 $H(x)$ 表示信息熵。如果我们给定了分布，那么我们就可以对分布进行分析，从而得到信息复杂度的一个下界。所以说，一个输入分布的构造是至关重要的。信息复杂度的好处在于，我们无需对协议本身执行大量的分析，而是直接通过分析输入来证明一个下界，这无疑让我们的分析简单了很多。
+
+### About Composition (题外话): Tree Evaluation and Finite Field
+
+## 五、Open Question
+
+### 对数秩猜想
+
+$\textbf{Conjecture.}存在常数c>1使得C(f)=O(\log(\text{rank}(M(f)))^c)对于任意函数f和所有输入规模n成立，其中秩在实数域上求得。$
+
+近期的一篇论文举出了对数秩猜想的一个进阶版本的反例，这使得学界开始审视对数秩猜想本身的正确性。
+
+### KRW猜想
+
+$\textbf{Conjecture.}(KRW)设D(f)表示计算f的电路深度，那么有D(f\circ g)\approx D(f) + D(g).$
+
+这个猜想过于强，以至于不好证。因此我们考虑弱一些的猜想，但也足够暗示 $\mathbf{P}\nsubseteq \mathbf{NC}^1$
+
+$\textbf{Conjecture.}(XOR-KRW)设D(f)表示计算f的电路深度，那么有D(f\boxplus g)\approx D(f) + D(g) -o(1).其中\boxplus 表示异或复合，也就是将内层函数的结果异或然后输入外层函数。$
+
+以上的一切都是为了计算复杂度理论中的一座圣杯—— $\mathbf{P}\ne \mathbf{NC}^1$ ——发起冲击，乃至于尝试冲击 $\mathbf{P}\ne \mathbf{NP}$ 这个庞然大物。（注， $\mathbf{NC}^1$ 即拥有高效并行算法且布尔电路深度为 $O(\log n)$ 的问题类，若证明 $\mathbf{P}=\mathbf{NC}^1$ ，则表明任何多项式算法都有高效并行算法，这是极其颠覆性的结论）
+
+## 六、随机通信协议
+
+* * *
+
+知乎上似乎没有相关领域的内容，许多内容需要依靠论文和课本进行学习，因此写一篇类似的综述似乎是一种很好的想法。
+
+实际工程中，人与人的沟通成本也可以视为通信复杂度的一种实例，例如，我们在完成一个项目的时候，需要进行通信。如何才能够降低沟通成本（优化）？为了完成项目，我们的最低沟通成本是什么（通信复杂度）？我们是否可以不事无巨细地描述，但是我们完成项目的概率却很高（随机通信协议）？我们如何使用公共冗余来降低理解误差（纠错码）？这都可以成为我们研究的项目。
+
+但是，更重要的是，通信复杂度给予了我们对于计算的一种新看法：若某一个计算步骤绝不可能在计算另一个东西的同时一起计算（即便我们通过非常巧妙的编码隐式计算了这一结果，我们将这个计算结果告诉主进程的代价也是高昂的，这表明我们的所谓的“巧妙思维”是徒劳的），那么我们无论如何都不可能用更大的空间来换取时间上的效率。通信复杂度正是突破计算复杂度理论的一个突破口：若计算过程不可并行，则问题绝不可能用非常“聪明和高效”的方式进行解决，那么这个计算过程必然是串行的。我们通过研究通信复杂度，尤其是KW Game，通过电路深度和通信复杂度的直接联系，我们能够实现对于复合函数电路的直和分解，从而进一步挑战若干重大的理论开放问题。

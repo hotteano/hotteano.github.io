@@ -10,5 +10,16 @@ tags:
   - Transformer
 column: "学习笔记"
 ---
+因为知乎的公式排版实在不太好看也不太方便，我决定用PDF编译一遍以后再用图片的形式展示出来，方便保存也方便看。
 
-<p>因为知乎的公式排版实在不太好看也不太方便，我决定用PDF编译一遍以后再用图片的形式展示出来，方便保存也方便看。</p><hr><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/what-is-attention/img-0.jpg"></div></figure><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/what-is-attention/img-1.jpg"></div></figure><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/what-is-attention/img-2.jpg"></div></figure><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/what-is-attention/img-3.jpg"></div></figure><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/what-is-attention/img-4.jpg"></div></figure>
+* * *
+
+![](/assets/blog/what-is-attention/img-0.jpg)
+
+![](/assets/blog/what-is-attention/img-1.jpg)
+
+![](/assets/blog/what-is-attention/img-2.jpg)
+
+![](/assets/blog/what-is-attention/img-3.jpg)
+
+![](/assets/blog/what-is-attention/img-4.jpg)

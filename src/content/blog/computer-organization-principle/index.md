@@ -9,26 +9,565 @@ tags:
   - 笔记
 column: "学习笔记"
 ---
+本笔记主要参考张进老师的计算机组成原理PPT写成，用于复习。
 
-<p>本笔记主要参考张进老师的计算机组成原理PPT写成，用于复习。</p><hr><p>我们忽略数字逻辑的部分。</p><hr><h2>一、计算机性能</h2><h3>IC、CPI、CPU Time和Clock Rate</h3><p>Instruction Count：指令数</p><p>Clock Per Instruction：每指令时钟数，也就是执行一个指令需要多少个时钟周期</p><p>CPU Time：（运行程序）的时间</p><p>Clock Rate：时钟频率，单位为赫兹</p><p>一个关键公式：</p><p><span class="ztext-math" data-tex="\text{CPU Time} = \frac{\text{IC} \times \text{CPI}}{\text{Clock Rate}}"><span><span class="tex2jax_ignore math-holder">\text{CPU Time} = \frac{\text{IC} \times \text{CPI}}{\text{Clock Rate}}</span></span></span> 这就是我们计算CPU时间的主要公式。</p><p>我们使用简单的数学原理来计算并行加速比：</p><p>Amdahl's Law: <span class="ztext-math" data-tex="S = \frac{1}{(1 - P) + \frac{P}{N}}"><span><span class="tex2jax_ignore math-holder">S = \frac{1}{(1 - P) + \frac{P}{N}}</span></span></span> , S表示加速比，N表示并行处理器数量，P表示可并行处理的部分。这非常自然，之前，100%的过程需要串行，现在，P的进程可以被N处理器并行，剩下的串行，那么 <span class="ztext-math" data-tex="\frac{v_{original}}{v_{new}} = \frac{1}{(1 - P) + P/N}"><span><span class="tex2jax_ignore math-holder">\frac{v_{original}}{v_{new}} = \frac{1}{(1 - P) + P/N}</span></span></span> </p><h3>功耗</h3><p>能量消耗如下：</p><p><span class="ztext-math" data-tex="能量 = 静态能耗 + 动态能耗"><span><span class="tex2jax_ignore math-holder">能量 = 静态能耗 + 动态能耗</span></span></span> </p><ul><li>静态能耗（Static Energy）：维持储存的能量</li><li>动态能耗（Dynamic Energy）：切换状态的能量</li></ul><p>单次切换（ <span class="ztext-math" data-tex="0 \to 1"><span><span class="tex2jax_ignore math-holder">0 \to 1</span></span></span> ）能耗正比于 <span class="ztext-math" data-tex="\frac{1}{2}CV^2"><span><span class="tex2jax_ignore math-holder">\frac{1}{2}CV^2</span></span></span> , <span class="ztext-math" data-tex="C"><span><span class="tex2jax_ignore math-holder">C</span></span></span> 代表电容， <span class="ztext-math" data-tex="V"><span><span class="tex2jax_ignore math-holder">V</span></span></span> 代表电压。</p><p>功率计算：</p><p><span class="ztext-math" data-tex="P \propto \frac{W}{T} = \frac{1}{2} C V^2 f"><span><span class="tex2jax_ignore math-holder">P \propto \frac{W}{T} = \frac{1}{2} C V^2 f</span></span></span> </p><h3>Benchmarks</h3><p>SPEC CPU2006（Now SPEC CPU2017）是被广泛用于CPU测试的套件，包含了多项Benchmark。</p><h2>二、指令集（<span>RISC-V</span>指令集）</h2><h3>系统优化思想</h3><ul><li>规格化即化简（Simplicity favors Regularity）</li><li>小即快（Smaller is faster）</li><li>让大多数情况更快（Make Common Case faster）</li><li>好的设计需要妥协（Good Design demands good compromises）</li></ul><p>注：这四条是从Eight Great Ideas of Computer Architecture里面提炼出来的。完整的是：1.面向摩尔定律设计；2.使用（对更底层的）抽象来简化设计；3.让通常情况更快；4、5、6：用并行化、<span>流水线</span>化、预测设计来提高性能；7.储存应有层级；8.用冗余换取可靠性。</p><h3>数的表示和符号拓展</h3><p>在计算机系统中，我们使用二进制表示数。数分为有符号和无符号两种。对于32位整数，有符号数使用第一位表示符号。在计算机系统中，我们使用正数的补码来表示其对应的负数。有符号数的范围是 <span class="ztext-math" data-tex="[-2^{n-1}, 2^{n-1} - 1]"><span><span class="tex2jax_ignore math-holder">[-2^{n-1}, 2^{n-1} - 1]</span></span></span> 。</p><p>对于少于32位的数，我们在将其拓展到32位的时候，只需要观察其最高位，如果是0，那么将高位填充0，如果是1，将高位填充1；十六进制同理，如果是F，将高位填充F即可。</p><h3>算术指令</h3><p>在RISC-V中，我们拥有很多算术指令：</p><div><pre><code>add rd, rs1, rs2 
-sub rd, rs1, rs2
-...</code></pre></div><p>一般来说，算术指令遵循如下的结构：</p><div><pre><code>指令 目标寄存器 源寄存器1 源寄存器2</code></pre></div><p>不在寄存器中，可以直接使用的数值被称为立即数。立即数可以是地址，也可以是数据。</p><p>立即数算术指令只需要在对应的算术指令后面加上“i（immediate）”：</p><div><pre><code>addi rd, rs, imm
-// 此处，如果要作减法，用负立即数即可</code></pre></div><p>无符号数相关指令只需要在后面加上“u（unsigned）”。此类指令都可以在Reference Card中找到，此处不再赘述。</p><p>逻辑运算指令如下：</p><div><pre><code>srl rd, rs1, rs2
-sll rd, rs1, rs2 
-and rd, rs1, rs2 
-or rd, rs1, rs2 
-xor rd, rs1, rs2 
-....</code></pre></div><p>逻辑运算最经典的用法是用来提取某一位的数，例如说，提取符号位，我们通常右移31位。</p><p>如果需要提取（例如说，浮点数的指数和分数），我们需要使用掩码和and运算来提取，一般来说，我们要提取中间22到31位，那么我们需要右移21位，然后用低8位掩码；</p><h3>访存指令</h3><p>我们通过load和store系列指令对内存进行操作（注意，不是寄存器）</p><div><pre><code>lw rd, imm(base addr)
-sw rd, imm(base addr)
-// imm指的是立即数offset（单位是字节），base addr=某一个寄存器中存储的基地址，必须是寄存器
-// 注意，一般来说，偏移必须是4的倍数，因为一个字占据四个字节；如果你使用了不是4的倍数，可
-// 能会导致读出来的数据没有意义</code></pre></div><p>注意：不能写成</p><div><pre><code>lw rd, t0(base addr)
-// 也就是说，偏移不能是寄存器，如有需要，请用add t0, t0, base addr计算之后再用
-// lw rd, 0(t0) </code></pre></div><p>在内存中，RISC-V的指令按照小端储存。也就是说，在一个字（四个字节）储存的时候，一个字若在寄存器中从左到右为高位到低位（从左到右记为1，2，3，4），那么在内存中，其储存方式为从上到下（高地址到低地址）1，2，3，4.</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-0.jpg"></div></figure><p>如图所示，在小端储存中，数据在寄存器中的相对位置与在内存中的相对位置一致。</p><p>既然知道了一个字在内存中存储的顺序，我们就可以通过load byte指令来取出一个字中的任何一个位置的数</p><div><pre><code>lb rd, 1(x1)
-// 这里，我们向高地址偏移，因为base处于低地址，我们向上才能够访问当前字的各个字节</code></pre></div><h3>跳转指令与过程</h3><p>在RISC-V指令集中，我们拥有多种跳转指令。</p><div><pre><code>beq rs1, rs2, label
-// beq指令衍生出了很多伪指令，但是大部分指令都会转化为beq执行
-jal ra, label := jal label
-jalr rd, rs, imm // 将PC+4储存到rd，然后跳转到rs + imm（后面详细了解）</code></pre></div><p>我们需要着重研究的是jal（jump and link）指令，这基本等价于在C中调用函数，我们自动将返回地址放入ra（return address）寄存器，我们在执行完一个子过程之后，使用</p><div><pre><code>jalr x0, 0(ra) := jr ra </code></pre></div><p>就可以直接回到上一次jal的位置，这就跟C差不多。执行指令的地址由Program Counter（PC，程序计数器）确定，通常来说，PC每一次自增4（一条指令长度是一个字，下一条指令位于当前地址+4字节）。当我们执行jal的时候，我们将当前指令的地址放入ra寄存器，然后在过程内部调用的时候返回这个位置。</p><p>如果我们需要调用多个过程，那么我们不能只用ra来保存返回地址，我们需要把返回地址暂存到Stack中。内存中的数据储存如下：</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-1.jpg"></div></figure><p>栈指针（sp）从高地址向低地址走，堆（Heap，储存Dynamic Data，即程序运行中申请的临时空间）从低地址向高地址生长。最下方是系统保留空间、文本空间和静态数据（全局变量，Global）。当我们需要一个字来储存调用过程中的数据的时候，我们一般将栈指针减掉4的倍数。</p><p>通常来说，Caller保存t0-6，a0-7，ra寄存器，Callee保存s0-11寄存器。也就是说，当这些寄存器中被使用的时候，Caller要将t、a、ra寄存器的值保存到栈里面，因为它们是返回上一层的关键，但是它们可能会在子过程被覆盖，所以必须要保存到栈里面；如果Callee要返回值，那么必须要把s寄存器的值保存到栈里面，否则它们可能在别的子过程中被覆盖。</p><p>需要注意的是，我们要给子过程留够返回数据的空间，例如说，子过程将要返回两个参数，那么我们至少下移12个字节，方便第一个子过程把s0的数据放到栈里面，用于后面的计算。例如说，在斐波那契数列的递归实现中，我们就需要类似的做法。</p><h3>指令类型与格式</h3><p>RISC-V中存在不同类型的指令，这些指令决定了我们指令的格式。RISC-V为32位定长指令（一个字），也就是说，我们指令所有的内容都存在一个32位数中，因此我们要对这个32位数的划分做一些约定：</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-2.jpg"></div></figure><p>指令分为这几个部分：</p><ul><li>OPCODE：指令类型，区分六种指令</li><li>rd，rs1，rs2：目标、源寄存器编号，二进制数直接对应其编号（不是地址！）</li><li>funct3，funct7：用于细分一种指令中的具体指令（问：为什么funct3和funct7不放到一起？答：为了让指令之间几乎保持一致的格式，减少译码延迟；注意到，funct3在指令之间几乎对齐，我们只需要固定读取12到14位即可）</li><li>imm：立即数，可以是地址，也可以是数值。</li></ul><p>立即数处理：我们需要注意，在部分指令中，立即数并不是其直接从指令中读到的那样，而是要先进行一定的处理（我们利用了立即数的一些性质，从而使得我们立即数的范围能够充分扩大）。</p><p>在R、I、S指令中，立即数读到的就是你使用的，可以直接运算。</p><p>在B指令中，由于RV32中指令地址必然是2的倍数（考虑到半字的存在，不能是4的倍数），因此我们储存立即数的时候忽略低位的0（因为必然是2的倍数，所以末尾必然是零，由此我们获得了相对于直接储存立即数两倍的跳转范围）</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-3.jpg"></div></figure><p>下一条指令的地址是： <span class="ztext-math" data-tex="\text{Addr} = PC + 2 \times \text{imm}"><span><span class="tex2jax_ignore math-holder">\text{Addr} = PC + 2 \times \text{imm}</span></span></span> ，注意要乘2！</p><p>我们观察到，在B指令中，我们的立即数实际上被拆成了四个部分，我们需要把它拼起来，然后组成一个立即数，将其乘以2以后就得到了offset。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-4.jpg"></div></figure><p>对于J指令而言，CPU执行到这里的时候，首先完成PC+4，然后将其保存到ra寄存器，接下来计算跳转地址 <span class="ztext-math" data-tex="PC = PC + \text{offset} = PC + 2 \times \text{imm}"><span><span class="tex2jax_ignore math-holder">PC = PC + \text{offset} = PC + 2 \times \text{imm}</span></span></span> 。注意到，J指令拥有20位的立即数偏移。我们同样遵循省略最低位的约定，也就是说，我们20位立即数实际上是21位，忽略了最低的0。这条指令的跳转范围是 <span class="ztext-math" data-tex="\pm 2^{19}"><span><span class="tex2jax_ignore math-holder">\pm 2^{19}</span></span></span> 半字（两个字节）。</p><p>如果我们要跳转超过这个范围的指令呢？例如说，这个程序很大，我们跳转的范围超过了指令提供的地址范围呢？</p><p>我们需要使用U指令。由于指令只有32位，所以立即数本身不能很大（我们还有储存寄存器编号、OPCODE），但是我们可以规定当前指令直接把20位LOAD到寄存器的高位，然后我们通过ADD之类的指令填充地位即可。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-5.jpg"></div></figure><p>U指令将目标寄存器的高20位填充为其立即数的部分，以满足加载大数的要求。</p><div><pre><code>LUI rd, imm // 将立即数加载到寄存器高二十位，rd = imm &lt;&lt; 12
-AUIPC rd, imm //将立即数加到到程序计数器高二十位，PC = PC + (imm &lt;&lt; 12)</code></pre></div><p>此时，我们可以直接使用加载好的寄存器，使用jalr来进行跳转</p><div><pre><code>jalr rd, rs, imm // 注意，此时我们不需要乘以2，因为imm储存的是绝对地址
-// 注意到jalr是一个I指令，因只能储存12位立即数，我们如果用LUI将数加载到了高20位，就可以实现
-// 32位地址的跳转了</code></pre></div><p>跳转范围是32位内存地址空间中的任意一个地方。</p><h3>寻址方式</h3><p>指令的寻址方式有四个：</p><ul><li>立即数寻址（Immediate Addressing）：I、U指令，addi和lui指令</li><li>寄存器寻址（Register Addressing）：R指令，类似于add rd, rs1, rs2这样的指令</li><li>基址寻址（Base Addressing）：I、S指令，类似于lw/sw rd, 0(x0)这样的指令</li><li>程序计数器相对寻址（PC Relative Addressing）：B、J、U指令，含有label的指令一般都是，同时还有AUIPC指令</li></ul><p><br></p><h3>整数算术原理</h3><p>饱和算术（Saturation Arithmetic）：如果超出范围，截断到最大或者最小数值，保证不会发生溢出。</p><p>我们接下来介绍整数的乘法和除法运算（加减法已经在数字逻辑中介绍）</p><p>整数乘法：</p><ul><li>将两个乘数加载到寄存器</li><li>重复操作：检测第二个操作数最低位，如果是1，product加上第一个操作数，如果是0，跳过</li><li>第二个操作数右移，第一个操作数左移</li></ul><p>整数除法（恢复余数法）：</p><ul><li>将被除数加载进入余数寄存器，除数加载到寄存器高位。</li><li>将被除数减去处于高位的除数，如果结果下溢，恢复，商最低位设置为0；如果仍然为正数，保持被除数，商的最低为设置为1</li><li>除数右移，商左移；循环直到结束，余数寄存器存储余数，商寄存器存储商</li></ul><h3>浮点数算术原理</h3><p>我们首先介绍<span>IEEE754</span>规格浮点数（单精度）：</p><div><pre><code>|符号位（1位）|指数（8位）|尾数（23位）| </code></pre></div><p>为了规格化表示浮点数，且扩大浮点数数值范围，我们使用科学计数法表示。</p><p>转换十进制浮点数和规格化浮点数：</p><ul><li>转换为二进制数</li><li>将二进制数写为科学计数法形式： <span class="ztext-math" data-tex="1.x \times 2^{exp}"><span><span class="tex2jax_ignore math-holder">1.x \times 2^{exp}</span></span></span> </li></ul><p>实际储存中，我们使用规格化处理：将指数加上一个bias，使得储存的时候保持为正数，方便计算。</p><p>bias计算为： <span class="ztext-math" data-tex="2^{n-1} - 1"><span><span class="tex2jax_ignore math-holder">2^{n-1} - 1</span></span></span> 。对于8位指数而言，偏移量是127。因此我们将真实指数加上127即可得到规格化表示。如果要换算回来，需要减掉bias。</p><p>在IEEE754规格中，指数00000000和11111111被保留用来表示特殊的数值，因此规格化浮点数的范围是</p><p><span class="ztext-math" data-tex="(-2\times 2^{127}, -1 \times 2^{-126}], [1 \times 2^{-126}, 2 \times 2^{127})"><span><span class="tex2jax_ignore math-holder">(-2\times 2^{127}, -1 \times 2^{-126}], [1 \times 2^{-126}, 2 \times 2^{127})</span></span></span> 小于最左端和大于最右端被称为上溢，在两个区间中间被称为下溢。</p><p>为了表示更小的数，当指数为零、尾数不为零的时候，我们称之为非规格化浮点数。它让我们能够表示更小的浮点数，绝对值最小可以达到 <span class="ztext-math" data-tex=" 1 \times 2^{-126 - 23}"><span><span class="tex2jax_ignore math-holder"> 1 \times 2^{-126 - 23}</span></span></span> 。注意，尽管非规格化浮点数的指数为0，但是我们不能认为它的指数实际上是-127，这是因为，如果我们认为全零代表-127，那么会占用对于数值0的编码，也就是说，指数和尾数全零表示 <span class="ztext-math" data-tex="1\times 2^{-127}"><span><span class="tex2jax_ignore math-holder">1\times 2^{-127}</span></span></span> 而不是0，这会破坏编码的统一性。</p><p>为了表示一些特殊数值，我们使用保留的指数和位数来表示它们：</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-6.jpg"></div></figure><p>若指数和位数为全零，则表示0；若指数全零，尾数不为零，则为非规格化浮点数。</p><p>如果指数全为1，位数为0，表示无限大；如果指数全为1，位数不为零，表示Not a Number。</p><p>接下来我们介绍浮点数加法（如果是减法，自行调整即可）</p><ul><li>指数对齐：为了直接加减尾数，我们比较两个浮点数的指数，将小的那一个向高位对齐，对应地，我们将指数小的那个数的尾数右移。之所以要向高位对齐，是因为我们要避免高位左移的时候丢失高位信息。高位信息比低位信息重要，低位丢失导致的是精度误差，高位丢失导致的是计算错误。</li><li>计算尾数，得出结果</li><li>规格化恢复：查看尾数结果，将其右移或者左移变为1.XX的形式，相应的，将指数减去或者加上左移或右移的位数。</li></ul><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-7.jpg"></div></figure><p>浮点数加法器示意图如上。不要被复杂的电路困扰，实际上我们只需要理解运算的过程，就知道多路选择器的选择信号的意义是什么。例如，左侧第一个多路选择器就是直接将最终的指数（更大的那个）传到运算后的规格化部分，以此类推，我们就可以熟悉整个加法器中的信号到底是怎么样的。</p><h3>RV32指令集拓展（Extension）</h3><ul><li>I拓展：RV32最基本的指令</li><li>M拓展：乘除法指令拓展</li><li>A拓展：原子操作拓展</li><li>F/D拓展：单精度/双精度浮点数运算拓展</li><li>C拓展：程序压缩指令拓展</li></ul><h2>三、处理器，也可以说是计算机</h2><p>如何设计处理器？因为我们需要解析指令集，因此处理器的能力必须和指令集一一对应。我们所有设计的指令都必须和电路行为一一对应，否则我们的指令集就没有用。</p><h3>处理器主要结构</h3><ul><li>算术逻辑单元（负责处理计算和逻辑问题）</li><li>控制单元（负责译码和控制电路）</li><li>存储（寄存器、Cache），以及在主板上的内存（哈佛结构中，分为指令存储和数据存储）</li><li>程序计数器（负责指向指令地址）</li></ul><p>现代处理器普遍采用流水线、分支预测、虚拟内存映射、权限和状态寄存器、中断处理等技术来提高可靠性和计算效率，但是我们这里不考虑这些内容。</p><h3>数据通路</h3><p>算术逻辑单元（ALU）：ALU支持寄存器算术运算、立即数算术运算、逻辑运算、地址计算等功能，因此，其数据输入包含寄存器和立即数生成器（来源于指令存储），数据输出包含寄存器，以及数据内存寻址。</p><p>PC寄存器：输入为上一个周期计算的地址，输出包含两个——自增的PC+4和跳转指令的地址，通过多路选择器，我们可以控制PC下一周期的状态。</p><p>立即数生成器：通过指令解码立即数，输出立即数给ALU，根据指令类型决定是否要左移一位（例如B和J指令）。</p><p>内存模块：输入为地址和数据，输出为数据，根据读写使能判断。</p><p>控制单元：控制单元负责控制各个模块的使能端口，指令译码之后，控制单元根据具体的指令激活对应的模块，例如，根据B、J指令还是一般指令激活PC的多路选择器，例如，根据ALU的操作类型确定其输入是立即数还是寄存器的数据，例如，确定是从内存中读取还是写入，等等。</p><p>这样，我们只要确定了各个模块的输入输出，我们就可以搭建出一个简单的CPU了。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-8.jpg"></div></figure><h3>流水线</h3><p>我们这里讨论经典的五级流水线（IF（取指）、ID（译码）、EX（执行）、MEM（访存）、WB（写回））。</p><p>首先，对于一个流水线来说，如果CPU是固定频率的，那么其频率最高能到多高？换句话说，每个周期至少多长？这由五个阶段中最慢的那个阶段决定，我们只需要取所有阶段最长时间的那个阶段作为最小周期即可。</p><p>流水线加速了什么？如果从单条指令来看，流水线实际上还拖慢了指令的执行速度，因为此时我们必须要按照最慢的那个阶段设计周期。例如说，一条指令在单周期CPU中，只需要执行1250ns，但是切分为五段以后，最慢的周期需要300ns，我们只好在1500ns才能执行完指令。流水线真正加速的是指令的通量（Throughput），在单个周期中，更多的指令同时被处理，这其中我们会发现通量和延迟（Latency）的Trade-Off。</p><p>为什么RISC-V适合进行流水线设计？首先，RISC-V是定长指令，取指和解码的电路不必非常复杂，甚至可以说可以非常简单，因此切分为五个阶段是很简单的；其次，指令的格式比较统一，指令的形式都比较常见；最后，Load/Store指令寻址简单，可以在EXE/MEM中很容易处理。</p><p>在流水线中，一个关键设计是要处理各种冒险。我们在执行一条指令的时候，可能其结果依赖于之前的一些数据（例如，我们要连续lw，将数据放入寄存器，然后才能够add）。可是，在流水线中，我们的lw的地址是在第三阶段计算，直到第五阶段从才写回，但是add在第三阶段就要使用前面的lw的内容！这里，我们就出现了冒险（其中，这一种叫数据冒险）。我们有三种冒险的可能：</p><ul><li>结构冒险（Structure Hazard）：部件正忙，没有办法使用。</li><li>数据冒险（Data Hazard）：之前的数据还没有进入寄存器/内存，紧接的指令读到的是错误的内容（真实的数据在后面的周期才会被写入）。</li><li>控制冒险（Control Hazard）：当前的决策可能要依赖于之前的结果（典型的就是分支判断，例如beq指令，这里我们会引入分支预测来提高效率）。</li></ul><p>结构冒险的典型就是写入和读取的矛盾，对于冯诺依曼结构来说，我们需要从内存中同时读取指令和内存，就不可避免地需要处理这一类问题。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-9.jpg"></div></figure><p>这些冒险都可以通过stall/flush来处理，只要我们等待的时间足够长，那么cpu就会退化为单周期cpu，我们就不会有问题；可是，如果等待时间太长，我们的效率就会大大降低，因此，这些冒险行为都是我们要为每一类指令精心设计的，例如说，lw在R指令前面的时候，要检测是否源寄存器正在被写入，我们就要stall一下流水线，让lw先写入，等等。</p><p>同样，我们还可以通过数据前递（Fowarding）的方法来处理这些问题，例如说，将EX阶段计算出来的数直接传递到下一个要使用这个本来应该放到寄存器中的数，这样我们就不必Stall然后等待写回了，这就提高了效率。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-10.jpg"></div></figure><p>在编译器层面，我们也会通过代码重排来避免Hazard。现代编译器通常在将高级语言转化为汇编代码的时候，会通过直接检测Hazard然后对代码进行优化，避免CPU在运行的时候过多Stall。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-11.jpg"></div></figure><p>如图所示，我们可以通过重新排序代码来降低stall的次数，从而优化代码的性能。这在考试中经常出现。</p><h3>指令级并行</h3><p>流水线中，我们每一个阶段（IF、ID、EXE、MEM、WB）在每一个周期实际上只能够处理一条指令，例如，你不可能同时Fetch两条指令。但是在多发射CPU（又称<span>超标量CPU</span>）中，这样是可能的。</p><p>下面介绍静态多发射。首先，编译器将指令放进发射包（issue packets）里面，编译器决定哪些指令可以被同时发射出去（指令需求的流水线同样决定了这个指令能不能被pack）。我们将这样的包称为超长指令字（Very Long Instruction Word, VLIW）。</p><p>对于简单的静态多发射CPU而言，我们可以创建两个完全一样的CPU系统，然后同时执行两个指令就可以了。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-12.jpg"></div></figure><p>当然，我们也可以复用已有的寄存器和内存，只需要将中间的立即数发生器、ALU等资源进行复制即可，我们就可以同时处理两条指令。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-13.jpg"></div></figure><p>当然，超标量寄存器的Hazard处理更加复杂，我们这里就不讨论了。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-14.jpg"></div></figure><p>以上展示了一个编译器如何进行代码重排从而进行多发射操作的，显然，s1在lw之后就不会使用了，因此我们可以把addi直接放到ALU执行。类似地，根据指令的依赖关系和原来程序的语义，我们可以重排整个代码。</p><p>接下来我们介绍循环展开：</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-15.jpg"></div></figure><p>如上的代码表示一个加法循环，显然，t0被引用了很多次，但是每一次加的数据之间没有直接联系，我们可以通过使用多个寄存器来储存中间结果的方式，将循环展开为双发射适应的形式：</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-16.jpg"></div></figure><p>循环展开的程度要根据CPU多发射的能力决定，如上，我们就成功将一个循环展开成了双发射形式。如果是原来的代码，由于一直都是引用t0寄存器，我们无法并行加和。当我们将名称依赖性去掉之后，就成功实现了双发射。</p><p>接下来我们介绍动态多发射CPU（此阶段，CPU占主导）。</p><p>（待补充）</p><h3>存储架构：Cache以及其它</h3><p>接下来我们介绍储存体系。计算机的储存体系大概分为：寄存器-Cache-内存-硬盘。当然，其中可能有很多变种，为了简单区分，我们使用以上的结构。我们着重介绍Cache的工作原理。</p><p>Cache位于CPU内部，CPU可以快速访问这个储存单元，其访问速度远远大于内存的访问速度。但是Cache制造的价格较贵，因此大小往往远小于内存。我们通过一些特殊的策略来让Cache尽管容量非常小，但是均摊的内存访问时间却比较小。</p><p>带有Cache的CPU如何访问内存的数据？首先，CPU根据地址访问Cache（如何访问我们后面再说），Cache里面包含了内存数据的副本，如果命中（hit）那么直接选取数据，如果没有命中（Miss），我们才stall并访问内存。</p><p>一个Cache Block指的是Cache中复制的最小单位，例如，我们可以一次性复制若干个字，以免我们频繁访问一个内存位置的时候频繁Miss。</p><p>Cache的设计有如下几个思路：</p><ul><li>直接映射（Direct Mapping）</li><li>组相联（Set Associated）</li><li>全相联（Full Associated）</li></ul><p>直接映射顾名思义，就是将地址直接对应到Cache里面的Block。我们通过约定Address的不同段的含义来给Cache里面的Block标号。例如，三十二位地址空间，一个Cache有128 Bytes，每一个Block大小为4个word，那么一个Cache就有8个Block，每一个Block我们要标号，也就是至少需要3Bit。因此，地址中至少要有3个bit标记block的标号，我们称之为index。接下来，因为一个Block里面有4个Word，我们需要知道是哪一个，因此需要两个bit来标记，我们称之为Offset；然后，为了确定我们拿到的数据是对的，我们需要把地址剩下的东西进行最后的比对，以确定Cache里面的数据是我们想要的数据，也就是剩下的27个bit，称之为Tag。</p><p>Cache的每一行的组成如下：Index、Valid Bit、Tag、Data。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-17.jpg"></div></figure><p>下面展示了一个Miss and Hit的示例：</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-18.jpg"></div></figure><p>如图，我们第一次访问18 = 10010的时候，我们此处约定后三位为index，前两位为Tag，此时Cache里面的Tag是11，显然不一样，因此Miss，我们访问真正的内存，然后将Tag一样的数据直接拉进Cache里（注意，如果允许拉四个字，tag一样的四个字会被直接拉进来，通过offset确定选取哪一个字，这是访问局部性——Locality决定的：如果你访问了一个地址，你很有可能会访问靠近的内存）。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-19.jpg"></div></figure><p>当然，一味的增大Block Size并不会降低Miss Rate，如图所示。</p><p>Cache Miss有三种类型：</p><ul><li>Compulsory Miss（Cache全空的时候，必然Miss）</li><li>Capacity Miss（Cache满了，新数据放不进去；后面在组相联Cache的时候我们会看得更清楚，这里，我们一个index只能放一个Block） </li><li>Conflict Miss（Tag不一致，Miss）</li></ul><p>我们知道，对于内存的访问通常是CPU中比较耗时的环节，如果需要频繁地写入和读出，那么我们会耗费大量的时间在这上面。我们如果在Cache每一次被修改的时候都要将数据写回，那么效率会非常低。设想，一个Block被频繁修改一百万次，表明我们要写回一百万次，时间可能会翻好几倍。相反，我们使用一个Dirty bit来标记，如果Block没有Miss，我们就不写回，直到Miss，我们才根据Dirty Bit = 1将这个数据落到内存当中.如果Dirty Bit = 0，表明这个数据只被读过，没有被写过，因此和内存里面数据是一致的，只需要直接丢掉即可。</p><p><b>组相联与全相联  </b>在储存体系的实践中，我们会发现，如果一个index对应一个Block，表明我们每一行的容错率非常低——只要Miss，我们就只能把已经拿到Cache里面的数据丢掉，然后换成新的；如果我们后面还要这些已经丢掉的数据呢？这就会导致大量的Miss。因此，设计师们想，为什么不让一个index多存几个Block呢？这样，我们就得到了一个组（Set）。一个组可能包含若干路（way），例如，一个组可以容纳两个数据行，我们就将其成为2-way set-associated。当所有的数据行都在一个组中，我们将其成为全相联。</p><p>对于一个k-way的组相联Cache，我们只需要 <span class="ztext-math" data-tex="\text{Max Index} = \frac{\text{Cache Size}}{\text{Block Size} \times k}"><span><span class="tex2jax_ignore math-holder">\text{Max Index} = \frac{\text{Cache Size}}{\text{Block Size} \times k}</span></span></span> 即可表示所有的Set。我们在每一个组内通过电路并行比较所有的Block里面的内容，看是否Hit。否则，我们使用设定好的策略淘汰掉Cache的东西。比较常用的是随机淘汰，同样，我们也可以使用LRU策略（最远使用策略）进行数据块的淘汰。</p><p>事实表明，并不是Way越多Miss率越大。对于不同的计算机，我们都可以测试得到其甜点区。</p><p><b>透写（Write Through）与写回（Write Back） </b>透写的含义是，当Cache被更新，内存同样被更新；写回则是，当Cache被更新，只有当要更新cache的时候才更新。这里，我们之前提到的Dirty Bit就派上用场了。为了解决透写的效率问题，我们通常会设计写缓存（Write Buffer）来避免频繁更新内存，当且仅当缓存满了，我们才将内容写回内存。同样，写回也可以使用写缓存，我们需要更新的时候，直接把更新的块丢进缓存区即可，不用等到更新完毕然后再把内存里的数据读进来。</p><p><b>Write Miss </b>如果Block不在Cache里面，怎么办？我们应该怎么写数据？对于透写而言，我们可以直接把Block拉进Cache然后写，也可以不把它拉进来，直接写内存；对于Write Back而言，我们只能先把Block拉进来，然后写了之后标记。</p><p><b>平均内存访问时间（AMAT） </b>我们使用AMAT来衡量一个储存体系的性能：</p><p><span class="ztext-math" data-tex="\text{AMAT} = \text{Hittime} + \text{Miss Rate} \times \text{Miss Penalty}\\"><span><span class="tex2jax_ignore math-holder">\text{AMAT} = \text{Hittime} + \text{Miss Rate} \times \text{Miss Penalty}\\</span></span></span>这个公式是显然的。当然，对应的CPI计算，我们只需要把这个公式换算成CPI即可，假设Hit的话就是一个周期，我们有</p><p><span class="ztext-math" data-tex="\text{Total CPI} = \text{Base CPI} + \sum_{i = 1}^n(\text{Miss Per Instruction of i-level Cache} \times \text{Penalty CPI})\\"><span><span class="tex2jax_ignore math-holder">\text{Total CPI} = \text{Base CPI} + \sum_{i = 1}^n(\text{Miss Per Instruction of i-level Cache} \times \text{Penalty CPI})\\</span></span></span>注意区分Global Miss Rate和Local Miss Rate，其中Local Miss Rate指的是，当前一级Miss的情况下，这一级也Miss的比例，注意读题计算。</p><p><b>纠错码 </b>我们这里介绍最经典的校验码——Hamming Code（汉明码）。它通过满足 <span class="ztext-math" data-tex="2^{p} \geq \text{Data Bits} + p + 1"><span><span class="tex2jax_ignore math-holder">2^{p} \geq \text{Data Bits} + p + 1</span></span></span> 的 <span class="ztext-math" data-tex="p"><span><span class="tex2jax_ignore math-holder">p</span></span></span> 位数来作为纠错码，实现Single Error Correction/Double Error Detection （SEC/DED）。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-20.jpg"></div></figure><p>原理如下：例如说，对于8位的数据，我们需要4位纠错码，计算方法如下：</p><ul><li>将纠错码占位符放在2的幂上面，然后将数据填充剩余的位</li><li>对于第i个纠错码 <span class="ztext-math" data-tex="p_i"><span><span class="tex2jax_ignore math-holder">p_i</span></span></span> ，它覆盖所有二进制下标从低位数起第 <span class="ztext-math" data-tex="i"><span><span class="tex2jax_ignore math-holder">i</span></span></span> 位为1的所有位置，这些位取异或，放到对应纠错码的位置</li></ul><p>如何解码？</p><ul><li>接收方收到的是格式化的信息，首先，对于每一个纠错码，将其与对应的数据进行异或，如果没有错误，应该出现0；如果有错误，应该出现1。</li><li>由于我们巧妙的对应方式，我们最终会计算得到一个Syndrome： <span class="ztext-math" data-tex="p_1p_2p_4p_8..."><span><span class="tex2jax_ignore math-holder">p_1p_2p_4p_8...</span></span></span> 。这个数恰好就对应了出现错误的那一位！（我们的下标从1开始，如果最终是0，表示没有错误）</li></ul><p>若我们需要DED，那么需要增加一位全局奇偶校验，也就是正常的SEC加一位。如果Syndrome为0，且全局校验为0，表明没有出现问题；如果两者都非零，表明有一个位错了；如果Syndrome = 0，校验码不为零，表明校验码出错了；如果Syndrome不等于0，全局校验码为零，表明出现了两个错误。</p><p><b>存储体系结构 </b>从上到下，计算机的存储体系大概是寄存器-Cache-内存-硬盘......，其中只有硬盘是不易失（not-Volatile）的，其它都是只要没电就自动清空。</p><h3>并行处理器</h3><p>在计算机设计中，我们通常希望能够通过并行来提高计算效率。在软件上，并行编程是一件非常困难的事情；但是在硬件层面，硬件天然具有并行的性质，因此并行处理器就是一种必然选择。</p><p>我们接下来有一些术语需要辨析：</p><ul><li>顺序、并行：用于描述硬件，例如不同的CPU</li><li>顺序、并发：用于描述软件</li></ul><p>并发和顺序程序都可以在顺序/并行的硬件上运行。</p><p><b>向量化指令</b></p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-21.jpg"></div></figure><p>在CPU设计中，可能很多人都会了解SIMD（Single Instruction, Multiple Data）指令，事实上，我们可以将这些原则区分为四类，如表中所示。</p><p>SIMD通常是对于向量进行操作的指令，CPU需要在硬件层面上支持数据集的并行，也就是说，CPU内可能有大量的计算单元，他们在同一时刻只执行相同的操作，这样就方便了CPU的状态管理，同时还提高了计算效率。</p><p>RISC-V的RV32V拓展中就提供了类似的指令集，但是实现比较复杂，我们在这里就不介绍了。</p><p><b>多线程</b></p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-22.jpg"></div></figure><p>线程是计算机能够调度的最小单位，共享虚拟内存空间；具体来说，它们的程序计数器不一样、寄存器堆不一样、栈不一样、线程状态不一样。</p><p>CPU可以提供这些资源来实现多线程。但是在CPU运行过程中，每一个线程可能要进行I/O，在等待的过程当中，很多时间就被浪费掉了。为了避免这个，简单的思路就是，一个线程卡住的时候，我们立刻切换到另一个线程进行运算，然后等I/O结束，再回头继续（当CPU只有一个核心的时候）。如果CPU有多个核心，支持物理层面的多线程，那么就可以同时执行多个线程。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-23.jpg"></div></figure><p>多处理器计算机的内存管理有很多类型，有的是一个内存对应一个CPU，有的是CPU之间通过互联网络来共享内存。有兴趣可以自行了解。</p><hr><p>以下部分是根据我们具体的RISC-V CPU开发补充的。</p><p>CPU是如何组成的？如何编写一个片上系统（SoC）？流水线并不是什么具体的模块，而是不同模块实例化的一个划分，它表明不同的模块在一个周期中应该做什么事情，方便我们进行阶段间的数据传递和优化。</p><p>一个经典的五级流水线CPU的每一个步骤都对应了不同的模块的实例化：取指（IF）阶段，我们需要考虑——从哪里取指令？取什么指令？需不需要提前取某些指令？取指令以后放到哪里？；在译码（ID）阶段，我们需要实例化Control Unit，然后进行译码，根据一条指令的Opcode、funct3、funct3将指令中的寄存器编号和立即数取出来，然后将立即数放入立即数生成器，根据指令类型转换为对应指令的可用立即数；在执行阶段，我们根据译码阶段给出的使能信号进行计算，并且将输入放到寄存器；在访存（MEM）阶段，我们根据控制单元的使能信号判断写入和读取；在写回（WB）阶段，我们判断是写回到寄存器还是写入到内存。</p><h2>四、总线和虚拟内存映射</h2><h3>总线（Bus）</h3><p>总线由仲裁器、解码器和多路选择器构成。</p><h3>MMU (Memory Management Unit，内存控制单元)和PMP (Physical Memory Protection，物理内存保护)</h3><p>对于不同的程序而言，要确定其访问的内存位置是一件非常麻烦的事情，这会给编程者带来大量内存管理上的麻烦，因此，我们通过虚拟内存和地址翻译来实现不同进程之间的内存隔离。</p><p>虚拟内存分配给每一个程序的内存空间被称为页（Page），出现内存翻译错误被称为页错误（Page Fault）。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-24.jpg"></div></figure><p>页编号（Page Number）通常取自于虚拟地址的前若干位（取决于页大小，通常为4K）。我们通过查表将虚拟地址的页编号翻译为物理地址的页编号，从而实现对于物理地址的访问。由此可见，在虚拟地址上连续的数据，可能在物理地址上并不连续，这就是地址翻译导致的。</p><p>如果出现了页错误：</p><ul><li>页必须要从磁盘上面拉取，这就会导致巨大的性能下降，操作系统将会接管这个过程</li><li>为了防止此类问题出现，我们通常使用全相联的策略和一些特殊的替换算法</li></ul><p>我们通过页表（Page Table，<b>储存在内存当中</b>）来进行维护映射。每一行被称为页表元素Page Table Entries，其行标对应虚拟地址，内部储存：</p><ul><li>物理页表</li><li>状态位，例如Valid位、Referenced位（表明近期被使用过，OS定期将其清零）、Dirty位......</li></ul><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-25.jpg"></div></figure><p>我们使用LRU策略来淘汰页，由于磁盘的写入极慢（数百万周期），因此我们不会采用透写，而是使用写回策略，因此Dirty Bit比较重要。</p><p>显然，由于页表在内存里面，我们需要先访问它，然后才能找到程序的数据，为了优化这一点，我们使用一个缓存（此时是一个Cache，而不是内存，与之前的Cache类似，不过这里存储的是页表）来提高读取速率（这是因为，页表通常具有良好的局部性，我们可以通过缓存来提高对于相近页表的访问）。这个缓存被称为转译后备缓冲器（Translation Look-aside Buffer, TLB）。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-26.jpg"></div></figure><p>如果TLB Miss：</p><ul><li>如果Page在内存中，我们将其加载到TLB里面即可</li><li>如果Page不在内存而在硬盘，则需要OS介入处理</li></ul><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-27.jpg"></div></figure><p>如上，就是这个完整的虚拟内存映射的原理，其中涉及到很多跟操作系统有关的内容，我们在这里就不再赘述了。</p><figure><div><img alt="" loading="lazy" decoding="async" src="/assets/blog/computer-organization-principle/img-28.jpg"></div><figcaption>简要的逻辑梳理，弄清楚两个不同的Cache之间的关系</figcaption></figure><h2>五、权限与状态寄存器</h2><h3>Privilege</h3><h3>CSR Reg</h3><h2>六、中断处理</h2><h3>PLIC</h3><h3>CLINT</h3><h3>中断代理</h3><h2>七、分支预测</h2><h3>BTB与2-Bit饱和计数器</h3><h3>Gshare</h3><h3>RAS</h3><h2>八、原子操作、系统调用，以及运行Linux</h2><h3>RV32A拓展</h3><h3>ECALL</h3><h3>如何在SoC上运行Linux</h3><hr>
+* * *
+
+我们忽略数字逻辑的部分。
+
+* * *
+
+## 一、计算机性能
+
+### IC、CPI、CPU Time和Clock Rate
+
+Instruction Count：指令数
+
+Clock Per Instruction：每指令时钟数，也就是执行一个指令需要多少个时钟周期
+
+CPU Time：（运行程序）的时间
+
+Clock Rate：时钟频率，单位为赫兹
+
+一个关键公式：
+
+$\text{CPU Time} = \frac{\text{IC} \times \text{CPI}}{\text{Clock Rate}}$ 这就是我们计算CPU时间的主要公式。
+
+我们使用简单的数学原理来计算并行加速比：
+
+Amdahl's Law: $S = \frac{1}{(1 - P) + \frac{P}{N}}$ , S表示加速比，N表示并行处理器数量，P表示可并行处理的部分。这非常自然，之前，100%的过程需要串行，现在，P的进程可以被N处理器并行，剩下的串行，那么 $\frac{v_{original}}{v_{new}} = \frac{1}{(1 - P) + P/N}$
+
+### 功耗
+
+能量消耗如下：
+
+$能量 = 静态能耗 + 动态能耗$
+
+-   静态能耗（Static Energy）：维持储存的能量
+-   动态能耗（Dynamic Energy）：切换状态的能量
+
+单次切换（ $0 \to 1$ ）能耗正比于 $\frac{1}{2}CV^2$ , $C$ 代表电容， $V$ 代表电压。
+
+功率计算：
+
+$P \propto \frac{W}{T} = \frac{1}{2} C V^2 f$
+
+### Benchmarks
+
+SPEC CPU2006（Now SPEC CPU2017）是被广泛用于CPU测试的套件，包含了多项Benchmark。
+
+## 二、指令集（RISC-V指令集）
+
+### 系统优化思想
+
+-   规格化即化简（Simplicity favors Regularity）
+-   小即快（Smaller is faster）
+-   让大多数情况更快（Make Common Case faster）
+-   好的设计需要妥协（Good Design demands good compromises）
+
+注：这四条是从Eight Great Ideas of Computer Architecture里面提炼出来的。完整的是：1.面向摩尔定律设计；2.使用（对更底层的）抽象来简化设计；3.让通常情况更快；4、5、6：用并行化、流水线化、预测设计来提高性能；7.储存应有层级；8.用冗余换取可靠性。
+
+### 数的表示和符号拓展
+
+在计算机系统中，我们使用二进制表示数。数分为有符号和无符号两种。对于32位整数，有符号数使用第一位表示符号。在计算机系统中，我们使用正数的补码来表示其对应的负数。有符号数的范围是 $[-2^{n-1}, 2^{n-1} - 1]$ 。
+
+对于少于32位的数，我们在将其拓展到32位的时候，只需要观察其最高位，如果是0，那么将高位填充0，如果是1，将高位填充1；十六进制同理，如果是F，将高位填充F即可。
+
+### 算术指令
+
+在RISC-V中，我们拥有很多算术指令：
+
+    add rd, rs1, rs2 
+    sub rd, rs1, rs2
+    ...
+
+一般来说，算术指令遵循如下的结构：
+
+    指令 目标寄存器 源寄存器1 源寄存器2
+
+不在寄存器中，可以直接使用的数值被称为立即数。立即数可以是地址，也可以是数据。
+
+立即数算术指令只需要在对应的算术指令后面加上“i（immediate）”：
+
+    addi rd, rs, imm
+    // 此处，如果要作减法，用负立即数即可
+
+无符号数相关指令只需要在后面加上“u（unsigned）”。此类指令都可以在Reference Card中找到，此处不再赘述。
+
+逻辑运算指令如下：
+
+    srl rd, rs1, rs2
+    sll rd, rs1, rs2 
+    and rd, rs1, rs2 
+    or rd, rs1, rs2 
+    xor rd, rs1, rs2 
+    ....
+
+逻辑运算最经典的用法是用来提取某一位的数，例如说，提取符号位，我们通常右移31位。
+
+如果需要提取（例如说，浮点数的指数和分数），我们需要使用掩码和and运算来提取，一般来说，我们要提取中间22到31位，那么我们需要右移21位，然后用低8位掩码；
+
+### 访存指令
+
+我们通过load和store系列指令对内存进行操作（注意，不是寄存器）
+
+    lw rd, imm(base addr)
+    sw rd, imm(base addr)
+    // imm指的是立即数offset（单位是字节），base addr=某一个寄存器中存储的基地址，必须是寄存器
+    // 注意，一般来说，偏移必须是4的倍数，因为一个字占据四个字节；如果你使用了不是4的倍数，可
+    // 能会导致读出来的数据没有意义
+
+注意：不能写成
+
+    lw rd, t0(base addr)
+    // 也就是说，偏移不能是寄存器，如有需要，请用add t0, t0, base addr计算之后再用
+    // lw rd, 0(t0) 
+
+在内存中，RISC-V的指令按照小端储存。也就是说，在一个字（四个字节）储存的时候，一个字若在寄存器中从左到右为高位到低位（从左到右记为1，2，3，4），那么在内存中，其储存方式为从上到下（高地址到低地址）1，2，3，4.
+
+![](/assets/blog/computer-organization-principle/img-0.jpg)
+
+如图所示，在小端储存中，数据在寄存器中的相对位置与在内存中的相对位置一致。
+
+既然知道了一个字在内存中存储的顺序，我们就可以通过load byte指令来取出一个字中的任何一个位置的数
+
+    lb rd, 1(x1)
+    // 这里，我们向高地址偏移，因为base处于低地址，我们向上才能够访问当前字的各个字节
+
+### 跳转指令与过程
+
+在RISC-V指令集中，我们拥有多种跳转指令。
+
+    beq rs1, rs2, label
+    // beq指令衍生出了很多伪指令，但是大部分指令都会转化为beq执行
+    jal ra, label := jal label
+    jalr rd, rs, imm // 将PC+4储存到rd，然后跳转到rs + imm（后面详细了解）
+
+我们需要着重研究的是jal（jump and link）指令，这基本等价于在C中调用函数，我们自动将返回地址放入ra（return address）寄存器，我们在执行完一个子过程之后，使用
+
+    jalr x0, 0(ra) := jr ra 
+
+就可以直接回到上一次jal的位置，这就跟C差不多。执行指令的地址由Program Counter（PC，程序计数器）确定，通常来说，PC每一次自增4（一条指令长度是一个字，下一条指令位于当前地址+4字节）。当我们执行jal的时候，我们将当前指令的地址放入ra寄存器，然后在过程内部调用的时候返回这个位置。
+
+如果我们需要调用多个过程，那么我们不能只用ra来保存返回地址，我们需要把返回地址暂存到Stack中。内存中的数据储存如下：
+
+![](/assets/blog/computer-organization-principle/img-1.jpg)
+
+栈指针（sp）从高地址向低地址走，堆（Heap，储存Dynamic Data，即程序运行中申请的临时空间）从低地址向高地址生长。最下方是系统保留空间、文本空间和静态数据（全局变量，Global）。当我们需要一个字来储存调用过程中的数据的时候，我们一般将栈指针减掉4的倍数。
+
+通常来说，Caller保存t0-6，a0-7，ra寄存器，Callee保存s0-11寄存器。也就是说，当这些寄存器中被使用的时候，Caller要将t、a、ra寄存器的值保存到栈里面，因为它们是返回上一层的关键，但是它们可能会在子过程被覆盖，所以必须要保存到栈里面；如果Callee要返回值，那么必须要把s寄存器的值保存到栈里面，否则它们可能在别的子过程中被覆盖。
+
+需要注意的是，我们要给子过程留够返回数据的空间，例如说，子过程将要返回两个参数，那么我们至少下移12个字节，方便第一个子过程把s0的数据放到栈里面，用于后面的计算。例如说，在斐波那契数列的递归实现中，我们就需要类似的做法。
+
+### 指令类型与格式
+
+RISC-V中存在不同类型的指令，这些指令决定了我们指令的格式。RISC-V为32位定长指令（一个字），也就是说，我们指令所有的内容都存在一个32位数中，因此我们要对这个32位数的划分做一些约定：
+
+![](/assets/blog/computer-organization-principle/img-2.jpg)
+
+指令分为这几个部分：
+
+-   OPCODE：指令类型，区分六种指令
+-   rd，rs1，rs2：目标、源寄存器编号，二进制数直接对应其编号（不是地址！）
+-   funct3，funct7：用于细分一种指令中的具体指令（问：为什么funct3和funct7不放到一起？答：为了让指令之间几乎保持一致的格式，减少译码延迟；注意到，funct3在指令之间几乎对齐，我们只需要固定读取12到14位即可）
+-   imm：立即数，可以是地址，也可以是数值。
+
+立即数处理：我们需要注意，在部分指令中，立即数并不是其直接从指令中读到的那样，而是要先进行一定的处理（我们利用了立即数的一些性质，从而使得我们立即数的范围能够充分扩大）。
+
+在R、I、S指令中，立即数读到的就是你使用的，可以直接运算。
+
+在B指令中，由于RV32中指令地址必然是2的倍数（考虑到半字的存在，不能是4的倍数），因此我们储存立即数的时候忽略低位的0（因为必然是2的倍数，所以末尾必然是零，由此我们获得了相对于直接储存立即数两倍的跳转范围）
+
+![](/assets/blog/computer-organization-principle/img-3.jpg)
+
+下一条指令的地址是： $\text{Addr} = PC + 2 \times \text{imm}$ ，注意要乘2！
+
+我们观察到，在B指令中，我们的立即数实际上被拆成了四个部分，我们需要把它拼起来，然后组成一个立即数，将其乘以2以后就得到了offset。
+
+![](/assets/blog/computer-organization-principle/img-4.jpg)
+
+对于J指令而言，CPU执行到这里的时候，首先完成PC+4，然后将其保存到ra寄存器，接下来计算跳转地址 $PC = PC + \text{offset} = PC + 2 \times \text{imm}$ 。注意到，J指令拥有20位的立即数偏移。我们同样遵循省略最低位的约定，也就是说，我们20位立即数实际上是21位，忽略了最低的0。这条指令的跳转范围是 $\pm 2^{19}$ 半字（两个字节）。
+
+如果我们要跳转超过这个范围的指令呢？例如说，这个程序很大，我们跳转的范围超过了指令提供的地址范围呢？
+
+我们需要使用U指令。由于指令只有32位，所以立即数本身不能很大（我们还有储存寄存器编号、OPCODE），但是我们可以规定当前指令直接把20位LOAD到寄存器的高位，然后我们通过ADD之类的指令填充地位即可。
+
+![](/assets/blog/computer-organization-principle/img-5.jpg)
+
+U指令将目标寄存器的高20位填充为其立即数的部分，以满足加载大数的要求。
+
+    LUI rd, imm // 将立即数加载到寄存器高二十位，rd = imm << 12
+    AUIPC rd, imm //将立即数加到到程序计数器高二十位，PC = PC + (imm << 12)
+
+此时，我们可以直接使用加载好的寄存器，使用jalr来进行跳转
+
+    jalr rd, rs, imm // 注意，此时我们不需要乘以2，因为imm储存的是绝对地址
+    // 注意到jalr是一个I指令，因只能储存12位立即数，我们如果用LUI将数加载到了高20位，就可以实现
+    // 32位地址的跳转了
+
+跳转范围是32位内存地址空间中的任意一个地方。
+
+### 寻址方式
+
+指令的寻址方式有四个：
+
+-   立即数寻址（Immediate Addressing）：I、U指令，addi和lui指令
+-   寄存器寻址（Register Addressing）：R指令，类似于add rd, rs1, rs2这样的指令
+-   基址寻址（Base Addressing）：I、S指令，类似于lw/sw rd, 0(x0)这样的指令
+-   程序计数器相对寻址（PC Relative Addressing）：B、J、U指令，含有label的指令一般都是，同时还有AUIPC指令
+
+  
+
+### 整数算术原理
+
+饱和算术（Saturation Arithmetic）：如果超出范围，截断到最大或者最小数值，保证不会发生溢出。
+
+我们接下来介绍整数的乘法和除法运算（加减法已经在数字逻辑中介绍）
+
+整数乘法：
+
+-   将两个乘数加载到寄存器
+-   重复操作：检测第二个操作数最低位，如果是1，product加上第一个操作数，如果是0，跳过
+-   第二个操作数右移，第一个操作数左移
+
+整数除法（恢复余数法）：
+
+-   将被除数加载进入余数寄存器，除数加载到寄存器高位。
+-   将被除数减去处于高位的除数，如果结果下溢，恢复，商最低位设置为0；如果仍然为正数，保持被除数，商的最低为设置为1
+-   除数右移，商左移；循环直到结束，余数寄存器存储余数，商寄存器存储商
+
+### 浮点数算术原理
+
+我们首先介绍IEEE754规格浮点数（单精度）：
+
+    |符号位（1位）|指数（8位）|尾数（23位）| 
+
+为了规格化表示浮点数，且扩大浮点数数值范围，我们使用科学计数法表示。
+
+转换十进制浮点数和规格化浮点数：
+
+-   转换为二进制数
+-   将二进制数写为科学计数法形式： $1.x \times 2^{exp}$
+
+实际储存中，我们使用规格化处理：将指数加上一个bias，使得储存的时候保持为正数，方便计算。
+
+bias计算为： $2^{n-1} - 1$ 。对于8位指数而言，偏移量是127。因此我们将真实指数加上127即可得到规格化表示。如果要换算回来，需要减掉bias。
+
+在IEEE754规格中，指数00000000和11111111被保留用来表示特殊的数值，因此规格化浮点数的范围是
+
+$(-2\times 2^{127}, -1 \times 2^{-126}], [1 \times 2^{-126}, 2 \times 2^{127})$ 小于最左端和大于最右端被称为上溢，在两个区间中间被称为下溢。
+
+为了表示更小的数，当指数为零、尾数不为零的时候，我们称之为非规格化浮点数。它让我们能够表示更小的浮点数，绝对值最小可以达到 $1 \times 2^{-126 - 23}$ 。注意，尽管非规格化浮点数的指数为0，但是我们不能认为它的指数实际上是-127，这是因为，如果我们认为全零代表-127，那么会占用对于数值0的编码，也就是说，指数和尾数全零表示 $1\times 2^{-127}$ 而不是0，这会破坏编码的统一性。
+
+为了表示一些特殊数值，我们使用保留的指数和位数来表示它们：
+
+![](/assets/blog/computer-organization-principle/img-6.jpg)
+
+若指数和位数为全零，则表示0；若指数全零，尾数不为零，则为非规格化浮点数。
+
+如果指数全为1，位数为0，表示无限大；如果指数全为1，位数不为零，表示Not a Number。
+
+接下来我们介绍浮点数加法（如果是减法，自行调整即可）
+
+-   指数对齐：为了直接加减尾数，我们比较两个浮点数的指数，将小的那一个向高位对齐，对应地，我们将指数小的那个数的尾数右移。之所以要向高位对齐，是因为我们要避免高位左移的时候丢失高位信息。高位信息比低位信息重要，低位丢失导致的是精度误差，高位丢失导致的是计算错误。
+-   计算尾数，得出结果
+-   规格化恢复：查看尾数结果，将其右移或者左移变为1.XX的形式，相应的，将指数减去或者加上左移或右移的位数。
+
+![](/assets/blog/computer-organization-principle/img-7.jpg)
+
+浮点数加法器示意图如上。不要被复杂的电路困扰，实际上我们只需要理解运算的过程，就知道多路选择器的选择信号的意义是什么。例如，左侧第一个多路选择器就是直接将最终的指数（更大的那个）传到运算后的规格化部分，以此类推，我们就可以熟悉整个加法器中的信号到底是怎么样的。
+
+### RV32指令集拓展（Extension）
+
+-   I拓展：RV32最基本的指令
+-   M拓展：乘除法指令拓展
+-   A拓展：原子操作拓展
+-   F/D拓展：单精度/双精度浮点数运算拓展
+-   C拓展：程序压缩指令拓展
+
+## 三、处理器，也可以说是计算机
+
+如何设计处理器？因为我们需要解析指令集，因此处理器的能力必须和指令集一一对应。我们所有设计的指令都必须和电路行为一一对应，否则我们的指令集就没有用。
+
+### 处理器主要结构
+
+-   算术逻辑单元（负责处理计算和逻辑问题）
+-   控制单元（负责译码和控制电路）
+-   存储（寄存器、Cache），以及在主板上的内存（哈佛结构中，分为指令存储和数据存储）
+-   程序计数器（负责指向指令地址）
+
+现代处理器普遍采用流水线、分支预测、虚拟内存映射、权限和状态寄存器、中断处理等技术来提高可靠性和计算效率，但是我们这里不考虑这些内容。
+
+### 数据通路
+
+算术逻辑单元（ALU）：ALU支持寄存器算术运算、立即数算术运算、逻辑运算、地址计算等功能，因此，其数据输入包含寄存器和立即数生成器（来源于指令存储），数据输出包含寄存器，以及数据内存寻址。
+
+PC寄存器：输入为上一个周期计算的地址，输出包含两个——自增的PC+4和跳转指令的地址，通过多路选择器，我们可以控制PC下一周期的状态。
+
+立即数生成器：通过指令解码立即数，输出立即数给ALU，根据指令类型决定是否要左移一位（例如B和J指令）。
+
+内存模块：输入为地址和数据，输出为数据，根据读写使能判断。
+
+控制单元：控制单元负责控制各个模块的使能端口，指令译码之后，控制单元根据具体的指令激活对应的模块，例如，根据B、J指令还是一般指令激活PC的多路选择器，例如，根据ALU的操作类型确定其输入是立即数还是寄存器的数据，例如，确定是从内存中读取还是写入，等等。
+
+这样，我们只要确定了各个模块的输入输出，我们就可以搭建出一个简单的CPU了。
+
+![](/assets/blog/computer-organization-principle/img-8.jpg)
+
+### 流水线
+
+我们这里讨论经典的五级流水线（IF（取指）、ID（译码）、EX（执行）、MEM（访存）、WB（写回））。
+
+首先，对于一个流水线来说，如果CPU是固定频率的，那么其频率最高能到多高？换句话说，每个周期至少多长？这由五个阶段中最慢的那个阶段决定，我们只需要取所有阶段最长时间的那个阶段作为最小周期即可。
+
+流水线加速了什么？如果从单条指令来看，流水线实际上还拖慢了指令的执行速度，因为此时我们必须要按照最慢的那个阶段设计周期。例如说，一条指令在单周期CPU中，只需要执行1250ns，但是切分为五段以后，最慢的周期需要300ns，我们只好在1500ns才能执行完指令。流水线真正加速的是指令的通量（Throughput），在单个周期中，更多的指令同时被处理，这其中我们会发现通量和延迟（Latency）的Trade-Off。
+
+为什么RISC-V适合进行流水线设计？首先，RISC-V是定长指令，取指和解码的电路不必非常复杂，甚至可以说可以非常简单，因此切分为五个阶段是很简单的；其次，指令的格式比较统一，指令的形式都比较常见；最后，Load/Store指令寻址简单，可以在EXE/MEM中很容易处理。
+
+在流水线中，一个关键设计是要处理各种冒险。我们在执行一条指令的时候，可能其结果依赖于之前的一些数据（例如，我们要连续lw，将数据放入寄存器，然后才能够add）。可是，在流水线中，我们的lw的地址是在第三阶段计算，直到第五阶段从才写回，但是add在第三阶段就要使用前面的lw的内容！这里，我们就出现了冒险（其中，这一种叫数据冒险）。我们有三种冒险的可能：
+
+-   结构冒险（Structure Hazard）：部件正忙，没有办法使用。
+-   数据冒险（Data Hazard）：之前的数据还没有进入寄存器/内存，紧接的指令读到的是错误的内容（真实的数据在后面的周期才会被写入）。
+-   控制冒险（Control Hazard）：当前的决策可能要依赖于之前的结果（典型的就是分支判断，例如beq指令，这里我们会引入分支预测来提高效率）。
+
+结构冒险的典型就是写入和读取的矛盾，对于冯诺依曼结构来说，我们需要从内存中同时读取指令和内存，就不可避免地需要处理这一类问题。
+
+![](/assets/blog/computer-organization-principle/img-9.jpg)
+
+这些冒险都可以通过stall/flush来处理，只要我们等待的时间足够长，那么cpu就会退化为单周期cpu，我们就不会有问题；可是，如果等待时间太长，我们的效率就会大大降低，因此，这些冒险行为都是我们要为每一类指令精心设计的，例如说，lw在R指令前面的时候，要检测是否源寄存器正在被写入，我们就要stall一下流水线，让lw先写入，等等。
+
+同样，我们还可以通过数据前递（Fowarding）的方法来处理这些问题，例如说，将EX阶段计算出来的数直接传递到下一个要使用这个本来应该放到寄存器中的数，这样我们就不必Stall然后等待写回了，这就提高了效率。
+
+![](/assets/blog/computer-organization-principle/img-10.jpg)
+
+在编译器层面，我们也会通过代码重排来避免Hazard。现代编译器通常在将高级语言转化为汇编代码的时候，会通过直接检测Hazard然后对代码进行优化，避免CPU在运行的时候过多Stall。
+
+![](/assets/blog/computer-organization-principle/img-11.jpg)
+
+如图所示，我们可以通过重新排序代码来降低stall的次数，从而优化代码的性能。这在考试中经常出现。
+
+### 指令级并行
+
+流水线中，我们每一个阶段（IF、ID、EXE、MEM、WB）在每一个周期实际上只能够处理一条指令，例如，你不可能同时Fetch两条指令。但是在多发射CPU（又称超标量CPU）中，这样是可能的。
+
+下面介绍静态多发射。首先，编译器将指令放进发射包（issue packets）里面，编译器决定哪些指令可以被同时发射出去（指令需求的流水线同样决定了这个指令能不能被pack）。我们将这样的包称为超长指令字（Very Long Instruction Word, VLIW）。
+
+对于简单的静态多发射CPU而言，我们可以创建两个完全一样的CPU系统，然后同时执行两个指令就可以了。
+
+![](/assets/blog/computer-organization-principle/img-12.jpg)
+
+当然，我们也可以复用已有的寄存器和内存，只需要将中间的立即数发生器、ALU等资源进行复制即可，我们就可以同时处理两条指令。
+
+![](/assets/blog/computer-organization-principle/img-13.jpg)
+
+当然，超标量寄存器的Hazard处理更加复杂，我们这里就不讨论了。
+
+![](/assets/blog/computer-organization-principle/img-14.jpg)
+
+以上展示了一个编译器如何进行代码重排从而进行多发射操作的，显然，s1在lw之后就不会使用了，因此我们可以把addi直接放到ALU执行。类似地，根据指令的依赖关系和原来程序的语义，我们可以重排整个代码。
+
+接下来我们介绍循环展开：
+
+![](/assets/blog/computer-organization-principle/img-15.jpg)
+
+如上的代码表示一个加法循环，显然，t0被引用了很多次，但是每一次加的数据之间没有直接联系，我们可以通过使用多个寄存器来储存中间结果的方式，将循环展开为双发射适应的形式：
+
+![](/assets/blog/computer-organization-principle/img-16.jpg)
+
+循环展开的程度要根据CPU多发射的能力决定，如上，我们就成功将一个循环展开成了双发射形式。如果是原来的代码，由于一直都是引用t0寄存器，我们无法并行加和。当我们将名称依赖性去掉之后，就成功实现了双发射。
+
+接下来我们介绍动态多发射CPU（此阶段，CPU占主导）。
+
+（待补充）
+
+### 存储架构：Cache以及其它
+
+接下来我们介绍储存体系。计算机的储存体系大概分为：寄存器-Cache-内存-硬盘。当然，其中可能有很多变种，为了简单区分，我们使用以上的结构。我们着重介绍Cache的工作原理。
+
+Cache位于CPU内部，CPU可以快速访问这个储存单元，其访问速度远远大于内存的访问速度。但是Cache制造的价格较贵，因此大小往往远小于内存。我们通过一些特殊的策略来让Cache尽管容量非常小，但是均摊的内存访问时间却比较小。
+
+带有Cache的CPU如何访问内存的数据？首先，CPU根据地址访问Cache（如何访问我们后面再说），Cache里面包含了内存数据的副本，如果命中（hit）那么直接选取数据，如果没有命中（Miss），我们才stall并访问内存。
+
+一个Cache Block指的是Cache中复制的最小单位，例如，我们可以一次性复制若干个字，以免我们频繁访问一个内存位置的时候频繁Miss。
+
+Cache的设计有如下几个思路：
+
+-   直接映射（Direct Mapping）
+-   组相联（Set Associated）
+-   全相联（Full Associated）
+
+直接映射顾名思义，就是将地址直接对应到Cache里面的Block。我们通过约定Address的不同段的含义来给Cache里面的Block标号。例如，三十二位地址空间，一个Cache有128 Bytes，每一个Block大小为4个word，那么一个Cache就有8个Block，每一个Block我们要标号，也就是至少需要3Bit。因此，地址中至少要有3个bit标记block的标号，我们称之为index。接下来，因为一个Block里面有4个Word，我们需要知道是哪一个，因此需要两个bit来标记，我们称之为Offset；然后，为了确定我们拿到的数据是对的，我们需要把地址剩下的东西进行最后的比对，以确定Cache里面的数据是我们想要的数据，也就是剩下的27个bit，称之为Tag。
+
+Cache的每一行的组成如下：Index、Valid Bit、Tag、Data。
+
+![](/assets/blog/computer-organization-principle/img-17.jpg)
+
+下面展示了一个Miss and Hit的示例：
+
+![](/assets/blog/computer-organization-principle/img-18.jpg)
+
+如图，我们第一次访问18 = 10010的时候，我们此处约定后三位为index，前两位为Tag，此时Cache里面的Tag是11，显然不一样，因此Miss，我们访问真正的内存，然后将Tag一样的数据直接拉进Cache里（注意，如果允许拉四个字，tag一样的四个字会被直接拉进来，通过offset确定选取哪一个字，这是访问局部性——Locality决定的：如果你访问了一个地址，你很有可能会访问靠近的内存）。
+
+![](/assets/blog/computer-organization-principle/img-19.jpg)
+
+当然，一味的增大Block Size并不会降低Miss Rate，如图所示。
+
+Cache Miss有三种类型：
+
+-   Compulsory Miss（Cache全空的时候，必然Miss）
+-   Capacity Miss（Cache满了，新数据放不进去；后面在组相联Cache的时候我们会看得更清楚，这里，我们一个index只能放一个Block）
+-   Conflict Miss（Tag不一致，Miss）
+
+我们知道，对于内存的访问通常是CPU中比较耗时的环节，如果需要频繁地写入和读出，那么我们会耗费大量的时间在这上面。我们如果在Cache每一次被修改的时候都要将数据写回，那么效率会非常低。设想，一个Block被频繁修改一百万次，表明我们要写回一百万次，时间可能会翻好几倍。相反，我们使用一个Dirty bit来标记，如果Block没有Miss，我们就不写回，直到Miss，我们才根据Dirty Bit = 1将这个数据落到内存当中.如果Dirty Bit = 0，表明这个数据只被读过，没有被写过，因此和内存里面数据是一致的，只需要直接丢掉即可。
+
+**组相联与全相联** 在储存体系的实践中，我们会发现，如果一个index对应一个Block，表明我们每一行的容错率非常低——只要Miss，我们就只能把已经拿到Cache里面的数据丢掉，然后换成新的；如果我们后面还要这些已经丢掉的数据呢？这就会导致大量的Miss。因此，设计师们想，为什么不让一个index多存几个Block呢？这样，我们就得到了一个组（Set）。一个组可能包含若干路（way），例如，一个组可以容纳两个数据行，我们就将其成为2-way set-associated。当所有的数据行都在一个组中，我们将其成为全相联。
+
+对于一个k-way的组相联Cache，我们只需要 $\text{Max Index} = \frac{\text{Cache Size}}{\text{Block Size} \times k}$ 即可表示所有的Set。我们在每一个组内通过电路并行比较所有的Block里面的内容，看是否Hit。否则，我们使用设定好的策略淘汰掉Cache的东西。比较常用的是随机淘汰，同样，我们也可以使用LRU策略（最远使用策略）进行数据块的淘汰。
+
+事实表明，并不是Way越多Miss率越大。对于不同的计算机，我们都可以测试得到其甜点区。
+
+**透写（Write Through）与写回（Write Back）** 透写的含义是，当Cache被更新，内存同样被更新；写回则是，当Cache被更新，只有当要更新cache的时候才更新。这里，我们之前提到的Dirty Bit就派上用场了。为了解决透写的效率问题，我们通常会设计写缓存（Write Buffer）来避免频繁更新内存，当且仅当缓存满了，我们才将内容写回内存。同样，写回也可以使用写缓存，我们需要更新的时候，直接把更新的块丢进缓存区即可，不用等到更新完毕然后再把内存里的数据读进来。
+
+**Write Miss** 如果Block不在Cache里面，怎么办？我们应该怎么写数据？对于透写而言，我们可以直接把Block拉进Cache然后写，也可以不把它拉进来，直接写内存；对于Write Back而言，我们只能先把Block拉进来，然后写了之后标记。
+
+**平均内存访问时间（AMAT）** 我们使用AMAT来衡量一个储存体系的性能：
+
+$\text{AMAT} = \text{Hittime} + \text{Miss Rate} \times \text{Miss Penalty}$这个公式是显然的。当然，对应的CPI计算，我们只需要把这个公式换算成CPI即可，假设Hit的话就是一个周期，我们有
+
+$\text{Total CPI} = \text{Base CPI} + \sum_{i = 1}^n(\text{Miss Per Instruction of i-level Cache} \times \text{Penalty CPI})$注意区分Global Miss Rate和Local Miss Rate，其中Local Miss Rate指的是，当前一级Miss的情况下，这一级也Miss的比例，注意读题计算。
+
+**纠错码** 我们这里介绍最经典的校验码——Hamming Code（汉明码）。它通过满足 $2^{p} \geq \text{Data Bits} + p + 1$ 的 $p$ 位数来作为纠错码，实现Single Error Correction/Double Error Detection （SEC/DED）。
+
+![](/assets/blog/computer-organization-principle/img-20.jpg)
+
+原理如下：例如说，对于8位的数据，我们需要4位纠错码，计算方法如下：
+
+-   将纠错码占位符放在2的幂上面，然后将数据填充剩余的位
+-   对于第i个纠错码 $p_i$ ，它覆盖所有二进制下标从低位数起第 $i$ 位为1的所有位置，这些位取异或，放到对应纠错码的位置
+
+如何解码？
+
+-   接收方收到的是格式化的信息，首先，对于每一个纠错码，将其与对应的数据进行异或，如果没有错误，应该出现0；如果有错误，应该出现1。
+-   由于我们巧妙的对应方式，我们最终会计算得到一个Syndrome： $p_1p_2p_4p_8...$ 。这个数恰好就对应了出现错误的那一位！（我们的下标从1开始，如果最终是0，表示没有错误）
+
+若我们需要DED，那么需要增加一位全局奇偶校验，也就是正常的SEC加一位。如果Syndrome为0，且全局校验为0，表明没有出现问题；如果两者都非零，表明有一个位错了；如果Syndrome = 0，校验码不为零，表明校验码出错了；如果Syndrome不等于0，全局校验码为零，表明出现了两个错误。
+
+**存储体系结构** 从上到下，计算机的存储体系大概是寄存器-Cache-内存-硬盘......，其中只有硬盘是不易失（not-Volatile）的，其它都是只要没电就自动清空。
+
+### 并行处理器
+
+在计算机设计中，我们通常希望能够通过并行来提高计算效率。在软件上，并行编程是一件非常困难的事情；但是在硬件层面，硬件天然具有并行的性质，因此并行处理器就是一种必然选择。
+
+我们接下来有一些术语需要辨析：
+
+-   顺序、并行：用于描述硬件，例如不同的CPU
+-   顺序、并发：用于描述软件
+
+并发和顺序程序都可以在顺序/并行的硬件上运行。
+
+**向量化指令**
+
+![](/assets/blog/computer-organization-principle/img-21.jpg)
+
+在CPU设计中，可能很多人都会了解SIMD（Single Instruction, Multiple Data）指令，事实上，我们可以将这些原则区分为四类，如表中所示。
+
+SIMD通常是对于向量进行操作的指令，CPU需要在硬件层面上支持数据集的并行，也就是说，CPU内可能有大量的计算单元，他们在同一时刻只执行相同的操作，这样就方便了CPU的状态管理，同时还提高了计算效率。
+
+RISC-V的RV32V拓展中就提供了类似的指令集，但是实现比较复杂，我们在这里就不介绍了。
+
+**多线程**
+
+![](/assets/blog/computer-organization-principle/img-22.jpg)
+
+线程是计算机能够调度的最小单位，共享虚拟内存空间；具体来说，它们的程序计数器不一样、寄存器堆不一样、栈不一样、线程状态不一样。
+
+CPU可以提供这些资源来实现多线程。但是在CPU运行过程中，每一个线程可能要进行I/O，在等待的过程当中，很多时间就被浪费掉了。为了避免这个，简单的思路就是，一个线程卡住的时候，我们立刻切换到另一个线程进行运算，然后等I/O结束，再回头继续（当CPU只有一个核心的时候）。如果CPU有多个核心，支持物理层面的多线程，那么就可以同时执行多个线程。
+
+![](/assets/blog/computer-organization-principle/img-23.jpg)
+
+多处理器计算机的内存管理有很多类型，有的是一个内存对应一个CPU，有的是CPU之间通过互联网络来共享内存。有兴趣可以自行了解。
+
+* * *
+
+以下部分是根据我们具体的RISC-V CPU开发补充的。
+
+CPU是如何组成的？如何编写一个片上系统（SoC）？流水线并不是什么具体的模块，而是不同模块实例化的一个划分，它表明不同的模块在一个周期中应该做什么事情，方便我们进行阶段间的数据传递和优化。
+
+一个经典的五级流水线CPU的每一个步骤都对应了不同的模块的实例化：取指（IF）阶段，我们需要考虑——从哪里取指令？取什么指令？需不需要提前取某些指令？取指令以后放到哪里？；在译码（ID）阶段，我们需要实例化Control Unit，然后进行译码，根据一条指令的Opcode、funct3、funct3将指令中的寄存器编号和立即数取出来，然后将立即数放入立即数生成器，根据指令类型转换为对应指令的可用立即数；在执行阶段，我们根据译码阶段给出的使能信号进行计算，并且将输入放到寄存器；在访存（MEM）阶段，我们根据控制单元的使能信号判断写入和读取；在写回（WB）阶段，我们判断是写回到寄存器还是写入到内存。
+
+## 四、总线和虚拟内存映射
+
+### 总线（Bus）
+
+总线由仲裁器、解码器和多路选择器构成。
+
+### MMU (Memory Management Unit，内存控制单元)和PMP (Physical Memory Protection，物理内存保护)
+
+对于不同的程序而言，要确定其访问的内存位置是一件非常麻烦的事情，这会给编程者带来大量内存管理上的麻烦，因此，我们通过虚拟内存和地址翻译来实现不同进程之间的内存隔离。
+
+虚拟内存分配给每一个程序的内存空间被称为页（Page），出现内存翻译错误被称为页错误（Page Fault）。
+
+![](/assets/blog/computer-organization-principle/img-24.jpg)
+
+页编号（Page Number）通常取自于虚拟地址的前若干位（取决于页大小，通常为4K）。我们通过查表将虚拟地址的页编号翻译为物理地址的页编号，从而实现对于物理地址的访问。由此可见，在虚拟地址上连续的数据，可能在物理地址上并不连续，这就是地址翻译导致的。
+
+如果出现了页错误：
+
+-   页必须要从磁盘上面拉取，这就会导致巨大的性能下降，操作系统将会接管这个过程
+-   为了防止此类问题出现，我们通常使用全相联的策略和一些特殊的替换算法
+
+我们通过页表（Page Table，**储存在内存当中**）来进行维护映射。每一行被称为页表元素Page Table Entries，其行标对应虚拟地址，内部储存：
+
+-   物理页表
+-   状态位，例如Valid位、Referenced位（表明近期被使用过，OS定期将其清零）、Dirty位......
+
+![](/assets/blog/computer-organization-principle/img-25.jpg)
+
+我们使用LRU策略来淘汰页，由于磁盘的写入极慢（数百万周期），因此我们不会采用透写，而是使用写回策略，因此Dirty Bit比较重要。
+
+显然，由于页表在内存里面，我们需要先访问它，然后才能找到程序的数据，为了优化这一点，我们使用一个缓存（此时是一个Cache，而不是内存，与之前的Cache类似，不过这里存储的是页表）来提高读取速率（这是因为，页表通常具有良好的局部性，我们可以通过缓存来提高对于相近页表的访问）。这个缓存被称为转译后备缓冲器（Translation Look-aside Buffer, TLB）。
+
+![](/assets/blog/computer-organization-principle/img-26.jpg)
+
+如果TLB Miss：
+
+-   如果Page在内存中，我们将其加载到TLB里面即可
+-   如果Page不在内存而在硬盘，则需要OS介入处理
+
+![](/assets/blog/computer-organization-principle/img-27.jpg)
+
+如上，就是这个完整的虚拟内存映射的原理，其中涉及到很多跟操作系统有关的内容，我们在这里就不再赘述了。
+
+![](/assets/blog/computer-organization-principle/img-28.jpg)
+
+## 五、权限与状态寄存器
+
+### Privilege
+
+### CSR Reg
+
+## 六、中断处理
+
+### PLIC
+
+### CLINT
+
+### 中断代理
+
+## 七、分支预测
+
+### BTB与2-Bit饱和计数器
+
+### Gshare
+
+### RAS
+
+## 八、原子操作、系统调用，以及运行Linux
+
+### RV32A拓展
+
+### ECALL
+
+### 如何在SoC上运行Linux
+
+* * *
