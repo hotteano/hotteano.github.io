@@ -237,12 +237,17 @@ const interests = [
   {
     icon: "🎾",
     title: "Sports",
-    desc: "Tennis and chess help me maintain focus and strategic thinking outside of research.",
+    desc: "Tennis helps me maintain focus and strategic thinking outside of research.",
+  },
+  {
+    icon: "♟️",
+    title: "Chess",
+    desc: "Rated as 中国棋协候补棋协大师；third place in the 1st SUSTech Orientation Cup (南方科技大学第一届迎新杯).",
   },
   {
     icon: "🎵",
     title: "Music",
-    desc: "Classical music and City-Pop; previously studied piano, and currently exploring electric guitar.",
+    desc: "Classical music and City-Pop; previously studied piano and passed ABRSM Grade 8 (业余钢琴8级), and currently exploring electric guitar.",
   },
 ];
 
@@ -469,22 +474,16 @@ const funFacts = [
                       padding="p-3"
                     >
                       {skill.logo ? (
-                        <div
-                          class={`w-9 h-9 rounded-xl bg-gradient-to-br ${skill.color} p-1.5 flex items-center justify-center mb-2 shadow-lg`}
-                        >
-                          <Image
-                            src={skill.logo}
-                            alt={skill.name}
-                            width={28}
-                            height={28}
-                            class="w-full h-full object-contain"
-                          />
-                        </div>
+                        <Image
+                          src={skill.logo}
+                          alt={skill.name}
+                          width={36}
+                          height={36}
+                          class="w-9 h-9 object-contain rounded-md mb-2"
+                        />
                       ) : (
-                        <div
-                          class={`w-9 h-9 rounded-xl bg-gradient-to-br ${skill.color} flex items-center justify-center mb-2 shadow-lg`}
-                        >
-                          <span class="font-serif font-bold text-[10px] text-white leading-none">
+                        <div class="w-9 h-9 rounded-xl bg-black/5 dark:bg-white/10 flex items-center justify-center mb-2">
+                          <span class="font-serif font-bold text-[10px] text-black/80 dark:text-white/80 leading-none">
                             {skill.name === "LaTeX" ? (
                               <>L<sup class="text-[0.6em] align-super">a</sup>TeX</>
                             ) : (
