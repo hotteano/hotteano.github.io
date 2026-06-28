@@ -5,6 +5,13 @@ import GlassCard from "@components/GlassCard.astro";
 import { SITE, ABOUT, SOCIALS } from "@consts";
 import { Image } from "astro:assets";
 import avatarImage from "../assets/soci.png";
+import cppLogo from "../assets/cpp-logo-clipart-5.jpg";
+import javaLogo from "../assets/java.png";
+import pythonLogo from "../assets/hd-python-logo.png";
+import cLogo from "../assets/c-logo.png";
+import postgresLogo from "../assets/postgre.webp";
+import gitLogo from "../assets/git.png";
+import svLogo from "../assets/SystemVerilog-.png";
 
 const sections = [
   { id: "about-me", label: "About Me" },
@@ -99,14 +106,14 @@ const researchItems = [
 ];
 
 const skills = [
-  { name: "C++", emoji: "📜", color: "from-yellow-400 to-orange-500" },
-  { name: "Java", emoji: "🔷", color: "from-blue-400 to-blue-600" },
-  { name: "Python", emoji: "🐍", color: "from-cyan-400 to-blue-500" },
-  { name: "C", emoji: "🟢", color: "from-green-400 to-green-600" },
-  { name: "PostgreSQL", emoji: "🐘", color: "from-blue-400 to-yellow-400" },
-  { name: "LaTeX", emoji: "🚀", color: "from-orange-400 to-red-500" },
-  { name: "SystemVerilog", emoji: "🎨", color: "from-cyan-400 to-teal-500" },
-  { name: "Git", emoji: "📦", color: "from-red-400 to-orange-500" },
+  { name: "C++", logo: cppLogo, color: "from-yellow-400 to-orange-500" },
+  { name: "Java", logo: javaLogo, color: "from-blue-400 to-blue-600" },
+  { name: "Python", logo: pythonLogo, color: "from-cyan-400 to-blue-500" },
+  { name: "C", logo: cLogo, color: "from-green-400 to-green-600" },
+  { name: "PostgreSQL", logo: postgresLogo, color: "from-blue-400 to-yellow-400" },
+  { name: "LaTeX", color: "from-orange-400 to-red-500" },
+  { name: "SystemVerilog", logo: svLogo, color: "from-cyan-400 to-teal-500" },
+  { name: "Git", logo: gitLogo, color: "from-red-400 to-orange-500" },
 ];
 
 const knowledgeGroups = [
@@ -461,11 +468,31 @@ const funFacts = [
                       style={`animation-delay: ${index * 50}ms`}
                       padding="p-3"
                     >
-                      <div
-                        class={`w-9 h-9 rounded-xl bg-gradient-to-br ${skill.color} flex items-center justify-center text-base mb-2 shadow-lg`}
-                      >
-                        {skill.emoji}
-                      </div>
+                      {skill.logo ? (
+                        <div
+                          class={`w-9 h-9 rounded-xl bg-gradient-to-br ${skill.color} p-1.5 flex items-center justify-center mb-2 shadow-lg`}
+                        >
+                          <Image
+                            src={skill.logo}
+                            alt={skill.name}
+                            width={28}
+                            height={28}
+                            class="w-full h-full object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          class={`w-9 h-9 rounded-xl bg-gradient-to-br ${skill.color} flex items-center justify-center mb-2 shadow-lg`}
+                        >
+                          <span class="font-serif font-bold text-[10px] text-white leading-none">
+                            {skill.name === "LaTeX" ? (
+                              <>L<sup class="text-[0.6em] align-super">a</sup>TeX</>
+                            ) : (
+                              skill.name
+                            )}
+                          </span>
+                        </div>
+                      )}
                       <h3 class="font-semibold text-black dark:text-white text-sm">
                         {skill.name}
                       </h3>
