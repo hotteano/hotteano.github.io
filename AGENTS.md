@@ -99,6 +99,43 @@ $$
 $$
 ```
 
+#### 博客增强语法
+
+文章支持 GitHub 风格的 Alert 块，用于高亮提示、警告、定理等内容：
+
+```markdown
+> [!NOTE]
+> 需要读者注意的补充信息。
+
+> [!TIP]
+> 实用的技巧或建议。
+
+> [!IMPORTANT]
+> 必须关注的重要内容。
+
+> [!WARNING]
+> 可能导致风险的警告。
+
+> [!CAUTION]
+> 需要谨慎操作的提示。
+
+> [!THEOREM]
+> 如果 $f$ 在闭区间上连续，则 $f$ 在该区间上有最大值和最小值。
+
+> [!LEMMA]
+> 辅助引理的内容。
+
+> [!DEFINITION]
+> 关键概念的定义。
+
+> [!PROOF]
+> 证明过程。
+```
+
+渲染后会自动带上对应颜色和图标：
+- `NOTE` / `TIP` / `IMPORTANT` / `WARNING` / `CAUTION`：提示类彩色框
+- `THEOREM` / `LEMMA` / `DEFINITION` / `PROOF`：数学类彩色框
+
 ### 项目展示 (`src/content/projects/`)
 
 ```markdown
