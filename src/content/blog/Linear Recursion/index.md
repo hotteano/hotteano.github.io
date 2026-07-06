@@ -9,6 +9,9 @@ tags:
   - 递推
   - 生成函数
 column: "学习笔记"
+track: "cs-fundamentals"
+trackStage: "algorithms"
+trackOrder: 14
 ---
 
 递推关系是描述数列或算法复杂度的基本语言。一个数列 $\{a_n\}$ 如果满足

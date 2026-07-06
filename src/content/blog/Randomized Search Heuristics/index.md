@@ -11,6 +11,9 @@ tags:
   - genetic programming
   - drift analysis
 column: "学习笔记"
+track: "cs-fundamentals"
+trackStage: "algorithms"
+trackOrder: 18
 ---
 
 ## 前置知识

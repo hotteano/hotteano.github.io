@@ -84,6 +84,9 @@ tags:
 column: "投资"  # 可选值: "投资", "学习笔记", "读书笔记", "期末复习", "说明"
 series: "黄金投资日报"  # 可选：系列名称，用于聚合系列文章
 lastUpdated: "2026-03-25"  # 可选：最后更新时间
+track: "cs-fundamentals"  # 可选：学习路线标识，目前支持 "cs-fundamentals"
+trackStage: "algorithms"  # 可选：路线阶段，可选 "programming" / "algorithms" / "architecture"
+trackOrder: 15  # 可选：文章在路线中的排序序号
 ---
 
 > 提示：过长的笔记建议按主题拆分为多期，使用相同的 `series` 名称，BlogPostLayout 会自动在文末渲染 `SeriesNav` 系列导航。

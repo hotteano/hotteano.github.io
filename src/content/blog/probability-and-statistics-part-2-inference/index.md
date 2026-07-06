@@ -6,6 +6,9 @@ draft: false
 tags: ["notes", "probability", "statistics"]
 column: "学习笔记"
 series: "概率论与数理统计"
+track: "cs-fundamentals"
+trackStage: "algorithms"
+trackOrder: 11
 ---
 
 > 这是 **概率论与数理统计** 系列的第二期。

@@ -6,6 +6,9 @@ draft: false
 tags: ["notes", "C++"]
 column: "学习笔记"
 series: "C++ Notes"
+track: "cs-fundamentals"
+trackStage: "programming"
+trackOrder: 2
 ---
 
 > 这是 **C++ Notes** 系列的第二期，上一期见系列导航。

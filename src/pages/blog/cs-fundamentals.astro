@@ -1,0 +1,115 @@
+---
+import { getCollection } from "astro:content";
+import PageLayout from "@layouts/PageLayout.astro";
+import Container from "@components/Container.astro";
+import ArrowCard from "@components/ArrowCard.astro";
+import GlassCard from "@components/GlassCard.astro";
+import { BLOG } from "@consts";
+
+const trackPosts = (await getCollection("blog"))
+  .filter(post => !post.data.draft && post.data.track === "cs-fundamentals")
+  .sort((a, b) => (a.data.trackOrder ?? 0) - (b.data.trackOrder ?? 0));
+
+const stageMeta: Record<string, { label: string; description: string; color: string; icon: string }> = {
+  programming: {
+    label: "基础编程",
+    description: "掌握一门系统级语言、构建工具与数据持久化，是后续所有计算机学习的起点。",
+    color: "from-emerald-500 to-teal-500",
+    icon: "💻",
+  },
+  algorithms: {
+    label: "算法与数学",
+    description: "从概率、组合、递推等数学工具出发，逐步深入到算法设计、博弈论与复杂性分析。",
+    color: "from-blue-500 to-indigo-500",
+    icon: "🧮",
+  },
+  architecture: {
+    label: "计算机体系结构",
+    description: "从数字逻辑到 CPU 数据通路，理解计算机硬件如何执行软件指令。",
+    color: "from-amber-500 to-orange-500",
+    icon: "🖥️",
+  },
+};
+
+const stageOrder = ["programming", "algorithms", "architecture"] as const;
+
+const grouped = trackPosts.reduce((acc, post) => {
+  const stage = post.data.trackStage || "other";
+  if (!acc[stage]) acc[stage] = [];
+  acc[stage].push(post);
+  return acc;
+}, {} as Record<string, typeof trackPosts>);
+---
+
+<PageLayout title={`计算机专业学习路线 | ${BLOG.TITLE}`} description="从基础编程、算法与数学到计算机体系结构的完整学习路线">
+  <Container>
+    <div class="space-y-10">
+      <div class="animate space-y-4">
+        <div class="flex items-center gap-2 text-sm text-black/50 dark:text-white/50">
+          <a href="/blog" class="hover:text-black dark:hover:text-white transition-colors">Blog</a>
+          <span>/</span>
+          <span>计算机专业学习路线</span>
+        </div>
+        <h1 class="section-title">计算机专业学习路线</h1>
+        <p class="text-black/65 dark:text-white/75 max-w-2xl">
+          这里把博客中关于基础编程、算法与数学、计算机体系结构的文章按推荐顺序组织起来，形成一条相对完整的计算机专业基础学习路径。
+        </p>
+      </div>
+
+      <div class="space-y-8">
+        {
+          stageOrder.map((stage, stageIndex) => {
+            const posts = grouped[stage];
+            if (!posts || posts.length === 0) return null;
+            const meta = stageMeta[stage];
+
+            return (
+              <GlassCard glow padding="p-6 md:p-8" class="animate space-y-5">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                  <div
+                    class={`w-12 h-12 rounded-2xl bg-gradient-to-br ${meta.color} flex items-center justify-center text-2xl shadow-lg`}
+                  >
+                    {meta.icon}
+                  </div>
+                  <div>
+                    <div class="text-xs font-medium text-black/40 dark:text-white/50 uppercase tracking-wider">
+                      Stage {stageIndex + 1}
+                    </div>
+                    <h2 class="text-xl font-bold text-black dark:text-white text-gradient-subtle">
+                      {meta.label}
+                    </h2>
+                  </div>
+                </div>
+                <p class="text-sm text-black/60 dark:text-white/70 leading-relaxed">
+                  {meta.description}
+                </p>
+
+                <ul class="flex flex-col gap-3">
+                  {posts.map((post, index) => (
+                    <li class="flex items-start gap-3">
+                      <span class="flex-shrink-0 w-6 h-6 rounded-full bg-black/5 dark:bg-white/10 text-xs font-medium text-black/60 dark:text-white/60 flex items-center justify-center mt-0.5">
+                        {index + 1}
+                      </span>
+                      <div class="flex-1">
+                        <ArrowCard entry={post} />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </GlassCard>
+            );
+          })
+        }
+      </div>
+
+      <div class="animate text-center">
+        <a
+          href="/blog"
+          class="btn-glass magnetic-btn"
+        >
+          返回博客首页
+        </a>
+      </div>
+    </div>
+  </Container>
+</PageLayout>

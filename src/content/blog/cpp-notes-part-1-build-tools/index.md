@@ -6,6 +6,9 @@ draft: false
 tags: ["notes", "C++"]
 column: "学习笔记"
 series: "C++ Notes"
+track: "cs-fundamentals"
+trackStage: "programming"
+trackOrder: 1
 ---
 
 > 这是 **C++ Notes** 系列的第一期，本系列将 C++ 学习笔记按主题拆分为多期，便于阅读和检索。

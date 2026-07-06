@@ -8,6 +8,9 @@ tags:
   - 体系结构
   - 笔记
 column: "学习笔记"
+track: "cs-fundamentals"
+trackStage: "architecture"
+trackOrder: 31
 ---
 本笔记主要参考张进老师的计算机组成原理PPT写成，用于复习。
 

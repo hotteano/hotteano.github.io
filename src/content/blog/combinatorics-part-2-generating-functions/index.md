@@ -6,6 +6,9 @@ draft: false
 tags: ["notes", "combinatorics"]
 column: "学习笔记"
 series: "组合学笔记"
+track: "cs-fundamentals"
+trackStage: "algorithms"
+trackOrder: 13
 ---
 
 > 这是 **组合学笔记** 系列的第二期。

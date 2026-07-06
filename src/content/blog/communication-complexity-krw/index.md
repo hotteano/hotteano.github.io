@@ -9,6 +9,9 @@ tags:
   - KRW Conjecture
   - 理论计算机科学
 column: "学习笔记"
+track: "cs-fundamentals"
+trackStage: "algorithms"
+trackOrder: 19
 ---
 本文主要介绍一些通信复杂度的基本概念（主要是因为最近对于KRW猜想比较感兴趣）。
 

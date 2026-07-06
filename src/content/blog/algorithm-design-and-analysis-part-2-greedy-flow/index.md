@@ -6,6 +6,9 @@ draft: false
 tags: ["notes", "algorithm"]
 column: "学习笔记"
 series: "算法设计与分析"
+track: "cs-fundamentals"
+trackStage: "algorithms"
+trackOrder: 16
 ---
 
 > 这是 **算法设计与分析** 系列的第二期。

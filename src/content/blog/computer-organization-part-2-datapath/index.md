@@ -6,6 +6,9 @@ draft: false
 tags: ["notes", "computer", "cpu"]
 column: "学习笔记"
 series: "计算机组成原理 Notes"
+track: "cs-fundamentals"
+trackStage: "architecture"
+trackOrder: 33
 ---
 
 > 这是 **计算机组成原理 Notes** 系列的第二期。

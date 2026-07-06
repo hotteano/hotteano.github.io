@@ -13,6 +13,9 @@ const blog = defineCollection({
     column: z.enum(["投资", "学习笔记", "读书笔记", "期末复习", "说明"]).optional(),
     series: z.string().optional(),
     lastUpdated: z.coerce.date().optional(),
+    track: z.enum(["cs-fundamentals"]).optional(),
+    trackStage: z.enum(["programming", "algorithms", "architecture"]).optional(),
+    trackOrder: z.number().int().min(0).optional(),
   }),
 });
 

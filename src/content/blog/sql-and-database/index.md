@@ -8,6 +8,9 @@ tags:
   - 数据库
   - 笔记
 column: "学习笔记"
+track: "cs-fundamentals"
+trackStage: "programming"
+trackOrder: 5
 ---
 本笔记主要为南方科技大学数据库（H）课程所记录。本课程旨在全面介绍SQL语言，以及简介数据库性能、设计内容。
 

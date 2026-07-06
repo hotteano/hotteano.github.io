@@ -8,6 +8,9 @@ tags:
   - 课程笔记
   - SUSTech
 column: "学习笔记"
+track: "cs-fundamentals"
+trackStage: "architecture"
+trackOrder: 30
 ---
 ## 一、数字信号
 
