@@ -23,13 +23,6 @@ type Acc = {
   [year: string]: YearData;
 };
 
-const quickLinks = [
-  { label: "专栏", href: "/blog/columns" },
-  { label: "学习路线", href: "/blog/cs-fundamentals" },
-  { label: "标签", href: "/blog/tags" },
-  { label: "归档", href: "/blog/archive" },
-];
-
 const posts = data.reduce((acc: Acc, post) => {
     const year = post.data.date.getFullYear().toString();
     if (!acc[year]) {
@@ -52,112 +45,194 @@ const posts = data.reduce((acc: Acc, post) => {
 const years = Object.keys(posts).sort((a, b) => parseInt(b) - parseInt(a));
 
 const allColumns = [...new Set(data.map(post => post.data.column).filter(Boolean))] as string[];
+const allTags = [...new Set(data.flatMap(post => post.data.tags || []))];
+const trackPosts = data.filter(post => post.data.track === "cs-fundamentals");
 
 const columnColors: Record<string, string> = {
   "学习笔记": "from-blue-500/20 to-cyan-500/20 border-blue-500/30 text-blue-700 dark:text-blue-300",
   "期末复习": "from-rose-500/20 to-red-500/20 border-rose-500/30 text-rose-700 dark:text-rose-300",
-  "投资": "from-amber-500/20 to-orange-500/20 border-amber-500/30 text-amber-700 dark:text-amber-300",
+  "投资": "from-amber-500/20 to-orange-500/20 border-amber-500/30 text-amber-700 dark:text-rose-300",
   "读书笔记": "from-emerald-500/20 to-green-500/20 border-emerald-500/30 text-emerald-700 dark:text-emerald-300",
   "说明": "from-purple-500/20 to-pink-500/20 border-purple-500/30 text-purple-700 dark:text-purple-300",
 };
+
+const columnMeta: Record<string, { icon: string; description: string; gradient: string }> = {
+  "学习笔记": { icon: "📝", description: "计算机、数学与算法的系统学习笔记", gradient: "from-blue-500 to-cyan-500" },
+  "期末复习": { icon: "🎓", description: "本科课程期末复习与重点整理", gradient: "from-rose-500 to-red-500" },
+  "投资": { icon: "📈", description: "黄金市场分析与投资复盘", gradient: "from-amber-500 to-orange-500" },
+  "读书笔记": { icon: "📚", description: "哲学、文学与专业书籍的读书札记", gradient: "from-emerald-500 to-green-500" },
+  "说明": { icon: "📌", description: "博客说明、仓库导航与站务公告", gradient: "from-purple-500 to-pink-500" },
+};
+
+const columnCounts = data.reduce((acc, post) => {
+  const column = post.data.column || "其他";
+  acc[column] = (acc[column] || 0) + 1;
+  return acc;
+}, {} as Record<string, number>);
+
+const dashboardItems = [
+  {
+    title: "学习路线",
+    href: "/blog/cs-fundamentals",
+    icon: "🗺️",
+    description: "按基础编程 → 算法与数学 → 计算机体系结构的顺序系统学习",
+    count: trackPosts.length,
+    color: "from-indigo-500 to-violet-500",
+    featured: true,
+  },
+  {
+    title: "专栏",
+    href: "/blog/columns",
+    icon: "📂",
+    description: "按学习笔记、期末复习、读书笔记等主题专栏浏览",
+    count: allColumns.length,
+    color: "from-sky-500 to-blue-500",
+  },
+  {
+    title: "标签",
+    href: "/blog/tags",
+    icon: "🏷️",
+    description: "通过关键词标签快速定位感兴趣的技术话题",
+    count: allTags.length,
+    color: "from-emerald-500 to-teal-500",
+  },
+  {
+    title: "归档",
+    href: "/blog/archive",
+    icon: "📅",
+    description: "按年份查看所有发布过的文章",
+    count: data.length,
+    color: "from-amber-500 to-orange-500",
+  },
+  ...allColumns.map(column => ({
+    title: column,
+    href: `/blog/column/${encodeURIComponent(column)}`,
+    icon: columnMeta[column]?.icon || "📄",
+    description: columnMeta[column]?.description || `${column} 专栏`,
+    count: columnCounts[column] || 0,
+    color: columnMeta[column]?.gradient || "from-gray-500 to-slate-500",
+  })),
+];
 ---
 
 <PageLayout title={BLOG.TITLE} description={BLOG.DESCRIPTION}>
   <Container>
-    <div class="space-y-10">
+    <div class="space-y-12">
       <div class="animate space-y-2">
         <div class="text-sm text-black/50 dark:text-white/50">Writing</div>
         <h1 class="section-title">Blog</h1>
         <p class="text-black/65 dark:text-white/75 max-w-2xl">
-          Notes, reviews, and write-ups on computer science, mathematics, and research.
+          笔记、复习与文章，覆盖计算机科学、数学和阅读思考。
         </p>
       </div>
 
-      {/* Quick nav */}
-      <GlassCard glow padding="p-4" class="animate">
-        <div class="flex flex-wrap gap-3 items-center">
-          <div class="text-sm text-black/50 dark:text-white/50">浏览方式</div>
-          <div class="flex flex-wrap gap-2">
-            {allColumns.map(column => (
-              <a
-                href={`/blog/column/${encodeURIComponent(column)}`}
-                class={`px-3 py-1.5 text-sm rounded-full border bg-gradient-to-r ${columnColors[column] || "from-gray-500/20 to-slate-500/20 border-gray-500/30"} hover:scale-105 transition-transform`}
-              >
-                {column}
-              </a>
-            ))}
-            {quickLinks.map(link => (
-              <a
-                href={link.href}
-                class="px-3 py-1.5 text-sm rounded-full border border-white/20 dark:border-white/10 bg-white/10 dark:bg-white/5 text-black/70 dark:text-white/70 hover:bg-white/15 dark:hover:bg-white/10 transition-colors"
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
+      {/* Dashboard */}
+      <section class="animate space-y-5">
+        <div class="flex items-center gap-3">
+          <span class="text-xl">🧭</span>
+          <h2 class="text-lg font-semibold text-black dark:text-white">推荐阅读方式</h2>
         </div>
-      </GlassCard>
+        <p class="text-sm text-black/50 dark:text-white/50 -mt-3">
+          建议先从学习路线或专栏开始，而不是直接浏览下方按时间排序的文章列表。
+        </p>
 
-      <div class="space-y-8">
-        {years.map(year => {
-          const yearData = posts[year];
-          const hasColumns = Object.keys(yearData.columns).length > 0;
-          const hasUncategorized = yearData.uncategorized.length > 0;
-
-          return (
-            <GlassCard class="animate space-y-6" padding="p-6 md:p-8">
-              <div class="font-semibold text-2xl text-black dark:text-white border-b border-black/10 dark:border-white/10 pb-3 flex items-center gap-3">
-                <span>{year}</span>
-                <span class="text-sm font-normal text-black/40 dark:text-white/40">
-                  {Object.values(yearData.columns).flat().length + yearData.uncategorized.length} posts
-                </span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {dashboardItems.map((item, index) => (
+            <a
+              href={item.href}
+              class={`group relative overflow-hidden rounded-2xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-black/30 backdrop-blur-xl p-5 hover-lift transition-all duration-300 ${item.featured ? "sm:col-span-2 lg:col-span-2 ring-1 ring-indigo-500/20 dark:ring-indigo-400/20" : ""}`}
+              style={`animation-delay: ${index * 50}ms`}
+            >
+              <div class={`absolute inset-0 bg-gradient-to-br ${item.featured ? "from-indigo-500/10 to-violet-500/10" : "from-black/5 to-black/[0.02] dark:from-white/5 dark:to-white/[0.02]"} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+              <div class="relative z-10">
+                <div class="flex items-start justify-between mb-3">
+                  <div class={`w-10 h-10 rounded-xl bg-gradient-to-br ${item.featured ? "from-indigo-500 to-violet-500" : item.color} flex items-center justify-center text-lg shadow-md`}>
+                    {item.icon}
+                  </div>
+                  <span class="text-xs font-medium text-black/40 dark:text-white/40 bg-black/5 dark:bg-white/5 px-2 py-1 rounded-full">
+                    {item.count} {item.title === "标签" ? "tags" : item.title === "专栏" ? "columns" : "posts"}
+                  </span>
+                </div>
+                <h3 class="font-bold text-black dark:text-white mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  {item.title}
+                </h3>
+                <p class="text-xs text-black/55 dark:text-white/65 leading-relaxed">
+                  {item.description}
+                </p>
               </div>
+            </a>
+          ))}
+        </div>
+      </section>
 
-              <div class="space-y-6">
-                {hasColumns && (
-                  <div class="space-y-5">
-                    {Object.entries(yearData.columns).map(([column, columnPosts]) => (
-                      <div class="space-y-3">
+      {/* Recent posts */}
+      <section class="space-y-6">
+        <div class="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+          <h2 class="text-lg font-semibold text-black dark:text-white">最新文章</h2>
+          <span class="text-sm text-black/40 dark:text-white/40">按发布时间排序</span>
+        </div>
+
+        <div class="space-y-8">
+          {years.map(year => {
+            const yearData = posts[year];
+            const hasColumns = Object.keys(yearData.columns).length > 0;
+            const hasUncategorized = yearData.uncategorized.length > 0;
+
+            return (
+              <GlassCard class="animate space-y-6" padding="p-6 md:p-8">
+                <div class="font-semibold text-2xl text-black dark:text-white border-b border-black/10 dark:border-white/10 pb-3 flex items-center gap-3">
+                  <span>{year}</span>
+                  <span class="text-sm font-normal text-black/40 dark:text-white/40">
+                    {Object.values(yearData.columns).flat().length + yearData.uncategorized.length} posts
+                  </span>
+                </div>
+
+                <div class="space-y-6">
+                  {hasColumns && (
+                    <div class="space-y-5">
+                      {Object.entries(yearData.columns).map(([column, columnPosts]) => (
+                        <div class="space-y-3">
+                          <div class="flex items-center gap-2">
+                            <span class={`px-3 py-1 text-xs rounded-full border bg-gradient-to-r ${columnColors[column] || "from-gray-500/20 to-slate-500/20 border-gray-500/30"}`}>
+                              {column}
+                            </span>
+                          </div>
+                          <ul class="flex flex-col gap-3 pl-4 border-l-2 border-blue-200/50 dark:border-blue-800/50">
+                            {columnPosts.map((post) => (
+                              <li>
+                                <ArrowCard entry={post}/>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {hasUncategorized && (
+                    <div class="space-y-3">
+                      {hasColumns && (
                         <div class="flex items-center gap-2">
-                          <span class={`px-3 py-1 text-xs rounded-full border bg-gradient-to-r ${columnColors[column] || "from-gray-500/20 to-slate-500/20 border-gray-500/30"}`}>
-                            {column}
+                          <span class="px-3 py-1 text-xs rounded-full border border-white/20 dark:border-white/10 bg-white/10 dark:bg-white/5 text-black/60 dark:text-white/60">
+                            其他
                           </span>
                         </div>
-                        <ul class="flex flex-col gap-3 pl-4 border-l-2 border-blue-200/50 dark:border-blue-800/50">
-                          {columnPosts.map((post) => (
-                            <li>
-                              <ArrowCard entry={post}/>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {hasUncategorized && (
-                  <div class="space-y-3">
-                    {hasColumns && (
-                      <div class="flex items-center gap-2">
-                        <span class="px-3 py-1 text-xs rounded-full border border-white/20 dark:border-white/10 bg-white/10 dark:bg-white/5 text-black/60 dark:text-white/60">
-                          其他
-                        </span>
-                      </div>
-                    )}
-                    <ul class={`flex flex-col gap-3 ${hasColumns ? 'pl-4 border-l-2 border-gray-200/50 dark:border-gray-800/50' : ''}`}>
-                      {yearData.uncategorized.map((post) => (
-                        <li>
-                          <ArrowCard entry={post}/>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </GlassCard>
-          );
-        })}
-      </div>
+                      )}
+                      <ul class={`flex flex-col gap-3 ${hasColumns ? 'pl-4 border-l-2 border-gray-200/50 dark:border-gray-800/50' : ''}`}>
+                        {yearData.uncategorized.map((post) => (
+                          <li>
+                            <ArrowCard entry={post}/>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </GlassCard>
+            );
+          })}
+        </div>
+      </section>
     </div>
   </Container>
 </PageLayout>
