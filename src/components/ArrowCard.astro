@@ -17,8 +17,7 @@ const isBlog = entry.collection === "blog";
 >
   <!-- Shine sweep -->
   <div
-    class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-    style="background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.08) 45%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.08) 55%, transparent 60%); transform: translateX(-100%); animation: card-shine 3.5s ease-in-out infinite;"
+    class="card-shine-overlay absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
   >
   </div>
 
@@ -51,6 +50,22 @@ const isBlog = entry.collection === "blog";
 </a>
 
 <style>
+  .card-shine-overlay {
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.08) 45%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.08) 55%,
+      transparent 60%
+    );
+    transform: translateX(-100%);
+  }
+
+  .group:hover .card-shine-overlay {
+    animation: card-shine 1.2s ease-in-out;
+  }
+
   @keyframes card-shine {
     0% {
       transform: translateX(-100%);

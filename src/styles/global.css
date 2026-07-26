@@ -144,7 +144,7 @@ article {
 /* Base animate class */
 .animate {
   @apply opacity-0 translate-y-3;
-  @apply transition-all duration-700 ease-out;
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
 }
 
 .animate.show {
@@ -210,7 +210,7 @@ article {
 
 /* Hover lift effect */
 .hover-lift {
-  @apply transition-all duration-300 ease-out;
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
 }
 
 .hover-lift:hover {
@@ -289,7 +289,40 @@ html {
 
 /* Selection color */
 ::selection {
-  @apply bg-black/20 dark:bg-white/20;
+  @apply bg-blue-500/25 dark:bg-blue-400/30;
+  @apply text-black dark:text-white;
+}
+
+/* Custom scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(0 0 0 / 0.25) transparent;
+}
+
+html.dark {
+  scrollbar-color: rgb(255 255 255 / 0.25) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: rgb(0 0 0 / 0.2);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgb(255 255 255 / 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(59 130 246 / 0.5);
 }
 
 /* Tech design system additions */

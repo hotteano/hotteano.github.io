@@ -99,25 +99,3 @@ import BackToTop from "@components/BackToTop.astro";
     </div>
   </Container>
 </footer>
-
-<script>
-  const lightBtn = document.getElementById('light-theme-button');
-  const darkBtn = document.getElementById('dark-theme-button');
-  const systemBtn = document.getElementById('system-theme-button');
-  const html = document.documentElement;
-
-  function setTheme(theme) {
-    if (theme === 'system') {
-      localStorage.removeItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      html.classList.toggle('dark', prefersDark);
-    } else {
-      localStorage.setItem('theme', theme);
-      html.classList.toggle('dark', theme === 'dark');
-    }
-  }
-
-  lightBtn?.addEventListener('click', () => setTheme('light'));
-  darkBtn?.addEventListener('click', () => setTheme('dark'));
-  systemBtn?.addEventListener('click', () => setTheme('system'));
-</script>

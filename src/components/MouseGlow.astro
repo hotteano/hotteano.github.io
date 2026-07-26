@@ -2,55 +2,77 @@
 // Mouse following glow effect
 ---
 
-<div id="mouse-glow" class="fixed pointer-events-none z-40 opacity-0 transition-opacity duration-300">
+<div id="mouse-glow" class="fixed top-0 left-0 pointer-events-none z-40 opacity-0 transition-opacity duration-300 will-change-transform">
   <div class="w-32 h-32 rounded-full bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 blur-2xl"></div>
 </div>
 
-<div id="mouse-trail" class="fixed pointer-events-none z-30">
+<div id="mouse-trail" class="fixed top-0 left-0 pointer-events-none z-30 will-change-transform">
   <div class="w-3 h-3 rounded-full bg-gradient-to-r from-blue-500/80 to-purple-500/80 blur-sm"></div>
 </div>
 
 <script>
   const mouseGlow = document.getElementById('mouse-glow');
   const mouseTrail = document.getElementById('mouse-trail');
-  
+
   let mouseX = 0;
   let mouseY = 0;
   let trailX = 0;
   let trailY = 0;
-  
+  let rafId = 0;
+  let lastMove = 0;
+
   // Check if device has fine pointer (not touch) and does not prefer reduced motion
   const hasPointer = window.matchMedia('(pointer: fine)').matches;
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  
+
   if (hasPointer && !prefersReducedMotion && mouseGlow && mouseTrail) {
     document.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      
+      lastMove = performance.now();
+
       mouseGlow.style.opacity = '1';
-      mouseGlow.style.left = `${mouseX - 128}px`;
-      mouseGlow.style.top = `${mouseY - 128}px`;
-    });
-    
-    // Smooth trail animation
+      mouseGlow.style.transform = `translate3d(${mouseX - 64}px, ${mouseY - 64}px, 0)`;
+
+      // Restart the trail loop after it idled out
+      if (!rafId) animateTrail();
+    }, { passive: true });
+
+    // Smooth trail animation (compositor-only transform updates)
     function animateTrail() {
       trailX += (mouseX - trailX) * 0.1;
       trailY += (mouseY - trailY) * 0.1;
-      
-      mouseTrail.style.left = `${trailX - 8}px`;
-      mouseTrail.style.top = `${trailY - 8}px`;
-      
-      requestAnimationFrame(animateTrail);
+
+      mouseTrail.style.transform = `translate3d(${trailX - 6}px, ${trailY - 6}px, 0)`;
+
+      // Stop the loop once the trail has settled and the mouse is idle
+      const settled = Math.abs(mouseX - trailX) < 0.5 && Math.abs(mouseY - trailY) < 0.5;
+      if (settled && performance.now() - lastMove > 1500) {
+        rafId = 0;
+        return;
+      }
+
+      rafId = requestAnimationFrame(animateTrail);
     }
-    
+
     animateTrail();
-    
+
+    // Pause the trail loop while the tab is hidden
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      } else if (!rafId) {
+        lastMove = performance.now();
+        animateTrail();
+      }
+    });
+
     // Hide when mouse leaves window
     document.addEventListener('mouseleave', () => {
       mouseGlow.style.opacity = '0';
     });
-    
+
     document.addEventListener('mouseenter', () => {
       mouseGlow.style.opacity = '1';
     });

@@ -3,7 +3,7 @@
 ---
 
 <div class="reading-progress fixed top-0 left-0 right-0 h-[2px] z-[60] bg-transparent">
-  <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-0 transition-all duration-100 shadow-[0_0_12px_rgba(147,51,234,0.6)]"></div>
+  <div id="progress-bar" class="h-full w-full origin-left scale-x-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-[0_0_12px_rgba(147,51,234,0.6)]"></div>
 </div>
 
 <div id="scroll-percent" class="fixed bottom-6 right-6 z-50 opacity-0 pointer-events-none transition-opacity duration-300">
@@ -17,20 +17,27 @@
   const scrollPercent = document.getElementById('scroll-percent');
   const percentText = document.getElementById('percent-text');
 
+  let ticking = false;
+  let lastPercent = -1;
+
   function updateProgress() {
+    ticking = false;
     const scrollTop = window.scrollY;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = (scrollTop / docHeight) * 100;
+    const progress = docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0;
 
-    if (progressBar) {
-      progressBar.style.width = `${progress}%`;
-    }
+    // scaleX keeps updates on the compositor (no layout)
+    progressBar?.style.setProperty('transform', `scaleX(${progress})`);
 
     if (scrollPercent && percentText) {
+      const rounded = Math.round(progress * 100);
       if (scrollTop > 200) {
         scrollPercent.classList.remove('opacity-0', 'pointer-events-none');
         scrollPercent.classList.add('opacity-100');
-        percentText.textContent = `${Math.round(progress)}%`;
+        if (rounded !== lastPercent) {
+          lastPercent = rounded;
+          percentText.textContent = `${rounded}%`;
+        }
       } else {
         scrollPercent.classList.add('opacity-0', 'pointer-events-none');
         scrollPercent.classList.remove('opacity-100');
@@ -38,6 +45,14 @@
     }
   }
 
-  window.addEventListener('scroll', updateProgress, { passive: true });
+  function requestUpdate() {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(updateProgress);
+    }
+  }
+
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate, { passive: true });
   updateProgress();
 </script>

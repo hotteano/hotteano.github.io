@@ -22,6 +22,8 @@
     mouseX: number;
     mouseY: number;
     isDark: boolean;
+    rafId: number;
+    running: boolean;
 
     constructor() {
       this.canvas = document.getElementById('particle-canvas') as HTMLCanvasElement;
@@ -32,7 +34,9 @@
       this.mouseX = 0;
       this.mouseY = 0;
       this.isDark = document.documentElement.classList.contains('dark');
-      
+      this.rafId = 0;
+      this.running = false;
+
       this.init();
     }
 
@@ -40,7 +44,7 @@
       this.resize();
       this.createParticles();
       this.bindEvents();
-      this.animate();
+      this.start();
     }
 
     resize() {
@@ -63,11 +67,28 @@
     }
 
     bindEvents() {
-      window.addEventListener('resize', () => this.resize());
-      
+      let resizeRaf = 0;
+      window.addEventListener('resize', () => {
+        if (!resizeRaf) {
+          resizeRaf = requestAnimationFrame(() => {
+            resizeRaf = 0;
+            this.resize();
+          });
+        }
+      }, { passive: true });
+
       window.addEventListener('mousemove', (e) => {
         this.mouseX = e.clientX;
         this.mouseY = e.clientY;
+      }, { passive: true });
+
+      // Pause the render loop while the tab is hidden
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          this.stop();
+        } else {
+          this.start();
+        }
       });
 
       // Watch for theme changes
@@ -145,14 +166,27 @@
       });
     }
 
+    start() {
+      if (this.running) return;
+      this.running = true;
+      this.animate();
+    }
+
+    stop() {
+      this.running = false;
+      if (this.rafId) cancelAnimationFrame(this.rafId);
+      this.rafId = 0;
+    }
+
     animate() {
+      if (!this.running) return;
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      
+
       this.update();
       this.drawConnections();
       this.particles.forEach(particle => this.drawParticle(particle));
-      
-      requestAnimationFrame(() => this.animate());
+
+      this.rafId = requestAnimationFrame(() => this.animate());
     }
   }
 

@@ -4,7 +4,7 @@ role: "Undergraduate Researcher"
 dateStart: "03/01/2026"
 dateEnd: "Present"
 status: "Under Preparation"
-venue: "Algorithmica"
+venue: "AAAI 2027"
 contribution: "Runtime Analysis & Proofs"
 tags:
   - Genetic Programming
@@ -13,7 +13,7 @@ tags:
   - Theoretical Computer Science
 ---
 
-Working on the theoretical analysis of randomised search heuristics and genetic programming, supervised by Prof. Pietro Simone Oliveto in collaboration with Mingxuan Yin. The current direction focuses on runtime analysis and generalisation bounds, with a submission target including *Algorithmica*.
+Working on the theoretical analysis of randomised search heuristics and genetic programming, supervised by Prof. Pietro Simone Oliveto in collaboration with Mingxuan Yin. The current direction focuses on runtime analysis and generalisation bounds, with a **short paper** targeting **AAAI 2027**; an extended full version is planned for submission to a journal such as *IEEE Transactions on Evolutionary Computation (TEVC)*.
 
 **My contribution** includes deriving runtime bounds, formalising proof arguments, and exploring how algorithmic parameters affect generalisation in evolutionary search.
 
