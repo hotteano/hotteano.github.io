@@ -13,7 +13,7 @@ tags:
   - Theoretical Computer Science
 ---
 
-I work on the theoretical analysis of randomised search heuristics and genetic programming, under the supervision of Prof. Pietro Simone Oliveto and in collaboration with Mingxuan Yin. The current direction focuses on runtime analysis and generalisation bounds, with a **short paper** targeting **AAAI 2027**; an extended full version is planned for submission to a journal such as *IEEE Transactions on Evolutionary Computation (TEVC)*.
+I work on the theoretical analysis of randomised search heuristics and genetic programming, under the supervision of Prof. Pietro Simone Oliveto and in collaboration with Mingxuan Yin. The current direction focuses on runtime analysis and generalisation bounds, with a full paper targeting **AAAI 2027**; an extended journal version is planned for submission to a venue such as *IEEE Transactions on Evolutionary Computation (TEVC)*.
 
 **My contribution** includes deriving runtime bounds, formalising proof arguments, and exploring how algorithmic parameters affect generalisation in evolutionary search.
 

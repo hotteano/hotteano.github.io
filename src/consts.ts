@@ -54,4 +54,12 @@ export const SOCIALS: Socials = [
     NAME: "Xiaohongshu",
     HREF: "https://www.xiaohongshu.com/user/profile/66e702c2000000001d033908",
   },
+  {
+    NAME: "google scholar",
+    HREF: "https://scholar.google.com/citations?user=7AzpbOMAAAAJ",
+  },
+  {
+    NAME: "ORCID",
+    HREF: "https://orcid.org/0009-0002-9612-4720",
+  },
 ];
