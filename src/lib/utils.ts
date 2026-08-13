@@ -52,3 +52,16 @@ export function dateRange(startDate: Date, endDate?: Date | string): string {
 
   return `${startMonth}${startYear} - ${endMonth}${endYear}`;
 }
+
+export function venueBadge(venue?: string): string {
+  if (venue?.startsWith("NeurIPS")) {
+    return "border-blue-500/30 bg-blue-500/10 !text-blue-700 dark:!text-blue-300";
+  }
+  if (venue?.startsWith("AAAI")) {
+    return "border-amber-500/30 bg-amber-500/10 !text-amber-700 dark:!text-amber-300";
+  }
+  if (venue?.startsWith("ICLR")) {
+    return "border-teal-500/30 bg-teal-500/10 !text-teal-700 dark:!text-teal-300";
+  }
+  return "";
+}

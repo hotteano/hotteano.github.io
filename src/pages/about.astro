@@ -2,6 +2,7 @@
 import Container from "@components/Container.astro";
 import PageLayout from "@layouts/PageLayout.astro";
 import GlassCard from "@components/GlassCard.astro";
+import { venueBadge } from "@lib/utils";
 import { SITE, ABOUT, SOCIALS } from "@consts";
 import { Image } from "astro:assets";
 import avatarImage from "../assets/soci.png";
@@ -575,9 +576,9 @@ const funFacts = [
                       <p class="text-sm text-black/70 dark:text-white/70 mb-1">
                         {pub.authors}
                       </p>
-                      <p class="text-sm text-black/45 dark:text-white/55">
+                      <span class={`badge-tech text-xs ${venueBadge(pub.venue)}`}>
                         {pub.venue}
-                      </p>
+                      </span>
                     </GlassCard>
                   ))
                 }

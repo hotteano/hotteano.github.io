@@ -8,6 +8,7 @@ import { WORK } from "@consts";
 
 import NeurIPSLogo from "@assets/NeurIPS-logo.svg";
 import AAAILogo from "@assets/AAAI-Logo-Title-FullColor.svg";
+import ICLRLogo from "@assets/ICLR-logo.svg";
 
 const collection = (await getCollection("work"))
   .sort((a, b) => new Date(b.data.dateStart).valueOf() - new Date(a.data.dateStart).valueOf());
@@ -34,6 +35,13 @@ const venueTheme = (venue?: string) => {
         badge: "border-amber-500/30 bg-amber-500/10 !text-amber-700 dark:!text-amber-300",
         logo: AAAILogo,
         watermark: "AAAI",
+      };
+    case "ICLR 2027":
+      return {
+        bar: "from-teal-500 via-cyan-500 to-sky-500",
+        badge: "border-teal-500/30 bg-teal-500/10 !text-teal-700 dark:!text-teal-300",
+        logo: ICLRLogo,
+        watermark: "ICLR",
       };
     default:
       return {

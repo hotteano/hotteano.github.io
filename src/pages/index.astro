@@ -10,7 +10,7 @@ import ProfileCard from "@components/ProfileCard.astro";
 import TagCloud from "@components/TagCloud.astro";
 import Calendar from "@components/Calendar.astro";
 import GlassCard from "@components/GlassCard.astro";
-import { dateRange } from "@lib/utils";
+import { dateRange, venueBadge } from "@lib/utils";
 import { SITE, HOME, SOCIALS } from "@consts";
 import { Image } from "astro:assets";
 import heroImage from "../assets/hero.webp";
@@ -230,7 +230,7 @@ const work = await Promise.all(
                   {dateRange(entry.data.dateStart, entry.data.dateEnd)}
                 </span>
                 {entry.data.venue && (
-                  <span class="badge-tech">
+                  <span class={`badge-tech ${venueBadge(entry.data.venue)}`}>
                     {entry.data.venue}
                   </span>
                 )}
