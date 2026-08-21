@@ -9,17 +9,37 @@ interface FAQItem {
 const faqs: FAQItem[] = [
   {
     question: "What are your research interests?",
-    answer: "My research interests lie at the intersection of theoretical computer science and machine learning, particularly in Circuit Complexity, Pseudorandomness, Reinforcement Learning Theory, and Learning Theory.",
+    answer: "I work on the theoretical foundations of learning and optimization: (1) optimization theory for deep neural networks, especially spectral optimizers; (2) theoretical analysis of genetic programming, focusing on generalization and runtime bounds; (3) reinforcement learning and world action models; and (4) agent systems, particularly context engineering and its underlying theory.",
+    category: "resume"
+  },
+  {
+    question: "What research are you currently working on?",
+    answer: "At the SUSTech Theory of AI Lab (advised by Prof. Pietro Simone Oliveto), I work on runtime analysis and generalization bounds for genetic programming, with a full paper targeting AAAI 2027 and an extended journal version planned for a venue such as IEEE TEVC. I also have a context-engineering paper under review at NeurIPS 2026, and further submissions in preparation for AAAI 2027 and ICLR 2027. See the Work page for details.",
     category: "resume"
   },
   {
     question: "Where are you currently studying?",
-    answer: "I am an undergraduate student at Southern University of Science and Technology (SUSTech), majoring in Computer Science and Engineering. I am a member of the Turing Class and currently in my sophomore year.",
+    answer: "I am an undergraduate student in the Department of Computer Science and Engineering at the Southern University of Science and Technology (SUSTech), a member of the Turing Class (class of 2028), currently in my third year.",
+    category: "resume"
+  },
+  {
+    question: "Do you have any teaching experience?",
+    answer: "Yes. In Fall 2026 I serve as a Teaching Assistant for Data Structures and Algorithms Analysis (H) at SUSTech, where I grade assignments and exam papers and lead problem-solving sessions.",
+    category: "resume"
+  },
+  {
+    question: "Who are your advisors?",
+    answer: "My academic advisor is Prof. Pietro Simone Oliveto (SUSTech Department of CSE), and my college advisor is Prof. Yanqing Hu (SUSTech Department of Statistics and Data Science).",
     category: "resume"
   },
   {
     question: "What is your GPA?",
-    answer: "My overall GPA is 3.83/4.0. Semester breakdown: Fall 2024: 3.72/4.0, Spring 2024: 3.91/4.0, Fall 2025: 3.85/4.0.",
+    answer: "My overall GPA is 3.83/4.0. Semester breakdown: Fall 2024: 3.72/4.0, Spring 2025: 3.91/4.0, Fall 2025: 3.85/4.0.",
+    category: "resume"
+  },
+  {
+    question: "What projects are you currently working on?",
+    answer: "Recent and ongoing projects include the CSE Proficiency Assessment System, TeaOS (an education-oriented x86_64 OS), a five-stage pipeline CPU on FPGA, the Chinese translation of Boaz Barak's Introduction to Theoretical Computer Science, and a survey on the SAT problem and complexity classes. Details are on the Projects page.",
     category: "resume"
   },
   {
@@ -28,24 +48,19 @@ const faqs: FAQItem[] = [
     category: "resume"
   },
   {
-    question: "How can I contact you?",
-    answer: "You can reach me via email at edwardchenyq@gmail.com, or find me through the social media links at the bottom of the page.",
-    category: "contact"
-  },
-  {
     question: "What content do you publish on your blog?",
-    answer: "My blog features technical notes, project updates, learning insights, and research progress. Topics include machine learning, algorithms, mathematics, and theoretical computer science.",
+    answer: "Notes organized into columns: study notes on algorithms, math and theoretical CS, final-exam review notes (期末复习), reading notes, and a gold-investment log. Articles support KaTeX math, GitHub-style alert blocks, tags, and series navigation. You can browse by column, tag, or the archive timeline, or subscribe via RSS.",
     category: "blog"
   },
   {
-    question: "What projects are you currently working on?",
-    answer: "I am currently involved in developing the CSE Proficiency Assessment System and the Digital Logic course design project. More details can be found on the Projects page.",
-    category: "resume"
+    question: "How is this site built?",
+    answer: "The site is a static blog built with Astro 5, TypeScript, and Tailwind CSS, deployed on GitHub Pages. It features KaTeX math rendering, RSS, a sitemap, and Giscus comments. The source code is on GitHub at hotteano/hotteano.github.io.",
+    category: "blog"
   },
   {
-    question: "Who are your advisors?",
-    answer: "My academic advisor is Prof. Pietro Simone Oliveto (SUSTech Department of CSE), and my college advisor is Prof. Yanqing Hu (SUSTech Department of Statistics and Data Science).",
-    category: "resume"
+    question: "How can I contact you?",
+    answer: "Email me at edwardchenyq@gmail.com. You can also find me on GitHub, Google Scholar, and ORCID — the links are in the Connect section on the homepage and on the About page.",
+    category: "contact"
   }
 ];
 
