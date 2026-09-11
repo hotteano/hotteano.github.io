@@ -12,7 +12,7 @@ tags:
   - Object Detection
 ---
 
-Second author of a small-target recognition project currently under review at **NeurIPS 2026**. The work focuses on improving detection and representation learning for low-resolution or weakly salient objects under challenging visual conditions.
+Second author of a small-target recognition project currently under review at **AAAI 2027**. The work focuses on improving detection and representation learning for low-resolution or weakly salient objects under challenging visual conditions.
 
 **My contribution** covers the model design choices, training-pipeline engineering, and extensive benchmark experiments validating the proposed approach.
 

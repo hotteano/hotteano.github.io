@@ -11,7 +11,7 @@ tags:
   - Self-play RLVR 
 ---
 
-Co-first author of a context-engineering work currently under review at **ICLR 2027**. The study study efficient self-play RLVR on LLM. 
+Co-first author of a Post-training work currently under review at **AAAI 2027**. The study study efficient self-play RLVR on LLM. 
 
 **My contribution** focused on the initial problem formulation and purpose some novel idea for the solution of this problem.
 
