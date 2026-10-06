@@ -20,7 +20,7 @@ const work = await Promise.all(
   })
 );
 
-const venueTheme = (venue?: string) => {
+const venueTheme = (venue?: string, paperURL?: string) => {
   switch (venue) {
     case "NeurIPS 2026":
       return {
@@ -43,7 +43,22 @@ const venueTheme = (venue?: string) => {
         logo: ICLRLogo,
         watermark: "ICLR",
       };
+    case "ICML 2027":
+      return {
+        bar: "from-violet-500 via-purple-500 to-fuchsia-500",
+        badge: "border-violet-500/30 bg-violet-500/10 !text-violet-700 dark:!text-violet-300",
+        logo: null,
+        watermark: "ICML",
+      };
     default:
+      if (paperURL?.includes("arxiv.org")) {
+        return {
+          bar: "from-red-500 via-rose-500 to-red-600",
+          badge: "border-red-500/30 bg-red-500/10 !text-red-700 dark:!text-red-300",
+          logo: null,
+          watermark: "arXiv",
+        };
+      }
       return {
         bar: "from-slate-400 to-slate-600",
         badge: "border-white/20 bg-white/10",
@@ -82,7 +97,7 @@ const statusTheme = (status?: string) => {
 
       <div class="grid gap-6">
         {work.map((entry, index) => {
-          const theme = venueTheme(entry.data.venue);
+          const theme = venueTheme(entry.data.venue, entry.data.paperURL);
           return (
             <GlassCard
               glow
@@ -161,12 +176,26 @@ const statusTheme = (status?: string) => {
 
                 {/* Action buttons */}
                 <div class="mt-6 flex flex-wrap gap-2">
-                  <button
-                    disabled
-                    class="btn-glass text-xs opacity-50 cursor-not-allowed"
-                  >
-                    Paper (coming soon)
-                  </button>
+                  {entry.data.paperURL ? (
+                    <a
+                      href={entry.data.paperURL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="btn-glass text-xs"
+                    >
+                      Paper (arXiv)
+                      <svg xmlns="http://www.w3.org/2000/svg" class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>
+                      </svg>
+                    </a>
+                  ) : (
+                    <button
+                      disabled
+                      class="btn-glass text-xs opacity-50 cursor-not-allowed"
+                    >
+                      Paper (coming soon)
+                    </button>
+                  )}
                   <button
                     disabled
                     class="btn-glass text-xs opacity-50 cursor-not-allowed"

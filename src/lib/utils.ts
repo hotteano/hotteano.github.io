@@ -63,5 +63,8 @@ export function venueBadge(venue?: string): string {
   if (venue?.startsWith("ICLR")) {
     return "border-teal-500/30 bg-teal-500/10 !text-teal-700 dark:!text-teal-300";
   }
+  if (venue?.startsWith("ICML")) {
+    return "border-violet-500/30 bg-violet-500/10 !text-violet-700 dark:!text-violet-300";
+  }
   return "";
 }

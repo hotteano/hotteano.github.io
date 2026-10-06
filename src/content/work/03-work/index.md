@@ -4,7 +4,7 @@ role: "Second Author"
 dateStart: "02/24/2026"
 dateEnd: "06/01/2026"
 status: "Under Review"
-venue: "AAAI 2027"
+paperURL: "https://arxiv.org/abs/2606.23825"
 contribution: "Model Design & Experiments"
 tags:
   - Computer Vision
@@ -12,7 +12,7 @@ tags:
   - Object Detection
 ---
 
-Second author of a small-target recognition project currently under review at **AAAI 2027**. The work focuses on improving detection and representation learning for low-resolution or weakly salient objects under challenging visual conditions.
+Second author of a small-target recognition project, now available as a preprint on **arXiv**. The work focuses on improving detection and representation learning for low-resolution or weakly salient objects under challenging visual conditions.
 
 **My contribution** covers the model design choices, training-pipeline engineering, and extensive benchmark experiments validating the proposed approach.
 

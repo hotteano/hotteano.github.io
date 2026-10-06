@@ -28,6 +28,7 @@ const work = defineCollection({
     dateEnd: z.union([z.coerce.date(), z.string()]),
     status: z.enum(["Submitted", "Under Review", "Under Preparation", "In Progress"]).optional(),
     venue: z.string().optional(),
+    paperURL: z.string().optional(),
     tags: z.array(z.string()).optional(),
     contribution: z.string().optional(),
   }),
